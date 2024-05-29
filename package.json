@@ -16,7 +16,7 @@
     "engine.io": "^6.5.4",
     "graphile-worker": "^0.16.6",
     "graphql-ws": "^5.16.0",
-    "nuxt": "^3.11.2",
+    "nuxt": "npm:nuxt-nightly@latest",
     "postgraphile": "beta",
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
