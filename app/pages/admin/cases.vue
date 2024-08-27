@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
   <section>
     <h1>Fälle</h1>
@@ -38,20 +39,26 @@
     <nav>
       <ul>
         <li>
-          <div>
+          <NuxtLink to="/admin/cases/1">
             <h2>Thomas Müller</h2>
             <dl>
               <dt>Gestart</dt>
               <dd>12.08.2024</dd>
             </dl>
-          </div>
+          </NuxtLink>
         </li>
       </ul>
     </nav>
   </section>
+
+  <NuxtPage />
 </template>
 
 <script lang="ts" setup>
+definePageMeta({
+  layout: "admin-panel"
+})
+
 const [mine] = useToggle(true)
 const [active] = useToggle(true)
 const [closed] = useToggle(false)

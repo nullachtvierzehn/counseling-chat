@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
-  modules: ["@nuxt/eslint", "@vueuse/nuxt"],
+  modules: ["@nuxt/eslint", "@vueuse/nuxt", "@nuxt/ui"],
   eslint: {
     config: {
       stylistic: {
