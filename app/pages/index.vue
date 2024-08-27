@@ -1,5 +1,7 @@
 <template>
-  <h1>Hallo Welt</h1>
-  <p>Verbindungstest</p>
-  <Connection />
+  <article>
+    <h1>Hallo Welt</h1>
+    <p>Verbindungstest</p>
+    <SocketioConnection />
+  </article>
 </template>

@@ -1,0 +1,10 @@
+**/node_modules
+**/.git
+**/.hg
+**/.nuxt
+**/.vscode
+**/.ts
+**/.tsx
+**/.js
+**/.jsx
+**/.vue
