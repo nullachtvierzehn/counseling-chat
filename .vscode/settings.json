@@ -17,5 +17,29 @@
   },
   "[vue]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  }
+  },
+  "[sql]": {
+    "editor.formatOnSave": false
+  },
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "counseling_db",
+      "database": "counseling_db",
+      "username": "counseling_owner"
+    },
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "database": "counseling_db",
+      "username": "timo",
+      "name": "timo@counseling_db",
+      "password": ""
+    }
+  ]
 }
