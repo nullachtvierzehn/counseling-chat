@@ -10,4 +10,7 @@ create extension if not exists "uuid-ossp" with schema public;
 create extension if not exists citext with schema public;
 create extension if not exists pgcrypto with schema public;
 
+create extension if not exists temporal_tables with schema public;
+grant execute on function public.versioning() to counseling_owner;
+
 commit;

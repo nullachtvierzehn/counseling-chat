@@ -17,6 +17,18 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Data for Name: consultations; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
+--
+
+
+
+--
+-- Data for Name: consultation_participants; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
+--
+
+
+
+--
 -- PostgreSQL database dump complete
 --
 
