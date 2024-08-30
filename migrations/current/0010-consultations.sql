@@ -70,11 +70,6 @@ create table app_public.consultation_participants (
     check (is_client <> (is_counselor or is_supervisor))
 );
 
-create trigger _100_timestamps
-before insert or update on app_public.consultation_participants
-for each row
-execute procedure app_private.tg__timestamps();
-
 alter table app_public.consultation_participants enable row level security;
 
 grant select on app_public.consultation_participants to :DATABASE_VISITOR;
@@ -86,6 +81,45 @@ create index consultation_participants_on_consultation_id on app_public.consulta
 create index consultation_participants_on_user_id on app_public.consultation_participants ("user_id");
 create index consultation_participants_on_created_at on app_public.consultation_participants using brin (created_at);
 
+create trigger _100_timestamps
+before insert or update on app_public.consultation_participants
+for each row
+execute procedure app_private.tg__timestamps();
+
+create or replace function app_public.current_user_consultation_ids()
+returns setof uuid
+language sql
+stable
+security definer
+set search_path = pg_catalog, public, pg_temp
+rows 20
+as $$
+  select consultation_id 
+  from app_public.consultation_participants
+  where "user_id" = app_public.current_user_id();
+$$;
+
+create policy manage_as_owner_or_dispatcher
+on app_public.consultation_participants
+for all
+using (exists(
+  select from app_public.consultations as c
+  join app_public.organization_memberships as m using (organization_id)
+  where c.id = consultation_participants.consultation_id
+  and m.user_id = app_public.current_user_id()
+  and (m.is_dispatcher is true or m.is_owner is true)
+));
+
+create policy see_participants_in_my_consultations
+on app_public.consultation_participants
+for select
+using (consultation_id in (select app_public.current_user_consultation_ids()));
+
+create policy allow_to_leave_a_consultation
+on app_public.consultation_participants
+for delete
+using ("user_id" = (select app_public.current_user_id()));
+
 
 -- Track the history of consultation participants.
 create table app_hidden.consultation_participants_history (
@@ -95,6 +129,9 @@ create table app_hidden.consultation_participants_history (
     references app_public.consultations (id)
     on update cascade on delete cascade
 );
+
+grant insert on app_hidden.consultation_participants_history to :DATABASE_VISITOR;
+grant update on app_hidden.consultation_participants_history to :DATABASE_VISITOR;
 
 create trigger _900_audit_log_consultation_participants
 before insert or update or delete on app_public.consultation_participants
