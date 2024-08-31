@@ -5,7 +5,11 @@ import { makePgService } from "postgraphile/adaptors/pg"
 import { makeV4Preset } from "postgraphile/presets/v4"
 import { grafserv } from "postgraphile/grafserv/h3/v1"
 import { postgraphile } from "postgraphile"
+import { PgSimplifyInflectionPreset } from "@graphile/simplify-inflection"
+import { PostGraphileConnectionFilterPreset } from "postgraphile-plugin-connection-filter"
+
 import pg from "pg"
+import PassportLoginPlugin from "./plugins/PassportLoginPlugin"
 
 export const pool = new pg.Pool({
   host: process.env.DATABASE_HOST ?? "localhost",
@@ -24,8 +28,8 @@ export const ownerPool = new pg.Pool({
 })
 
 export const graphileInstance = postgraphile({
-  extends: [amber, makeV4Preset({ dynamicJson: true })],
-  plugins: [/* TopicMessageSubscriptionPlugin */],
+  extends: [amber, makeV4Preset({ dynamicJson: true }), PgSimplifyInflectionPreset, PostGraphileConnectionFilterPreset],
+  plugins: [PassportLoginPlugin],
   gather: {
     pgStrictFunctions: true,
     installWatchFixtures: true,
@@ -55,6 +59,15 @@ export const graphileInstance = postgraphile({
         })
 
         contextAdditions.session = session
+
+        if (session.data.graphileSessionId) {
+          contextAdditions.pgSettings!["jwt.claims.session_id"] = session.data.graphileSessionId
+          // Update the last_active timestamp (but only do it at most once every 15 seconds to avoid too much churn).
+          await ownerPool.query(
+            "UPDATE app_private.sessions SET last_active = NOW() WHERE uuid = $1 AND last_active < NOW() - INTERVAL '15 seconds'",
+            [session.data.graphileSessionId]
+          )
+        }
       }
 
       return contextAdditions
