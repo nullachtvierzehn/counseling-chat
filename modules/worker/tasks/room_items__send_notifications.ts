@@ -6,8 +6,15 @@ interface RoomItemsSendNotificationsPayload {
   id: string
 }
 
-export const task: Task = async (inPayload, { addJob, query }) => {
-  const payload: RoomItemsSendNotificationsPayload = inPayload as any
+function assertPayload(payload: unknown): asserts payload is RoomItemsSendNotificationsPayload {
+  if (typeof payload !== "object" || !payload)
+    throw new Error("payload must be an object")
+  if (!("id" in payload) || typeof payload.id !== "string")
+    throw new Error("payload must satisfy { \"id\": \"string\" }")
+}
+
+export const task: Task = async (payload, { addJob, query }) => {
+  assertPayload(payload)
   const { id: roomItemId } = payload
 
   const { rows } = await query(

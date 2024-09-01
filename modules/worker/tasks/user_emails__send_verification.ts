@@ -8,8 +8,15 @@ interface UserEmailsSendVerificationPayload {
   id: string
 }
 
-export const task: Task = async (inPayload, { addJob, withPgClient }) => {
-  const payload: UserEmailsSendVerificationPayload = inPayload as any
+function assertUserEmailsSendVerificationPayload(payload: unknown): asserts payload is UserEmailsSendVerificationPayload {
+  if (typeof payload !== "object" || !payload)
+    throw new Error("payload must be an object")
+  if (!("id" in payload) || typeof payload.id !== "string")
+    throw new Error("payload must have an 'id' property of type string")
+}
+
+export const task: Task = async (payload, { addJob, withPgClient, logger }) => {
+  assertUserEmailsSendVerificationPayload(payload)
   const { id: userEmailId } = payload
   const {
     rows: [userEmail],
@@ -29,7 +36,7 @@ export const task: Task = async (inPayload, { addJob, withPgClient }) => {
     )
   )
   if (!userEmail) {
-    console.warn(
+    logger.warn(
       `user_emails__send_verification task for non-existent userEmail ignored (userEmailId = ${userEmailId})`
     )
     // No longer relevant
@@ -46,7 +53,7 @@ export const task: Task = async (inPayload, { addJob, withPgClient }) => {
     seconds_since_verification_sent != null
     && seconds_since_verification_sent < MIN_INTERVAL / 1000
   ) {
-    console.log("Email sent too recently")
+    logger.info("Email sent too recently")
     return
   }
   const sendEmailPayload: SendEmailPayload = {

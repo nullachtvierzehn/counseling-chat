@@ -13,8 +13,17 @@ interface UserSendAccountDeletionEmailPayload {
   token: string
 }
 
-export const task: Task = async (inPayload, { addJob }) => {
-  const payload: UserSendAccountDeletionEmailPayload = inPayload as any
+function assertPayload(payload: unknown): asserts payload is UserSendAccountDeletionEmailPayload {
+  if (typeof payload !== "object" || payload === null)
+    throw new Error("payload must be an object")
+  if (!("email" in payload) || typeof payload.email !== "string")
+    throw new Error("payload.email must be a string")
+  if (!("token" in payload) || typeof payload.token !== "string")
+    throw new Error("payload.token must be a string")
+}
+
+export const task: Task = async (payload, { addJob }) => {
+  assertPayload(payload)
   const { email, token } = payload
   const sendEmailPayload: SendEmailPayload = {
     options: {

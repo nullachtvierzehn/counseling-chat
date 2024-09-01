@@ -5,8 +5,16 @@ interface UserForgotPasswordUnregisteredEmailPayload {
   email: string
 }
 
-export const task: Task = async (inPayload, { addJob }) => {
-  const payload: UserForgotPasswordUnregisteredEmailPayload = inPayload as any
+function assertPayload(payload: unknown): asserts payload is UserForgotPasswordUnregisteredEmailPayload {
+  if (typeof payload !== "object" || !payload)
+    throw new Error("payload must be an object")
+
+  if (!("email" in payload) || typeof payload.email !== "string")
+    throw new Error("payload must have an 'email' property of type string")
+}
+
+export const task: Task = async (payload, { addJob }) => {
+  assertPayload(payload)
   const { email } = payload
 
   const sendEmailPayload: SendEmailPayload = {

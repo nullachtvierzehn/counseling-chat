@@ -71,8 +71,33 @@ type UserAuditPayload =
     current_user_id: string
   }
 
-const task: Task = async (rawPayload, { addJob, withPgClient, job }) => {
-  const payload: UserAuditPayload = rawPayload as any
+function assertUserAuditPayload(payload: unknown): asserts payload is UserAuditPayload {
+  if (typeof payload !== "object" || payload === null)
+    throw new Error("Payload must be an object")
+
+  if (!("type" in payload) || typeof payload.type !== "string")
+    throw new Error("Payload must have a 'type' property of type string")
+
+  if (!("user_id" in payload) || typeof payload.user_id !== "string")
+    throw new Error("Payload must have a 'user_id' property of type string")
+
+  if (!("current_user_id" in payload) || typeof payload.current_user_id !== "string")
+    throw new Error("Payload must have a 'current_user_id' property of type string")
+
+  const validTypes = ["added_email", "removed_email", "linked_account", "unlinked_account", "reset_password", "change_password"]
+  if (!validTypes.includes(payload.type))
+    throw new Error(`Invalid payload type: ${payload.type}`)
+
+  if (["added_email", "removed_email", "linked_account", "unlinked_account"].includes(payload.type)) {
+    if (!("extra1" in payload) || typeof payload.extra1 !== "string")
+      throw new Error(`Payload of type '${payload.type}' must have an 'extra1' property of type string`)
+    if (!("extra2" in payload) || typeof payload.extra2 !== "string")
+      throw new Error(`Payload of type '${payload.type}' must have an 'extra2' property of type string`)
+  }
+}
+
+const task: Task = async (payload, { addJob, withPgClient, job, logger }) => {
+  assertUserAuditPayload(payload)
   let subject: string
   let actionDescription: string
   switch (payload.type) {
@@ -106,14 +131,6 @@ const task: Task = async (rawPayload, { addJob, withPgClient, job }) => {
       actionDescription = `You changed your password.`
       break
     }
-    default: {
-      // Ensure we've handled all cases above
-      const neverPayload: never = payload
-      console.error(
-        `Audit action '${(neverPayload as any).type}' not understood; ignoring.`
-      )
-      return
-    }
   }
 
   const {
@@ -126,13 +143,13 @@ const task: Task = async (rawPayload, { addJob, withPgClient, job }) => {
   )
 
   if (!user) {
-    console.error(
+    logger.error(
       `User '${payload.user_id}' no longer exists. (Tried to audit: ${actionDescription})`
     )
     return
   }
   if (Math.abs(+user.created_at - +job.created_at) < 2) {
-    console.info(
+    logger.info(
       `Not sending audit announcement for user '${payload.user_id}' because it occurred immediately after account creation. (Tried to audit: ${actionDescription})`
     )
     return

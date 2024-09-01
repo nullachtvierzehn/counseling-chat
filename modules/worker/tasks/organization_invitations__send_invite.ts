@@ -8,8 +8,15 @@ interface OrganizationInvitationSendInvitePayload {
   id: string
 }
 
-export const task: Task = async (inPayload, { addJob, withPgClient }) => {
-  const payload: OrganizationInvitationSendInvitePayload = inPayload as any
+function assertPayload(payload: unknown): asserts payload is OrganizationInvitationSendInvitePayload {
+  if (typeof payload !== "object" || !payload)
+    throw new Error("payload must be an object")
+  if (!("id" in payload) || typeof payload.id !== "string")
+    throw new Error("payload must satisfy { \"id\": \"string\" }")
+}
+
+export const task: Task = async (payload, { addJob, withPgClient, logger }) => {
+  assertPayload(payload)
   const { id: invitationId } = payload
   const {
     rows: [invitation],
@@ -24,7 +31,7 @@ export const task: Task = async (inPayload, { addJob, withPgClient }) => {
     )
   )
   if (!invitation) {
-    console.error("Invitation not found; aborting")
+    logger.error("Invitation not found; aborting")
     return
   }
 
@@ -39,7 +46,7 @@ export const task: Task = async (inPayload, { addJob, withPgClient }) => {
       )
     )
     if (!primaryEmail) {
-      console.error(
+      logger.error(
         `No primary email found for user ${invitation.user_id}; aborting`
       )
       return

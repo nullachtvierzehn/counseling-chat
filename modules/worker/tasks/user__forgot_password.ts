@@ -18,8 +18,19 @@ interface UserForgotPasswordPayload {
   token: string
 }
 
-export const task: Task = async (inPayload, { addJob, withPgClient }) => {
-  const payload: UserForgotPasswordPayload = inPayload as any
+function assertPayload(payload: unknown): asserts payload is UserForgotPasswordPayload {
+  if (typeof payload !== "object" || !payload)
+    throw new Error("payload must be an object")
+  if (!("id" in payload) || typeof payload.id !== "string")
+    throw new Error("payload.id must be a string")
+  if (!("email" in payload) || typeof payload.email !== "string")
+    throw new Error("payload.email must be a string")
+  if (!("token" in payload) || typeof payload.token !== "string")
+    throw new Error("payload.token must be a string")
+}
+
+export const task: Task = async (payload, { addJob, withPgClient, logger }) => {
+  assertPayload(payload)
   const { id: userId, email, token } = payload
   const {
     rows: [user],
@@ -34,7 +45,7 @@ export const task: Task = async (inPayload, { addJob, withPgClient }) => {
     )
   )
   if (!user) {
-    console.error("User not found; aborting")
+    logger.error("User not found; aborting")
     return
   }
   const sendEmailPayload: SendEmailPayload = {
