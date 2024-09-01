@@ -26,3 +26,6 @@ logs
 # Uploaded files
 files/*
 !files/.gitkeep
+
+# Temporary config of Ethereal mail service
+.ethereal
