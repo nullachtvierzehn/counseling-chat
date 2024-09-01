@@ -18,7 +18,7 @@ export default defineNuxtModule({
       noHandleSignals: true, // signals are handled by Nuxt.
       preset: {
         worker: {
-          // fileExtensions: [".js", ".cjs", ".mjs", ".ts", ".cts", ".mts", ".py"],
+          fileExtensions: [".js", ".cjs", ".mjs", ".ts", ".cts", ".mts", ".py"],
         }
       },
       taskDirectory: resolve("./tasks")
