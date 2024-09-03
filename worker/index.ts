@@ -1,12 +1,15 @@
 import { dirname, resolve } from "path"
 import { fileURLToPath } from "url"
 
+import findConfig from "find-config"
 import { config as loadConfig } from "dotenv"
 import { run } from "graphile-worker"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-loadConfig({ path: resolve("../.env") })
+
+const configPath = findConfig(".env")
+if (configPath) loadConfig({ path: configPath })
 
 const runner = await run({
   connectionString: process.env.DATABASE_URL,
