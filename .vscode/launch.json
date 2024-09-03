@@ -18,12 +18,21 @@
             "program": "${workspaceFolder}/node_modules/nuxi/bin/nuxi.mjs",
             "args": ["dev"],
             "cwd": "${workspaceFolder}",
+        },
+        {
+            "name": "Worker",
+            "type": "bun",
+            "request": "launch",
+            "program": "index.ts",
+            "stopOnEntry": false,
+            "watchMode": true,
+            "cwd": "${workspaceFolder}/worker",
         }
     ],
     "compounds": [
         {
             "name": "Nuxt Fullstack",
-            "configurations": ["Nuxt", "Browser"]
+            "configurations": ["Nuxt", "Browser", "Worker"]
         }
     ]
 }

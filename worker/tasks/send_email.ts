@@ -12,10 +12,10 @@ import { template as lodashTemplate } from "lodash-es"
 import mjml2html from "mjml"
 import * as nodemailer from "nodemailer"
 
-import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js"
+import type { SentMessageInfo } from "nodemailer"
 import getTransport from "../transport.js"
 
-export const TEST_EMAILS: SMTPTransport.SentMessageInfo[] = []
+export const TEST_EMAILS: SentMessageInfo[] = []
 
 const __filename = fileURLToPath(import.meta.url) // get the resolved path to the file
 const __dirname = path.dirname(__filename) // get the name of the directory
@@ -119,6 +119,6 @@ function loadTemplate(template: string, variables?: Record<string, any>) {
   })
   const { html, errors } = mjml2html(mjml)
   if (errors && errors.length)
-    throw new Error("Failed to parse MJML", { cause: errors })
+    throw new Error("Failed to parse MJML")
   return html
 }

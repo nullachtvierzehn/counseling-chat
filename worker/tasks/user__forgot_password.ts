@@ -1,5 +1,5 @@
 import type { Task } from "graphile-worker"
-import type { SendEmailPayload } from "./send_email"
+import type { SendEmailPayload } from "./send_email.js"
 
 interface UserForgotPasswordPayload {
   /**

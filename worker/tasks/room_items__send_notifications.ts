@@ -1,6 +1,6 @@
 import type { Task } from "graphile-worker"
 import { camelCase, mapKeys } from "lodash-es"
-import type { SendEmailPayload } from "./send_email"
+import type { SendEmailPayload } from "./send_email.js"
 
 interface RoomItemsSendNotificationsPayload {
   id: string

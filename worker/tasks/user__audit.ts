@@ -1,5 +1,5 @@
 import type { Task } from "graphile-worker"
-import type { SendEmailPayload } from "./send_email"
+import type { SendEmailPayload } from "./send_email.js"
 
 const projectName = "test"
 
@@ -81,7 +81,7 @@ function assertUserAuditPayload(payload: unknown): asserts payload is UserAuditP
   if (!("user_id" in payload) || typeof payload.user_id !== "string")
     throw new Error("Payload must have a 'user_id' property of type string")
 
-  if (!("current_user_id" in payload) || typeof payload.current_user_id !== "string")
+  if (("current_user_id" in payload) && !(typeof payload.current_user_id === "string" || payload.current_user_id === null))
     throw new Error("Payload must have a 'current_user_id' property of type string")
 
   const validTypes = ["added_email", "removed_email", "linked_account", "unlinked_account", "reset_password", "change_password"]

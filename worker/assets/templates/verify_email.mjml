@@ -1,0 +1,45 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-class name="big-text" font-size="24px" line-height="1.25" />
+      <mj-class name="regular-text" font-size="18px" line-height="1.25" />
+      <mj-class name="primary-button" background-color="#4b5563" color="#FFF" border="none" padding="15px 30px" border-radius="10px" padding-left="25px" padding-right="25px" padding-bottom="10px" />
+      <mj-class name="bg-gray-300" background-color="#d1d5db">
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body background-color="#ffffff">
+    <mj-section>
+      <mj-column>
+        <mj-text mj-class="big-text">
+          Bestätige bitte Deine E-Mail-Adresse.
+        </mj-text>
+        <mj-spacer />
+
+        <mj-text mj-class="regular-text">
+          Damit wir wissen, dass wir Dich auf dieser E-Mail-Adresse erreichen können.
+        </mj-text>
+        <mj-button mj-class="regular-text primary-button" href="[[verifyLink]]">
+          Meine E-Mail-Adresse funktioniert!
+        </mj-button>
+        <mj-spacer />
+
+        <mj-text mj-class="regular-text">
+          Wenn alles klappt, siehst Du danach eine Bestätigung. Falls nicht, schreibe uns bitte eine E-Mail mit Deinen Bestätigungscode: [[token]]. Wir werden Dir dann helfen und dem Fehler nachgehen.
+        </mj-text>
+        <mj-text mj-class="regular-text">
+          Falls Du Dich nicht angemeldet hast, kannst Du diese E-Mail löschen. Komm bei Fragen gerne auf uns zu.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-section mj-class="bg-gray-300">
+      <mj-column>
+        <mj-text mj-class="regular-text">
+          Herzliche Grüße,<br />
+          das Team von <a href="https://www.a-friend.org">a-friend.org</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
