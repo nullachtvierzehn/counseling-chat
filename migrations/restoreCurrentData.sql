@@ -29,6 +29,30 @@ SET row_security = off;
 
 
 --
+-- Data for Name: messages; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
+--
+
+
+
+--
+-- Data for Name: message_body_revisions; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
+--
+
+
+
+--
+-- Data for Name: message_body_revision_approvals; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
+--
+
+
+
+--
+-- Data for Name: message_body_revision_comments; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
+--
+
+
+
+--
 -- PostgreSQL database dump complete
 --
 
