@@ -81,6 +81,11 @@ export const graphileInstance = postgraphile({
       schemas: ["app_public"],
     }),
   ],
+  schema: {
+    exportSchemaIntrospectionResultPath: `${process.cwd()}/schema.json`,
+    exportSchemaSDLPath: `${process.cwd()}/schema.graphql`,
+    sortExport: true,
+  }
 })
 
 export const server = graphileInstance.createServ(grafserv)
