@@ -43,7 +43,8 @@
     "tus-js-client": "^4.1.0",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@iconify-json/ic": "^1.1.18",
