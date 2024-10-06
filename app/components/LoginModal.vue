@@ -63,9 +63,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   }
   else if (error)
     toast.add({ title: "Fehler beim Einloggen.", description: error.message, color: "red" })
-  else if (!data?.login?.user)
+  else
     toast.add({ title: "Benutzername oder Passwort falsch.", description: "Bitte versuchen Sie es erneut.", color: "orange" })
-  else {
-  }
 }
 </script>
