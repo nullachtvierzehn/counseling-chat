@@ -5774,6 +5774,14 @@ export type VerifyEmailPayload = {
   query: Maybe<Query>;
 };
 
+export type LoginMutationVariables = Exact<{
+  username: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+}>;
+
+
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', user: { __typename?: 'User', id: string, username: string } } | null };
+
 
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {

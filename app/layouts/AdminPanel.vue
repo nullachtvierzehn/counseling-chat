@@ -91,6 +91,7 @@
         </li>
         <li>
           <UTooltip text="Konto" :shortcuts="[metaSymbol, 'K']">
+            <!--
             <NuxtLink
               ref="linkToOrganizations"
               role="tab"
@@ -101,6 +102,11 @@
               <Icon name="ic:baseline-face" />
               <span role="tab" class="sr-only">Konto</span>
             </NuxtLink>
+            -->
+            <UButton @click="loginModalOpen = true">
+              <Icon name="ic:baseline-face" />
+              <span role="tab" class="sr-only">Konto</span>
+            </UButton>
           </UTooltip>
         </li>
       </ul>
@@ -109,6 +115,8 @@
     <main>
       <slot />
     </main>
+
+    <LoginModal v-model="loginModalOpen" />
   </div>
 </template>
 
@@ -117,6 +125,7 @@ import type { NuxtLink } from "#components"
 
 const linkToOrganizations = ref<typeof NuxtLink>()
 const linkToCases = ref<typeof NuxtLink>()
+const loginModalOpen = ref(false)
 
 defineShortcuts({
   meta_b: {
