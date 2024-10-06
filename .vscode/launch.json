@@ -12,9 +12,10 @@
             "webRoot": "${workspaceFolder}"
         },
         {
-            "name": "Nuxt",
-            "type": "bun",
+            "type": "node",
             "request": "launch",
+            "name": "Nuxt",
+            "outputCapture": "std",
             "program": "${workspaceFolder}/node_modules/nuxi/bin/nuxi.mjs",
             "args": ["dev"],
             "cwd": "${workspaceFolder}",
