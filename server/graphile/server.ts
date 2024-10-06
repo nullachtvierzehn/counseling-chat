@@ -1,5 +1,5 @@
 import { makeServer } from "graphql-ws"
-import { makeGraphQLWSConfig } from "postgraphile/grafserv"
+import { makeGraphQLWSConfig, defaultMaskError } from "postgraphile/grafserv"
 import { PostGraphileAmberPreset as amber } from "postgraphile/presets/amber"
 import { makePgService } from "postgraphile/adaptors/pg"
 import { makeV4Preset } from "postgraphile/presets/v4"
@@ -7,6 +7,7 @@ import { grafserv } from "postgraphile/grafserv/h3/v1"
 import { postgraphile } from "postgraphile"
 import { PgSimplifyInflectionPreset } from "@graphile/simplify-inflection"
 import { PostGraphileConnectionFilterPreset } from "postgraphile-plugin-connection-filter"
+import { GraphQLError } from "graphql"
 
 import pg from "pg"
 import PassportLoginPlugin from "./plugins/PassportLoginPlugin"
@@ -39,6 +40,41 @@ export const graphileInstance = postgraphile({
     eventStreamPath: "/api/graphql/stream",
     watch: true,
     websockets: true,
+    maskError: (error) => {
+      if (!error.originalError) return defaultMaskError(error)
+      const code = "code" in error.originalError ? error.originalError.code as string : null
+      switch (code) {
+        case "CDLEA":
+        case "LOCKD":
+        case "WEAKP":
+        case "LOGIN":
+        case "DNIED":
+        case "CREDS":
+        case "MODAT":
+        case "TAKEN":
+        case "VRFY1":
+        case "ISMBR":
+        case "VRFY2":
+        case "NTFND":
+        case "OWNER":
+          // Expose application errors
+          return new GraphQLError(error.message, {
+            nodes: error.nodes,
+            source: error.source,
+            positions: error.positions,
+            path: error.path,
+            originalError: error.originalError,
+            extensions: {
+              code: "code" in error.originalError ? error.originalError.code : null,
+              exception: error.originalError ?? error
+            }
+          })
+        case null:
+        default:
+          // Default masking for all others
+          return defaultMaskError(error)
+      }
+    }
   },
   grafast: {
     explain: true,
