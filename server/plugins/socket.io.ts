@@ -3,11 +3,12 @@ import { Server as Engine } from "engine.io"
 import { Server } from "socket.io"
 import { defineEventHandler } from "h3"
 
+// https://socket.io/how-to/use-with-nuxt
 export default defineNitroPlugin((nitroApp: NitroApp) => {
   const engine = new Engine()
   const io = new Server()
 
-  io.bind(engine)
+  io.bind(engine as any)
 
   io.on("connection", (socket) => {
     console.log("incoming connection", socket.id)
