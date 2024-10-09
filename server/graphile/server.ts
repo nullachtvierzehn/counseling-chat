@@ -29,7 +29,18 @@ export const ownerPool = new pg.Pool({
 })
 
 export const graphileInstance = postgraphile({
-  extends: [amber, makeV4Preset({ dynamicJson: true }), PgSimplifyInflectionPreset, PostGraphileConnectionFilterPreset],
+  extends: [
+    amber,
+    makeV4Preset({
+      dynamicJson: true,
+      subscriptions: true,
+      watchPg: process.env.NODE_ENV === "development",
+      setofFunctionsContainNulls: false,
+      ignoreRBAC: false
+    }),
+    PgSimplifyInflectionPreset,
+    PostGraphileConnectionFilterPreset
+  ],
   plugins: [PassportLoginPlugin],
   gather: {
     pgStrictFunctions: true,
