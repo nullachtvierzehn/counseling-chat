@@ -26,6 +26,7 @@
     "@tus/server": "^1.6.0",
     "@urql/core": "^5.0.6",
     "@urql/devtools": "^2.0.3",
+    "@urql/exchange-graphcache": "^7.2.0",
     "@urql/vue": "^1.4.1",
     "@vueuse/nuxt": "^10.10.0",
     "engine.io": "^6.5.4",
