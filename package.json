@@ -8,6 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "codegen:graphql": "graphql-codegen --config codegen.yml",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier . \"!**/*.{js,jsx,mjs,cjs,ts,tsx,vue}\" --check",
     "lint:fix": "prettier . \"!**/*.{js,jsx,mjs,cjs,ts,tsx,vue}\" --write --list-different && eslint . --fix"
