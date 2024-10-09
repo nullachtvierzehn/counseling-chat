@@ -89,9 +89,8 @@
             </NuxtLink>
           </UTooltip>
         </li>
-        <li>
+        <li v-if="currentUser">
           <UTooltip text="Konto" :shortcuts="[metaSymbol, 'K']">
-            <!--
             <NuxtLink
               ref="linkToOrganizations"
               role="tab"
@@ -102,7 +101,10 @@
               <Icon name="ic:baseline-face" />
               <span role="tab" class="sr-only">Konto</span>
             </NuxtLink>
-            -->
+          </UTooltip>
+        </li>
+        <li v-else>
+          <UTooltip text="Einloggen" :shortcuts="[metaSymbol, 'K']">
             <UButton @click="loginModalOpen = true">
               <Icon name="ic:baseline-face" />
               <span role="tab" class="sr-only">Konto</span>
@@ -126,6 +128,9 @@ import type { NuxtLink } from "#components"
 const linkToOrganizations = ref<typeof NuxtLink>()
 const linkToCases = ref<typeof NuxtLink>()
 const loginModalOpen = ref(false)
+
+const { data: currentUserData } = await useCurrentUserQuery()
+const currentUser = computed(() => currentUserData?.value?.currentUser)
 
 defineShortcuts({
   meta_b: {

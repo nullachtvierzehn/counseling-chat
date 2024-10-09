@@ -3049,6 +3049,11 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', user: { __typename?: 'User', id: string, username: string } } | null };
 
+export type CurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, username: string, createdAt: string } | null };
+
 export type FetchConsultationsQueryVariables = Exact<{
   filter?: InputMaybe<ConsultationFilter>;
   orderBy?: InputMaybe<Array<ConsultationsOrderBy> | ConsultationsOrderBy>;
@@ -3060,6 +3065,11 @@ export type FetchConsultationsQueryVariables = Exact<{
 
 
 export type FetchConsultationsQuery = { __typename?: 'Query', consultations: { __typename?: 'ConsultationsConnection', nodes: Array<{ __typename?: 'Consultation', id: string, name: string, createdAt: string }> } | null };
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'LogoutPayload', success: boolean | null } | null };
 
 
 export const LoginDocument = gql`
@@ -3075,6 +3085,19 @@ export const LoginDocument = gql`
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const CurrentUserDocument = gql`
+    query CurrentUser {
+  currentUser {
+    id
+    username
+    createdAt
+  }
+}
+    `;
+
+export function useCurrentUserQuery(options?: Omit<Urql.UseQueryArgs<never, CurrentUserQueryVariables | undefined>, 'query'>) {
+  return Urql.useQuery<CurrentUserQuery, CurrentUserQueryVariables | undefined>({ query: CurrentUserDocument, variables: undefined, ...options });
 };
 export const FetchConsultationsDocument = gql`
     query FetchConsultations($filter: ConsultationFilter, $orderBy: [ConsultationsOrderBy!], $first: Int, $after: Cursor, $last: Int, $before: Cursor) {
@@ -3097,4 +3120,15 @@ export const FetchConsultationsDocument = gql`
 
 export function useFetchConsultationsQuery(options?: Omit<Urql.UseQueryArgs<never, FetchConsultationsQueryVariables | undefined>, 'query'>) {
   return Urql.useQuery<FetchConsultationsQuery, FetchConsultationsQueryVariables | undefined>({ query: FetchConsultationsDocument, variables: undefined, ...options });
+};
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout {
+    success
+  }
+}
+    `;
+
+export function useLogoutMutation() {
+  return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };

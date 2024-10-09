@@ -54,7 +54,7 @@
             <NuxtLink :to="{ name: 'consultation-by-id', params: { id } }">
               <h2>{{ name }}</h2>
               <dl>
-                <dt>Gestart</dt>
+                <dt>Gestartet</dt>
                 <dd>{{ createdAt }}</dd>
               </dl>
             </NuxtLink>
