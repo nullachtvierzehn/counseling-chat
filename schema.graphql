@@ -156,40 +156,6 @@ type Consultation implements Node {
   ): ConsultationParticipantsConnection!
   createdAt: Datetime!
   id: UUID!
-
-  """Reads and enables pagination through a set of `Message`."""
-  messages(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `Message`."""
-    orderBy: [MessagesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessagesConnection!
   name: String!
 
   """
@@ -243,12 +209,6 @@ input ConsultationFilter {
   """Filter by the object’s `id` field."""
   id: UUIDFilter
 
-  """Filter by the object’s `messages` relation."""
-  messages: ConsultationToManyMessageFilter
-
-  """Some related `messages` exist."""
-  messagesExist: Boolean
-
   """Filter by the object’s `name` field."""
   name: StringFilter
 
@@ -270,11 +230,8 @@ input ConsultationFilter {
 
 """An input for mutations affecting `Consultation`"""
 input ConsultationInput {
-  createdAt: Datetime
   id: UUID
   name: String!
-  organizationId: UUID!
-  updatedAt: Datetime
 }
 
 type ConsultationParticipant implements Node {
@@ -386,13 +343,10 @@ input ConsultationParticipantFilter {
 """An input for mutations affecting `ConsultationParticipant`"""
 input ConsultationParticipantInput {
   consultationId: UUID!
-  createdAt: Datetime
   id: UUID
   isClient: Boolean
   isCounselor: Boolean
   isSupervisor: Boolean
-  sysPeriod: DatetimeRangeInput
-  updatedAt: Datetime
   userId: UUID
 }
 
@@ -400,15 +354,9 @@ input ConsultationParticipantInput {
 Represents an update to a `ConsultationParticipant`. Fields that are set will be updated.
 """
 input ConsultationParticipantPatch {
-  consultationId: UUID
-  createdAt: Datetime
-  id: UUID
   isClient: Boolean
   isCounselor: Boolean
   isSupervisor: Boolean
-  sysPeriod: DatetimeRangeInput
-  updatedAt: Datetime
-  userId: UUID
 }
 
 """A connection to a list of `ConsultationParticipant` values."""
@@ -416,10 +364,10 @@ type ConsultationParticipantsConnection {
   """
   A list of edges which contains the `ConsultationParticipant` and cursor to aid in pagination.
   """
-  edges: [ConsultationParticipantsEdge]!
+  edges: [ConsultationParticipantsEdge!]!
 
   """A list of `ConsultationParticipant` objects."""
-  nodes: [ConsultationParticipant]!
+  nodes: [ConsultationParticipant!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
@@ -436,7 +384,7 @@ type ConsultationParticipantsEdge {
   cursor: Cursor
 
   """The `ConsultationParticipant` at the end of the edge."""
-  node: ConsultationParticipant
+  node: ConsultationParticipant!
 }
 
 """Methods to use when ordering `ConsultationParticipant`."""
@@ -466,11 +414,7 @@ enum ConsultationParticipantsOrderBy {
 Represents an update to a `Consultation`. Fields that are set will be updated.
 """
 input ConsultationPatch {
-  createdAt: Datetime
-  id: UUID
   name: String
-  organizationId: UUID
-  updatedAt: Datetime
 }
 
 """
@@ -493,35 +437,15 @@ input ConsultationToManyConsultationParticipantFilter {
   some: ConsultationParticipantFilter
 }
 
-"""
-A filter to be used against many `Message` object types. All fields are combined with a logical ‘and.’
-"""
-input ConsultationToManyMessageFilter {
-  """
-  Every related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: MessageFilter
-
-  """
-  No related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: MessageFilter
-
-  """
-  Some related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: MessageFilter
-}
-
 """A connection to a list of `Consultation` values."""
 type ConsultationsConnection {
   """
   A list of edges which contains the `Consultation` and cursor to aid in pagination.
   """
-  edges: [ConsultationsEdge]!
+  edges: [ConsultationsEdge!]!
 
   """A list of `Consultation` objects."""
-  nodes: [Consultation]!
+  nodes: [Consultation!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
@@ -536,7 +460,7 @@ type ConsultationsEdge {
   cursor: Cursor
 
   """The `Consultation` at the end of the edge."""
-  node: Consultation
+  node: Consultation!
 }
 
 """Methods to use when ordering `Consultation`."""
@@ -639,291 +563,24 @@ type CreateConsultationPayload {
   query: Query
 }
 
-"""All input for the create `MessageBodyRevisionApproval` mutation."""
-input CreateMessageBodyRevisionApprovalInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `MessageBodyRevisionApproval` to be created by this mutation."""
-  messageBodyRevisionApproval: MessageBodyRevisionApprovalInput!
-}
-
-"""The output of our create `MessageBodyRevisionApproval` mutation."""
-type CreateMessageBodyRevisionApprovalPayload {
-  """
-  Reads a single `User` that is related to this `MessageBodyRevisionApproval`.
-  """
-  approver: User
-
-  """
-  Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionApproval`.
-  """
-  bodyRevision: MessageBodyRevision
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `MessageBodyRevisionApproval` that was created by this mutation."""
-  messageBodyRevisionApproval: MessageBodyRevisionApproval
-
-  """An edge for our `MessageBodyRevisionApproval`. May be used by Relay 1."""
-  messageBodyRevisionApprovalEdge(
-    """The method to use when ordering `MessageBodyRevisionApproval`."""
-    orderBy: [MessageBodyRevisionApprovalsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionApprovalsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the create `MessageBodyRevisionComment` mutation."""
-input CreateMessageBodyRevisionCommentInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `MessageBodyRevisionComment` to be created by this mutation."""
-  messageBodyRevisionComment: MessageBodyRevisionCommentInput!
-}
-
-"""The output of our create `MessageBodyRevisionComment` mutation."""
-type CreateMessageBodyRevisionCommentPayload {
-  """
-  Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionComment`.
-  """
-  bodyRevision: MessageBodyRevision
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `User` that is related to this `MessageBodyRevisionComment`.
-  """
-  commenter: User
-
-  """The `MessageBodyRevisionComment` that was created by this mutation."""
-  messageBodyRevisionComment: MessageBodyRevisionComment
-
-  """An edge for our `MessageBodyRevisionComment`. May be used by Relay 1."""
-  messageBodyRevisionCommentEdge(
-    """The method to use when ordering `MessageBodyRevisionComment`."""
-    orderBy: [MessageBodyRevisionCommentsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionCommentsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the create `MessageBodyRevision` mutation."""
-input CreateMessageBodyRevisionInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `MessageBodyRevision` to be created by this mutation."""
-  messageBodyRevision: MessageBodyRevisionInput!
-}
-
-"""The output of our create `MessageBodyRevision` mutation."""
-type CreateMessageBodyRevisionPayload {
-  """Reads a single `User` that is related to this `MessageBodyRevision`."""
-  author: User
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `Message` that is related to this `MessageBodyRevision`.
-  """
-  message: Message
-
-  """The `MessageBodyRevision` that was created by this mutation."""
-  messageBodyRevision: MessageBodyRevision
-
-  """An edge for our `MessageBodyRevision`. May be used by Relay 1."""
-  messageBodyRevisionEdge(
-    """The method to use when ordering `MessageBodyRevision`."""
-    orderBy: [MessageBodyRevisionsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the create `Message` mutation."""
-input CreateMessageInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `Message` to be created by this mutation."""
-  message: MessageInput!
-}
-
-"""The output of our create `Message` mutation."""
-type CreateMessagePayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """Reads a single `Consultation` that is related to this `Message`."""
-  consultation: Consultation
-
-  """The `Message` that was created by this mutation."""
-  message: Message
-
-  """An edge for our `Message`. May be used by Relay 1."""
-  messageEdge(
-    """The method to use when ordering `Message`."""
-    orderBy: [MessagesOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessagesEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `User` that is related to this `Message`."""
-  sender: User
-}
-
-"""All input for the create `Organization` mutation."""
+"""All input for the `createOrganization` mutation."""
 input CreateOrganizationInput {
   """
   An arbitrary string value with no semantic meaning. Will be included in the
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-
-  """The `Organization` to be created by this mutation."""
-  organization: OrganizationInput!
+  name: String!
+  slug: String!
 }
 
-"""All input for the create `OrganizationInvitation` mutation."""
-input CreateOrganizationInvitationInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `OrganizationInvitation` to be created by this mutation."""
-  organizationInvitation: OrganizationInvitationInput!
-}
-
-"""The output of our create `OrganizationInvitation` mutation."""
-type CreateOrganizationInvitationPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `Organization` that is related to this `OrganizationInvitation`.
-  """
-  organization: Organization
-
-  """The `OrganizationInvitation` that was created by this mutation."""
-  organizationInvitation: OrganizationInvitation
-
-  """An edge for our `OrganizationInvitation`. May be used by Relay 1."""
-  organizationInvitationEdge(
-    """The method to use when ordering `OrganizationInvitation`."""
-    orderBy: [OrganizationInvitationsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): OrganizationInvitationsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `User` that is related to this `OrganizationInvitation`.
-  """
-  user: User
-}
-
-"""All input for the create `OrganizationMembership` mutation."""
-input CreateOrganizationMembershipInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `OrganizationMembership` to be created by this mutation."""
-  organizationMembership: OrganizationMembershipInput!
-}
-
-"""The output of our create `OrganizationMembership` mutation."""
-type CreateOrganizationMembershipPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `Organization` that is related to this `OrganizationMembership`.
-  """
-  organization: Organization
-
-  """The `OrganizationMembership` that was created by this mutation."""
-  organizationMembership: OrganizationMembership
-
-  """An edge for our `OrganizationMembership`. May be used by Relay 1."""
-  organizationMembershipEdge(
-    """The method to use when ordering `OrganizationMembership`."""
-    orderBy: [OrganizationMembershipsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): OrganizationMembershipsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `User` that is related to this `OrganizationMembership`.
-  """
-  user: User
-}
-
-"""The output of our create `Organization` mutation."""
+"""The output of our `createOrganization` mutation."""
 type CreateOrganizationPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
-
-  """The `Organization` that was created by this mutation."""
   organization: Organization
 
   """An edge for our `Organization`. May be used by Relay 1."""
@@ -936,44 +593,6 @@ type CreateOrganizationPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-}
-
-"""All input for the create `UserAuthentication` mutation."""
-input CreateUserAuthenticationInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `UserAuthentication` to be created by this mutation."""
-  userAuthentication: UserAuthenticationInput!
-}
-
-"""The output of our create `UserAuthentication` mutation."""
-type CreateUserAuthenticationPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `User` that is related to this `UserAuthentication`."""
-  user: User
-
-  """The `UserAuthentication` that was created by this mutation."""
-  userAuthentication: UserAuthentication
-
-  """An edge for our `UserAuthentication`. May be used by Relay 1."""
-  userAuthenticationEdge(
-    """The method to use when ordering `UserAuthentication`."""
-    orderBy: [UserAuthenticationsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): UserAuthenticationsEdge
 }
 
 """All input for the create `UserEmail` mutation."""
@@ -1012,41 +631,6 @@ type CreateUserEmailPayload {
     """The method to use when ordering `UserEmail`."""
     orderBy: [UserEmailsOrderBy!]! = [PRIMARY_KEY_ASC]
   ): UserEmailsEdge
-}
-
-"""All input for the create `User` mutation."""
-input CreateUserInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The `User` to be created by this mutation."""
-  user: UserInput!
-}
-
-"""The output of our create `User` mutation."""
-type CreateUserPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """The `User` that was created by this mutation."""
-  user: User
-
-  """An edge for our `User`. May be used by Relay 1."""
-  userEdge(
-    """The method to use when ordering `User`."""
-    orderBy: [UsersOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): UsersEdge
 }
 
 """A connection to a list of `UUID` values."""
@@ -1412,258 +996,6 @@ type DeleteConsultationPayload {
   query: Query
 }
 
-"""
-All input for the `deleteMessageBodyRevisionApprovalByNodeId` mutation.
-"""
-input DeleteMessageBodyRevisionApprovalByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `MessageBodyRevisionApproval` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteMessageBodyRevisionApproval` mutation."""
-input DeleteMessageBodyRevisionApprovalInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-}
-
-"""The output of our delete `MessageBodyRevisionApproval` mutation."""
-type DeleteMessageBodyRevisionApprovalPayload {
-  """
-  Reads a single `User` that is related to this `MessageBodyRevisionApproval`.
-  """
-  approver: User
-
-  """
-  Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionApproval`.
-  """
-  bodyRevision: MessageBodyRevision
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-  deletedMessageBodyRevisionApprovalNodeId: ID
-
-  """The `MessageBodyRevisionApproval` that was deleted by this mutation."""
-  messageBodyRevisionApproval: MessageBodyRevisionApproval
-
-  """An edge for our `MessageBodyRevisionApproval`. May be used by Relay 1."""
-  messageBodyRevisionApprovalEdge(
-    """The method to use when ordering `MessageBodyRevisionApproval`."""
-    orderBy: [MessageBodyRevisionApprovalsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionApprovalsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `deleteMessageBodyRevisionByNodeId` mutation."""
-input DeleteMessageBodyRevisionByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `MessageBodyRevision` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteMessageBodyRevisionCommentByNodeId` mutation."""
-input DeleteMessageBodyRevisionCommentByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `MessageBodyRevisionComment` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteMessageBodyRevisionComment` mutation."""
-input DeleteMessageBodyRevisionCommentInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-}
-
-"""The output of our delete `MessageBodyRevisionComment` mutation."""
-type DeleteMessageBodyRevisionCommentPayload {
-  """
-  Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionComment`.
-  """
-  bodyRevision: MessageBodyRevision
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `User` that is related to this `MessageBodyRevisionComment`.
-  """
-  commenter: User
-  deletedMessageBodyRevisionCommentNodeId: ID
-
-  """The `MessageBodyRevisionComment` that was deleted by this mutation."""
-  messageBodyRevisionComment: MessageBodyRevisionComment
-
-  """An edge for our `MessageBodyRevisionComment`. May be used by Relay 1."""
-  messageBodyRevisionCommentEdge(
-    """The method to use when ordering `MessageBodyRevisionComment`."""
-    orderBy: [MessageBodyRevisionCommentsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionCommentsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `deleteMessageBodyRevision` mutation."""
-input DeleteMessageBodyRevisionInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-}
-
-"""The output of our delete `MessageBodyRevision` mutation."""
-type DeleteMessageBodyRevisionPayload {
-  """Reads a single `User` that is related to this `MessageBodyRevision`."""
-  author: User
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-  deletedMessageBodyRevisionNodeId: ID
-
-  """
-  Reads a single `Message` that is related to this `MessageBodyRevision`.
-  """
-  message: Message
-
-  """The `MessageBodyRevision` that was deleted by this mutation."""
-  messageBodyRevision: MessageBodyRevision
-
-  """An edge for our `MessageBodyRevision`. May be used by Relay 1."""
-  messageBodyRevisionEdge(
-    """The method to use when ordering `MessageBodyRevision`."""
-    orderBy: [MessageBodyRevisionsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `deleteMessageByNodeId` mutation."""
-input DeleteMessageByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Message` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteMessage` mutation."""
-input DeleteMessageInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-}
-
-"""The output of our delete `Message` mutation."""
-type DeleteMessagePayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """Reads a single `Consultation` that is related to this `Message`."""
-  consultation: Consultation
-  deletedMessageNodeId: ID
-
-  """The `Message` that was deleted by this mutation."""
-  message: Message
-
-  """An edge for our `Message`. May be used by Relay 1."""
-  messageEdge(
-    """The method to use when ordering `Message`."""
-    orderBy: [MessagesOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessagesEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `User` that is related to this `Message`."""
-  sender: User
-}
-
-"""All input for the `deleteOrganizationByNodeId` mutation."""
-input DeleteOrganizationByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Organization` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteOrganizationBySlug` mutation."""
-input DeleteOrganizationBySlugInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  slug: String!
-}
-
 """All input for the `deleteOrganization` mutation."""
 input DeleteOrganizationInput {
   """
@@ -1671,181 +1003,16 @@ input DeleteOrganizationInput {
   payload verbatim. May be used to track mutations by the client.
   """
   clientMutationId: String
-  id: UUID!
-}
-
-"""All input for the `deleteOrganizationInvitationByNodeId` mutation."""
-input DeleteOrganizationInvitationByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `OrganizationInvitation` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""
-All input for the `deleteOrganizationInvitationByOrganizationIdAndEmail` mutation.
-"""
-input DeleteOrganizationInvitationByOrganizationIdAndEmailInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  email: String!
   organizationId: UUID!
 }
 
-"""
-All input for the `deleteOrganizationInvitationByOrganizationIdAndUserId` mutation.
-"""
-input DeleteOrganizationInvitationByOrganizationIdAndUserIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  organizationId: UUID!
-  userId: UUID!
-}
-
-"""All input for the `deleteOrganizationInvitation` mutation."""
-input DeleteOrganizationInvitationInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-}
-
-"""The output of our delete `OrganizationInvitation` mutation."""
-type DeleteOrganizationInvitationPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-  deletedOrganizationInvitationNodeId: ID
-
-  """
-  Reads a single `Organization` that is related to this `OrganizationInvitation`.
-  """
-  organization: Organization
-
-  """The `OrganizationInvitation` that was deleted by this mutation."""
-  organizationInvitation: OrganizationInvitation
-
-  """An edge for our `OrganizationInvitation`. May be used by Relay 1."""
-  organizationInvitationEdge(
-    """The method to use when ordering `OrganizationInvitation`."""
-    orderBy: [OrganizationInvitationsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): OrganizationInvitationsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `User` that is related to this `OrganizationInvitation`.
-  """
-  user: User
-}
-
-"""All input for the `deleteOrganizationMembershipByNodeId` mutation."""
-input DeleteOrganizationMembershipByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `OrganizationMembership` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""
-All input for the `deleteOrganizationMembershipByOrganizationIdAndUserId` mutation.
-"""
-input DeleteOrganizationMembershipByOrganizationIdAndUserIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  organizationId: UUID!
-  userId: UUID!
-}
-
-"""All input for the `deleteOrganizationMembership` mutation."""
-input DeleteOrganizationMembershipInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-}
-
-"""The output of our delete `OrganizationMembership` mutation."""
-type DeleteOrganizationMembershipPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-  deletedOrganizationMembershipNodeId: ID
-
-  """
-  Reads a single `Organization` that is related to this `OrganizationMembership`.
-  """
-  organization: Organization
-
-  """The `OrganizationMembership` that was deleted by this mutation."""
-  organizationMembership: OrganizationMembership
-
-  """An edge for our `OrganizationMembership`. May be used by Relay 1."""
-  organizationMembershipEdge(
-    """The method to use when ordering `OrganizationMembership`."""
-    orderBy: [OrganizationMembershipsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): OrganizationMembershipsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `User` that is related to this `OrganizationMembership`.
-  """
-  user: User
-}
-
-"""The output of our delete `Organization` mutation."""
+"""The output of our `deleteOrganization` mutation."""
 type DeleteOrganizationPayload {
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
   """
   clientMutationId: String
-  deletedOrganizationNodeId: ID
-
-  """The `Organization` that was deleted by this mutation."""
-  organization: Organization
-
-  """An edge for our `Organization`. May be used by Relay 1."""
-  organizationEdge(
-    """The method to use when ordering `Organization`."""
-    orderBy: [OrganizationsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): OrganizationsEdge
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -1921,32 +1088,6 @@ type DeleteUserAuthenticationPayload {
   ): UserAuthenticationsEdge
 }
 
-"""All input for the `deleteUserByNodeId` mutation."""
-input DeleteUserByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `User` to be deleted.
-  """
-  nodeId: ID!
-}
-
-"""All input for the `deleteUserByUsername` mutation."""
-input DeleteUserByUsernameInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """Public-facing username (or 'handle') of the user."""
-  username: String!
-}
-
 """All input for the `deleteUserEmailByNodeId` mutation."""
 input DeleteUserEmailByNodeIdInput {
   """
@@ -2009,42 +1150,6 @@ type DeleteUserEmailPayload {
     """The method to use when ordering `UserEmail`."""
     orderBy: [UserEmailsOrderBy!]! = [PRIMARY_KEY_ASC]
   ): UserEmailsEdge
-}
-
-"""All input for the `deleteUser` mutation."""
-input DeleteUserInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """Unique identifier for the user."""
-  id: UUID!
-}
-
-"""The output of our delete `User` mutation."""
-type DeleteUserPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-  deletedUserNodeId: ID
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """The `User` that was deleted by this mutation."""
-  user: User
-
-  """An edge for our `User`. May be used by Relay 1."""
-  userEdge(
-    """The method to use when ordering `User`."""
-    orderBy: [UsersOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): UsersEdge
 }
 
 """All input for the `forgotPassword` mutation."""
@@ -2206,791 +1311,6 @@ type MakeEmailPrimaryPayload {
   ): UserEmailsEdge
 }
 
-type Message implements Node {
-  """Reads a single `Consultation` that is related to this `Message`."""
-  consultation: Consultation
-  consultationId: UUID!
-  createdAt: Datetime!
-  id: UUID!
-  isForClients: Boolean!
-  isForStaff: Boolean!
-
-  """Reads and enables pagination through a set of `MessageBodyRevision`."""
-  messageBodyRevisions(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevision`."""
-    orderBy: [MessageBodyRevisionsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionsConnection!
-
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-
-  """Reads a single `User` that is related to this `Message`."""
-  sender: User
-  senderId: UUID
-}
-
-type MessageBodyRevision implements Node {
-  """Reads a single `User` that is related to this `MessageBodyRevision`."""
-  author: User
-  authorId: UUID
-  content: String!
-  createdAt: Datetime!
-  id: UUID!
-
-  """
-  Reads a single `Message` that is related to this `MessageBodyRevision`.
-  """
-  message: Message
-
-  """
-  Reads and enables pagination through a set of `MessageBodyRevisionApproval`.
-  """
-  messageBodyRevisionApprovalsByBodyRevisionId(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionApprovalCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionApprovalFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevisionApproval`."""
-    orderBy: [MessageBodyRevisionApprovalsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionApprovalsConnection!
-
-  """
-  Reads and enables pagination through a set of `MessageBodyRevisionComment`.
-  """
-  messageBodyRevisionCommentsByBodyRevisionId(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionCommentCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionCommentFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevisionComment`."""
-    orderBy: [MessageBodyRevisionCommentsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionCommentsConnection!
-  messageId: UUID!
-
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  updatedAt: Datetime!
-}
-
-type MessageBodyRevisionApproval implements Node {
-  """
-  Reads a single `User` that is related to this `MessageBodyRevisionApproval`.
-  """
-  approver: User
-  approverId: UUID
-
-  """
-  Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionApproval`.
-  """
-  bodyRevision: MessageBodyRevision
-  bodyRevisionId: UUID!
-  createdAt: Datetime!
-  id: UUID!
-
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-}
-
-"""
-A condition to be used against `MessageBodyRevisionApproval` object types. All
-fields are tested for equality and combined with a logical ‘and.’
-"""
-input MessageBodyRevisionApprovalCondition {
-  """Checks for equality with the object’s `approverId` field."""
-  approverId: UUID
-
-  """Checks for equality with the object’s `bodyRevisionId` field."""
-  bodyRevisionId: UUID
-
-  """Checks for equality with the object’s `createdAt` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-}
-
-"""
-A filter to be used against `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’
-"""
-input MessageBodyRevisionApprovalFilter {
-  """Checks for all expressions in this list."""
-  and: [MessageBodyRevisionApprovalFilter!]
-
-  """Filter by the object’s `approver` relation."""
-  approver: UserFilter
-
-  """A related `approver` exists."""
-  approverExists: Boolean
-
-  """Filter by the object’s `approverId` field."""
-  approverId: UUIDFilter
-
-  """Filter by the object’s `bodyRevision` relation."""
-  bodyRevision: MessageBodyRevisionFilter
-
-  """Filter by the object’s `bodyRevisionId` field."""
-  bodyRevisionId: UUIDFilter
-
-  """Filter by the object’s `createdAt` field."""
-  createdAt: DatetimeFilter
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
-
-  """Negates the expression."""
-  not: MessageBodyRevisionApprovalFilter
-
-  """Checks for any expressions in this list."""
-  or: [MessageBodyRevisionApprovalFilter!]
-}
-
-"""An input for mutations affecting `MessageBodyRevisionApproval`"""
-input MessageBodyRevisionApprovalInput {
-  approverId: UUID
-  bodyRevisionId: UUID!
-  createdAt: Datetime
-  id: UUID
-}
-
-"""
-Represents an update to a `MessageBodyRevisionApproval`. Fields that are set will be updated.
-"""
-input MessageBodyRevisionApprovalPatch {
-  approverId: UUID
-  bodyRevisionId: UUID
-  createdAt: Datetime
-  id: UUID
-}
-
-"""A connection to a list of `MessageBodyRevisionApproval` values."""
-type MessageBodyRevisionApprovalsConnection {
-  """
-  A list of edges which contains the `MessageBodyRevisionApproval` and cursor to aid in pagination.
-  """
-  edges: [MessageBodyRevisionApprovalsEdge]!
-
-  """A list of `MessageBodyRevisionApproval` objects."""
-  nodes: [MessageBodyRevisionApproval]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """
-  The count of *all* `MessageBodyRevisionApproval` you could get from the connection.
-  """
-  totalCount: Int!
-}
-
-"""A `MessageBodyRevisionApproval` edge in the connection."""
-type MessageBodyRevisionApprovalsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `MessageBodyRevisionApproval` at the end of the edge."""
-  node: MessageBodyRevisionApproval
-}
-
-"""Methods to use when ordering `MessageBodyRevisionApproval`."""
-enum MessageBodyRevisionApprovalsOrderBy {
-  APPROVER_ID_ASC
-  APPROVER_ID_DESC
-  BODY_REVISION_ID_ASC
-  BODY_REVISION_ID_DESC
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  ID_ASC
-  ID_DESC
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-}
-
-type MessageBodyRevisionComment implements Node {
-  """
-  Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionComment`.
-  """
-  bodyRevision: MessageBodyRevision
-  bodyRevisionId: UUID!
-
-  """
-  Reads a single `User` that is related to this `MessageBodyRevisionComment`.
-  """
-  commenter: User
-  commenterId: UUID
-  content: String!
-  createdAt: Datetime!
-  id: UUID!
-
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-  updatedAt: Datetime!
-}
-
-"""
-A condition to be used against `MessageBodyRevisionComment` object types. All
-fields are tested for equality and combined with a logical ‘and.’
-"""
-input MessageBodyRevisionCommentCondition {
-  """Checks for equality with the object’s `bodyRevisionId` field."""
-  bodyRevisionId: UUID
-
-  """Checks for equality with the object’s `commenterId` field."""
-  commenterId: UUID
-
-  """Checks for equality with the object’s `content` field."""
-  content: String
-
-  """Checks for equality with the object’s `createdAt` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `updatedAt` field."""
-  updatedAt: Datetime
-}
-
-"""
-A filter to be used against `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’
-"""
-input MessageBodyRevisionCommentFilter {
-  """Checks for all expressions in this list."""
-  and: [MessageBodyRevisionCommentFilter!]
-
-  """Filter by the object’s `bodyRevision` relation."""
-  bodyRevision: MessageBodyRevisionFilter
-
-  """Filter by the object’s `bodyRevisionId` field."""
-  bodyRevisionId: UUIDFilter
-
-  """Filter by the object’s `commenter` relation."""
-  commenter: UserFilter
-
-  """A related `commenter` exists."""
-  commenterExists: Boolean
-
-  """Filter by the object’s `commenterId` field."""
-  commenterId: UUIDFilter
-
-  """Filter by the object’s `content` field."""
-  content: StringFilter
-
-  """Filter by the object’s `createdAt` field."""
-  createdAt: DatetimeFilter
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
-
-  """Negates the expression."""
-  not: MessageBodyRevisionCommentFilter
-
-  """Checks for any expressions in this list."""
-  or: [MessageBodyRevisionCommentFilter!]
-
-  """Filter by the object’s `updatedAt` field."""
-  updatedAt: DatetimeFilter
-}
-
-"""An input for mutations affecting `MessageBodyRevisionComment`"""
-input MessageBodyRevisionCommentInput {
-  bodyRevisionId: UUID!
-  commenterId: UUID
-  content: String!
-  createdAt: Datetime
-  id: UUID
-  updatedAt: Datetime
-}
-
-"""
-Represents an update to a `MessageBodyRevisionComment`. Fields that are set will be updated.
-"""
-input MessageBodyRevisionCommentPatch {
-  bodyRevisionId: UUID
-  commenterId: UUID
-  content: String
-  createdAt: Datetime
-  id: UUID
-  updatedAt: Datetime
-}
-
-"""A connection to a list of `MessageBodyRevisionComment` values."""
-type MessageBodyRevisionCommentsConnection {
-  """
-  A list of edges which contains the `MessageBodyRevisionComment` and cursor to aid in pagination.
-  """
-  edges: [MessageBodyRevisionCommentsEdge]!
-
-  """A list of `MessageBodyRevisionComment` objects."""
-  nodes: [MessageBodyRevisionComment]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """
-  The count of *all* `MessageBodyRevisionComment` you could get from the connection.
-  """
-  totalCount: Int!
-}
-
-"""A `MessageBodyRevisionComment` edge in the connection."""
-type MessageBodyRevisionCommentsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `MessageBodyRevisionComment` at the end of the edge."""
-  node: MessageBodyRevisionComment
-}
-
-"""Methods to use when ordering `MessageBodyRevisionComment`."""
-enum MessageBodyRevisionCommentsOrderBy {
-  BODY_REVISION_ID_ASC
-  BODY_REVISION_ID_DESC
-  COMMENTER_ID_ASC
-  COMMENTER_ID_DESC
-  CONTENT_ASC
-  CONTENT_DESC
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  ID_ASC
-  ID_DESC
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  UPDATED_AT_ASC
-  UPDATED_AT_DESC
-}
-
-"""
-A condition to be used against `MessageBodyRevision` object types. All fields
-are tested for equality and combined with a logical ‘and.’
-"""
-input MessageBodyRevisionCondition {
-  """Checks for equality with the object’s `authorId` field."""
-  authorId: UUID
-
-  """Checks for equality with the object’s `content` field."""
-  content: String
-
-  """Checks for equality with the object’s `createdAt` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `messageId` field."""
-  messageId: UUID
-
-  """Checks for equality with the object’s `updatedAt` field."""
-  updatedAt: Datetime
-}
-
-"""
-A filter to be used against `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’
-"""
-input MessageBodyRevisionFilter {
-  """Checks for all expressions in this list."""
-  and: [MessageBodyRevisionFilter!]
-
-  """Filter by the object’s `author` relation."""
-  author: UserFilter
-
-  """A related `author` exists."""
-  authorExists: Boolean
-
-  """Filter by the object’s `authorId` field."""
-  authorId: UUIDFilter
-
-  """Filter by the object’s `content` field."""
-  content: StringFilter
-
-  """Filter by the object’s `createdAt` field."""
-  createdAt: DatetimeFilter
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
-
-  """Filter by the object’s `message` relation."""
-  message: MessageFilter
-
-  """
-  Filter by the object’s `messageBodyRevisionApprovalsByBodyRevisionId` relation.
-  """
-  messageBodyRevisionApprovalsByBodyRevisionId: MessageBodyRevisionToManyMessageBodyRevisionApprovalFilter
-
-  """Some related `messageBodyRevisionApprovalsByBodyRevisionId` exist."""
-  messageBodyRevisionApprovalsByBodyRevisionIdExist: Boolean
-
-  """
-  Filter by the object’s `messageBodyRevisionCommentsByBodyRevisionId` relation.
-  """
-  messageBodyRevisionCommentsByBodyRevisionId: MessageBodyRevisionToManyMessageBodyRevisionCommentFilter
-
-  """Some related `messageBodyRevisionCommentsByBodyRevisionId` exist."""
-  messageBodyRevisionCommentsByBodyRevisionIdExist: Boolean
-
-  """Filter by the object’s `messageId` field."""
-  messageId: UUIDFilter
-
-  """Negates the expression."""
-  not: MessageBodyRevisionFilter
-
-  """Checks for any expressions in this list."""
-  or: [MessageBodyRevisionFilter!]
-
-  """Filter by the object’s `updatedAt` field."""
-  updatedAt: DatetimeFilter
-}
-
-"""An input for mutations affecting `MessageBodyRevision`"""
-input MessageBodyRevisionInput {
-  authorId: UUID
-  content: String!
-  createdAt: Datetime
-  id: UUID
-  messageId: UUID!
-  updatedAt: Datetime
-}
-
-"""
-Represents an update to a `MessageBodyRevision`. Fields that are set will be updated.
-"""
-input MessageBodyRevisionPatch {
-  authorId: UUID
-  content: String
-  createdAt: Datetime
-  id: UUID
-  messageId: UUID
-  updatedAt: Datetime
-}
-
-"""
-A filter to be used against many `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’
-"""
-input MessageBodyRevisionToManyMessageBodyRevisionApprovalFilter {
-  """
-  Every related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: MessageBodyRevisionApprovalFilter
-
-  """
-  No related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: MessageBodyRevisionApprovalFilter
-
-  """
-  Some related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: MessageBodyRevisionApprovalFilter
-}
-
-"""
-A filter to be used against many `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’
-"""
-input MessageBodyRevisionToManyMessageBodyRevisionCommentFilter {
-  """
-  Every related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: MessageBodyRevisionCommentFilter
-
-  """
-  No related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: MessageBodyRevisionCommentFilter
-
-  """
-  Some related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: MessageBodyRevisionCommentFilter
-}
-
-"""A connection to a list of `MessageBodyRevision` values."""
-type MessageBodyRevisionsConnection {
-  """
-  A list of edges which contains the `MessageBodyRevision` and cursor to aid in pagination.
-  """
-  edges: [MessageBodyRevisionsEdge]!
-
-  """A list of `MessageBodyRevision` objects."""
-  nodes: [MessageBodyRevision]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """
-  The count of *all* `MessageBodyRevision` you could get from the connection.
-  """
-  totalCount: Int!
-}
-
-"""A `MessageBodyRevision` edge in the connection."""
-type MessageBodyRevisionsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `MessageBodyRevision` at the end of the edge."""
-  node: MessageBodyRevision
-}
-
-"""Methods to use when ordering `MessageBodyRevision`."""
-enum MessageBodyRevisionsOrderBy {
-  AUTHOR_ID_ASC
-  AUTHOR_ID_DESC
-  CONTENT_ASC
-  CONTENT_DESC
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  ID_ASC
-  ID_DESC
-  MESSAGE_ID_ASC
-  MESSAGE_ID_DESC
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  UPDATED_AT_ASC
-  UPDATED_AT_DESC
-}
-
-"""
-A condition to be used against `Message` object types. All fields are tested for equality and combined with a logical ‘and.’
-"""
-input MessageCondition {
-  """Checks for equality with the object’s `consultationId` field."""
-  consultationId: UUID
-
-  """Checks for equality with the object’s `createdAt` field."""
-  createdAt: Datetime
-
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `isForClients` field."""
-  isForClients: Boolean
-
-  """Checks for equality with the object’s `isForStaff` field."""
-  isForStaff: Boolean
-
-  """Checks for equality with the object’s `senderId` field."""
-  senderId: UUID
-}
-
-"""
-A filter to be used against `Message` object types. All fields are combined with a logical ‘and.’
-"""
-input MessageFilter {
-  """Checks for all expressions in this list."""
-  and: [MessageFilter!]
-
-  """Filter by the object’s `consultation` relation."""
-  consultation: ConsultationFilter
-
-  """Filter by the object’s `consultationId` field."""
-  consultationId: UUIDFilter
-
-  """Filter by the object’s `createdAt` field."""
-  createdAt: DatetimeFilter
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
-
-  """Filter by the object’s `isForClients` field."""
-  isForClients: BooleanFilter
-
-  """Filter by the object’s `isForStaff` field."""
-  isForStaff: BooleanFilter
-
-  """Filter by the object’s `messageBodyRevisions` relation."""
-  messageBodyRevisions: MessageToManyMessageBodyRevisionFilter
-
-  """Some related `messageBodyRevisions` exist."""
-  messageBodyRevisionsExist: Boolean
-
-  """Negates the expression."""
-  not: MessageFilter
-
-  """Checks for any expressions in this list."""
-  or: [MessageFilter!]
-
-  """Filter by the object’s `sender` relation."""
-  sender: UserFilter
-
-  """A related `sender` exists."""
-  senderExists: Boolean
-
-  """Filter by the object’s `senderId` field."""
-  senderId: UUIDFilter
-}
-
-"""An input for mutations affecting `Message`"""
-input MessageInput {
-  consultationId: UUID!
-  createdAt: Datetime
-  id: UUID
-  isForClients: Boolean
-  isForStaff: Boolean
-  senderId: UUID
-}
-
-"""
-Represents an update to a `Message`. Fields that are set will be updated.
-"""
-input MessagePatch {
-  consultationId: UUID
-  createdAt: Datetime
-  id: UUID
-  isForClients: Boolean
-  isForStaff: Boolean
-  senderId: UUID
-}
-
-"""
-A filter to be used against many `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’
-"""
-input MessageToManyMessageBodyRevisionFilter {
-  """
-  Every related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: MessageBodyRevisionFilter
-
-  """
-  No related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: MessageBodyRevisionFilter
-
-  """
-  Some related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: MessageBodyRevisionFilter
-}
-
-"""A connection to a list of `Message` values."""
-type MessagesConnection {
-  """
-  A list of edges which contains the `Message` and cursor to aid in pagination.
-  """
-  edges: [MessagesEdge]!
-
-  """A list of `Message` objects."""
-  nodes: [Message]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """The count of *all* `Message` you could get from the connection."""
-  totalCount: Int!
-}
-
-"""A `Message` edge in the connection."""
-type MessagesEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `Message` at the end of the edge."""
-  node: Message
-}
-
-"""Methods to use when ordering `Message`."""
-enum MessagesOrderBy {
-  CONSULTATION_ID_ASC
-  CONSULTATION_ID_DESC
-  CREATED_AT_ASC
-  CREATED_AT_DESC
-  ID_ASC
-  ID_DESC
-  IS_FOR_CLIENTS_ASC
-  IS_FOR_CLIENTS_DESC
-  IS_FOR_STAFF_ASC
-  IS_FOR_STAFF_DESC
-  NATURAL
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  SENDER_ID_ASC
-  SENDER_ID_DESC
-}
-
 """
 The root mutation type which contains root level fields which mutate data.
 """
@@ -3035,78 +1355,12 @@ type Mutation {
     """
     input: CreateConsultationParticipantInput!
   ): CreateConsultationParticipantPayload
-
-  """Creates a single `Message`."""
-  createMessage(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateMessageInput!
-  ): CreateMessagePayload
-
-  """Creates a single `MessageBodyRevision`."""
-  createMessageBodyRevision(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateMessageBodyRevisionInput!
-  ): CreateMessageBodyRevisionPayload
-
-  """Creates a single `MessageBodyRevisionApproval`."""
-  createMessageBodyRevisionApproval(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateMessageBodyRevisionApprovalInput!
-  ): CreateMessageBodyRevisionApprovalPayload
-
-  """Creates a single `MessageBodyRevisionComment`."""
-  createMessageBodyRevisionComment(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateMessageBodyRevisionCommentInput!
-  ): CreateMessageBodyRevisionCommentPayload
-
-  """Creates a single `Organization`."""
   createOrganization(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: CreateOrganizationInput!
   ): CreateOrganizationPayload
-
-  """Creates a single `OrganizationInvitation`."""
-  createOrganizationInvitation(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateOrganizationInvitationInput!
-  ): CreateOrganizationInvitationPayload
-
-  """Creates a single `OrganizationMembership`."""
-  createOrganizationMembership(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateOrganizationMembershipInput!
-  ): CreateOrganizationMembershipPayload
-
-  """Creates a single `User`."""
-  createUser(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateUserInput!
-  ): CreateUserPayload
-
-  """Creates a single `UserAuthentication`."""
-  createUserAuthentication(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: CreateUserAuthenticationInput!
-  ): CreateUserAuthenticationPayload
 
   """Creates a single `UserEmail`."""
   createUserEmail(
@@ -3157,166 +1411,12 @@ type Mutation {
     """
     input: DeleteConsultationParticipantByNodeIdInput!
   ): DeleteConsultationParticipantPayload
-
-  """Deletes a single `Message` using a unique key."""
-  deleteMessage(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteMessageInput!
-  ): DeleteMessagePayload
-
-  """Deletes a single `MessageBodyRevision` using a unique key."""
-  deleteMessageBodyRevision(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteMessageBodyRevisionInput!
-  ): DeleteMessageBodyRevisionPayload
-
-  """Deletes a single `MessageBodyRevisionApproval` using a unique key."""
-  deleteMessageBodyRevisionApproval(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteMessageBodyRevisionApprovalInput!
-  ): DeleteMessageBodyRevisionApprovalPayload
-
-  """
-  Deletes a single `MessageBodyRevisionApproval` using its globally unique id.
-  """
-  deleteMessageBodyRevisionApprovalByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteMessageBodyRevisionApprovalByNodeIdInput!
-  ): DeleteMessageBodyRevisionApprovalPayload
-
-  """Deletes a single `MessageBodyRevision` using its globally unique id."""
-  deleteMessageBodyRevisionByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteMessageBodyRevisionByNodeIdInput!
-  ): DeleteMessageBodyRevisionPayload
-
-  """Deletes a single `MessageBodyRevisionComment` using a unique key."""
-  deleteMessageBodyRevisionComment(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteMessageBodyRevisionCommentInput!
-  ): DeleteMessageBodyRevisionCommentPayload
-
-  """
-  Deletes a single `MessageBodyRevisionComment` using its globally unique id.
-  """
-  deleteMessageBodyRevisionCommentByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteMessageBodyRevisionCommentByNodeIdInput!
-  ): DeleteMessageBodyRevisionCommentPayload
-
-  """Deletes a single `Message` using its globally unique id."""
-  deleteMessageByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteMessageByNodeIdInput!
-  ): DeleteMessagePayload
-
-  """Deletes a single `Organization` using a unique key."""
   deleteOrganization(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: DeleteOrganizationInput!
   ): DeleteOrganizationPayload
-
-  """Deletes a single `Organization` using its globally unique id."""
-  deleteOrganizationByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationByNodeIdInput!
-  ): DeleteOrganizationPayload
-
-  """Deletes a single `Organization` using a unique key."""
-  deleteOrganizationBySlug(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationBySlugInput!
-  ): DeleteOrganizationPayload
-
-  """Deletes a single `OrganizationInvitation` using a unique key."""
-  deleteOrganizationInvitation(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationInvitationInput!
-  ): DeleteOrganizationInvitationPayload
-
-  """
-  Deletes a single `OrganizationInvitation` using its globally unique id.
-  """
-  deleteOrganizationInvitationByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationInvitationByNodeIdInput!
-  ): DeleteOrganizationInvitationPayload
-
-  """Deletes a single `OrganizationInvitation` using a unique key."""
-  deleteOrganizationInvitationByOrganizationIdAndEmail(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationInvitationByOrganizationIdAndEmailInput!
-  ): DeleteOrganizationInvitationPayload
-
-  """Deletes a single `OrganizationInvitation` using a unique key."""
-  deleteOrganizationInvitationByOrganizationIdAndUserId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationInvitationByOrganizationIdAndUserIdInput!
-  ): DeleteOrganizationInvitationPayload
-
-  """Deletes a single `OrganizationMembership` using a unique key."""
-  deleteOrganizationMembership(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationMembershipInput!
-  ): DeleteOrganizationMembershipPayload
-
-  """
-  Deletes a single `OrganizationMembership` using its globally unique id.
-  """
-  deleteOrganizationMembershipByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationMembershipByNodeIdInput!
-  ): DeleteOrganizationMembershipPayload
-
-  """Deletes a single `OrganizationMembership` using a unique key."""
-  deleteOrganizationMembershipByOrganizationIdAndUserId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteOrganizationMembershipByOrganizationIdAndUserIdInput!
-  ): DeleteOrganizationMembershipPayload
-
-  """Deletes a single `User` using a unique key."""
-  deleteUser(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteUserInput!
-  ): DeleteUserPayload
 
   """Deletes a single `UserAuthentication` using a unique key."""
   deleteUserAuthentication(
@@ -3341,22 +1441,6 @@ type Mutation {
     """
     input: DeleteUserAuthenticationByServiceAndIdentifierInput!
   ): DeleteUserAuthenticationPayload
-
-  """Deletes a single `User` using its globally unique id."""
-  deleteUserByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteUserByNodeIdInput!
-  ): DeleteUserPayload
-
-  """Deletes a single `User` using a unique key."""
-  deleteUserByUsername(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: DeleteUserByUsernameInput!
-  ): DeleteUserPayload
 
   """Deletes a single `UserEmail` using a unique key."""
   deleteUserEmail(
@@ -3527,80 +1611,6 @@ type Mutation {
     input: UpdateConsultationParticipantByNodeIdInput!
   ): UpdateConsultationParticipantPayload
 
-  """Updates a single `Message` using a unique key and a patch."""
-  updateMessage(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateMessageInput!
-  ): UpdateMessagePayload
-
-  """Updates a single `MessageBodyRevision` using a unique key and a patch."""
-  updateMessageBodyRevision(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateMessageBodyRevisionInput!
-  ): UpdateMessageBodyRevisionPayload
-
-  """
-  Updates a single `MessageBodyRevisionApproval` using a unique key and a patch.
-  """
-  updateMessageBodyRevisionApproval(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateMessageBodyRevisionApprovalInput!
-  ): UpdateMessageBodyRevisionApprovalPayload
-
-  """
-  Updates a single `MessageBodyRevisionApproval` using its globally unique id and a patch.
-  """
-  updateMessageBodyRevisionApprovalByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateMessageBodyRevisionApprovalByNodeIdInput!
-  ): UpdateMessageBodyRevisionApprovalPayload
-
-  """
-  Updates a single `MessageBodyRevision` using its globally unique id and a patch.
-  """
-  updateMessageBodyRevisionByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateMessageBodyRevisionByNodeIdInput!
-  ): UpdateMessageBodyRevisionPayload
-
-  """
-  Updates a single `MessageBodyRevisionComment` using a unique key and a patch.
-  """
-  updateMessageBodyRevisionComment(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateMessageBodyRevisionCommentInput!
-  ): UpdateMessageBodyRevisionCommentPayload
-
-  """
-  Updates a single `MessageBodyRevisionComment` using its globally unique id and a patch.
-  """
-  updateMessageBodyRevisionCommentByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateMessageBodyRevisionCommentByNodeIdInput!
-  ): UpdateMessageBodyRevisionCommentPayload
-
-  """Updates a single `Message` using its globally unique id and a patch."""
-  updateMessageByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateMessageByNodeIdInput!
-  ): UpdateMessagePayload
-
   """Updates a single `Organization` using a unique key and a patch."""
   updateOrganization(
     """
@@ -3627,76 +1637,6 @@ type Mutation {
     input: UpdateOrganizationBySlugInput!
   ): UpdateOrganizationPayload
 
-  """
-  Updates a single `OrganizationInvitation` using a unique key and a patch.
-  """
-  updateOrganizationInvitation(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationInvitationInput!
-  ): UpdateOrganizationInvitationPayload
-
-  """
-  Updates a single `OrganizationInvitation` using its globally unique id and a patch.
-  """
-  updateOrganizationInvitationByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationInvitationByNodeIdInput!
-  ): UpdateOrganizationInvitationPayload
-
-  """
-  Updates a single `OrganizationInvitation` using a unique key and a patch.
-  """
-  updateOrganizationInvitationByOrganizationIdAndEmail(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationInvitationByOrganizationIdAndEmailInput!
-  ): UpdateOrganizationInvitationPayload
-
-  """
-  Updates a single `OrganizationInvitation` using a unique key and a patch.
-  """
-  updateOrganizationInvitationByOrganizationIdAndUserId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationInvitationByOrganizationIdAndUserIdInput!
-  ): UpdateOrganizationInvitationPayload
-
-  """
-  Updates a single `OrganizationMembership` using a unique key and a patch.
-  """
-  updateOrganizationMembership(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationMembershipInput!
-  ): UpdateOrganizationMembershipPayload
-
-  """
-  Updates a single `OrganizationMembership` using its globally unique id and a patch.
-  """
-  updateOrganizationMembershipByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationMembershipByNodeIdInput!
-  ): UpdateOrganizationMembershipPayload
-
-  """
-  Updates a single `OrganizationMembership` using a unique key and a patch.
-  """
-  updateOrganizationMembershipByOrganizationIdAndUserId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateOrganizationMembershipByOrganizationIdAndUserIdInput!
-  ): UpdateOrganizationMembershipPayload
-
   """Updates a single `User` using a unique key and a patch."""
   updateUser(
     """
@@ -3704,32 +1644,6 @@ type Mutation {
     """
     input: UpdateUserInput!
   ): UpdateUserPayload
-
-  """Updates a single `UserAuthentication` using a unique key and a patch."""
-  updateUserAuthentication(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateUserAuthenticationInput!
-  ): UpdateUserAuthenticationPayload
-
-  """
-  Updates a single `UserAuthentication` using its globally unique id and a patch.
-  """
-  updateUserAuthenticationByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateUserAuthenticationByNodeIdInput!
-  ): UpdateUserAuthenticationPayload
-
-  """Updates a single `UserAuthentication` using a unique key and a patch."""
-  updateUserAuthenticationByServiceAndIdentifier(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateUserAuthenticationByServiceAndIdentifierInput!
-  ): UpdateUserAuthenticationPayload
 
   """Updates a single `User` using its globally unique id and a patch."""
   updateUserByNodeId(
@@ -3746,30 +1660,6 @@ type Mutation {
     """
     input: UpdateUserByUsernameInput!
   ): UpdateUserPayload
-
-  """Updates a single `UserEmail` using a unique key and a patch."""
-  updateUserEmail(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateUserEmailInput!
-  ): UpdateUserEmailPayload
-
-  """Updates a single `UserEmail` using its globally unique id and a patch."""
-  updateUserEmailByNodeId(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateUserEmailByNodeIdInput!
-  ): UpdateUserEmailPayload
-
-  """Updates a single `UserEmail` using a unique key and a patch."""
-  updateUserEmailByUserIdAndEmail(
-    """
-    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
-    """
-    input: UpdateUserEmailByUserIdAndEmailInput!
-  ): UpdateUserEmailPayload
 
   """
   Once you have received a verification token for your email, you may call this mutation with that token to make your email verified.
@@ -3834,42 +1724,6 @@ type Organization implements Node {
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
   nodeId: ID!
-
-  """
-  Reads and enables pagination through a set of `OrganizationInvitation`.
-  """
-  organizationInvitations(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OrganizationInvitationCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OrganizationInvitationFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `OrganizationInvitation`."""
-    orderBy: [OrganizationInvitationsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationInvitationsConnection!
 
   """
   Reads and enables pagination through a set of `OrganizationMembership`.
@@ -3969,12 +1823,6 @@ input OrganizationFilter {
   """Checks for any expressions in this list."""
   or: [OrganizationFilter!]
 
-  """Filter by the object’s `organizationInvitations` relation."""
-  organizationInvitations: OrganizationToManyOrganizationInvitationFilter
-
-  """Some related `organizationInvitations` exist."""
-  organizationInvitationsExist: Boolean
-
   """Filter by the object’s `organizationMemberships` relation."""
   organizationMemberships: OrganizationToManyOrganizationMembershipFilter
 
@@ -3983,161 +1831,6 @@ input OrganizationFilter {
 
   """Filter by the object’s `slug` field."""
   slug: StringFilter
-}
-
-"""An input for mutations affecting `Organization`"""
-input OrganizationInput {
-  createdAt: Datetime
-  id: UUID
-  name: String!
-  slug: String!
-}
-
-type OrganizationInvitation implements Node {
-  code: String
-  email: String
-  id: UUID!
-
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-
-  """
-  Reads a single `Organization` that is related to this `OrganizationInvitation`.
-  """
-  organization: Organization
-  organizationId: UUID!
-
-  """
-  Reads a single `User` that is related to this `OrganizationInvitation`.
-  """
-  user: User
-  userId: UUID
-}
-
-"""
-A condition to be used against `OrganizationInvitation` object types. All fields
-are tested for equality and combined with a logical ‘and.’
-"""
-input OrganizationInvitationCondition {
-  """Checks for equality with the object’s `code` field."""
-  code: String
-
-  """Checks for equality with the object’s `email` field."""
-  email: String
-
-  """Checks for equality with the object’s `id` field."""
-  id: UUID
-
-  """Checks for equality with the object’s `organizationId` field."""
-  organizationId: UUID
-
-  """Checks for equality with the object’s `userId` field."""
-  userId: UUID
-}
-
-"""
-A filter to be used against `OrganizationInvitation` object types. All fields are combined with a logical ‘and.’
-"""
-input OrganizationInvitationFilter {
-  """Checks for all expressions in this list."""
-  and: [OrganizationInvitationFilter!]
-
-  """Filter by the object’s `code` field."""
-  code: StringFilter
-
-  """Filter by the object’s `email` field."""
-  email: StringFilter
-
-  """Filter by the object’s `id` field."""
-  id: UUIDFilter
-
-  """Negates the expression."""
-  not: OrganizationInvitationFilter
-
-  """Checks for any expressions in this list."""
-  or: [OrganizationInvitationFilter!]
-
-  """Filter by the object’s `organization` relation."""
-  organization: OrganizationFilter
-
-  """Filter by the object’s `organizationId` field."""
-  organizationId: UUIDFilter
-
-  """Filter by the object’s `user` relation."""
-  user: UserFilter
-
-  """A related `user` exists."""
-  userExists: Boolean
-
-  """Filter by the object’s `userId` field."""
-  userId: UUIDFilter
-}
-
-"""An input for mutations affecting `OrganizationInvitation`"""
-input OrganizationInvitationInput {
-  code: String
-  email: String
-  id: UUID
-  organizationId: UUID!
-  userId: UUID
-}
-
-"""
-Represents an update to a `OrganizationInvitation`. Fields that are set will be updated.
-"""
-input OrganizationInvitationPatch {
-  code: String
-  email: String
-  id: UUID
-  organizationId: UUID
-  userId: UUID
-}
-
-"""A connection to a list of `OrganizationInvitation` values."""
-type OrganizationInvitationsConnection {
-  """
-  A list of edges which contains the `OrganizationInvitation` and cursor to aid in pagination.
-  """
-  edges: [OrganizationInvitationsEdge]!
-
-  """A list of `OrganizationInvitation` objects."""
-  nodes: [OrganizationInvitation]!
-
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """
-  The count of *all* `OrganizationInvitation` you could get from the connection.
-  """
-  totalCount: Int!
-}
-
-"""A `OrganizationInvitation` edge in the connection."""
-type OrganizationInvitationsEdge {
-  """A cursor for use in pagination."""
-  cursor: Cursor
-
-  """The `OrganizationInvitation` at the end of the edge."""
-  node: OrganizationInvitation
-}
-
-"""Methods to use when ordering `OrganizationInvitation`."""
-enum OrganizationInvitationsOrderBy {
-  CODE_ASC
-  CODE_DESC
-  EMAIL_ASC
-  EMAIL_DESC
-  ID_ASC
-  ID_DESC
-  NATURAL
-  ORGANIZATION_ID_ASC
-  ORGANIZATION_ID_DESC
-  PRIMARY_KEY_ASC
-  PRIMARY_KEY_DESC
-  USER_ID_ASC
-  USER_ID_DESC
 }
 
 type OrganizationMembership implements Node {
@@ -4247,43 +1940,15 @@ input OrganizationMembershipFilter {
   userId: UUIDFilter
 }
 
-"""An input for mutations affecting `OrganizationMembership`"""
-input OrganizationMembershipInput {
-  createdAt: Datetime
-  id: UUID
-  isBillingContact: Boolean
-  isCounselor: Boolean
-  isDispatcher: Boolean
-  isOwner: Boolean
-  isSupervisor: Boolean
-  organizationId: UUID!
-  userId: UUID!
-}
-
-"""
-Represents an update to a `OrganizationMembership`. Fields that are set will be updated.
-"""
-input OrganizationMembershipPatch {
-  createdAt: Datetime
-  id: UUID
-  isBillingContact: Boolean
-  isCounselor: Boolean
-  isDispatcher: Boolean
-  isOwner: Boolean
-  isSupervisor: Boolean
-  organizationId: UUID
-  userId: UUID
-}
-
 """A connection to a list of `OrganizationMembership` values."""
 type OrganizationMembershipsConnection {
   """
   A list of edges which contains the `OrganizationMembership` and cursor to aid in pagination.
   """
-  edges: [OrganizationMembershipsEdge]!
+  edges: [OrganizationMembershipsEdge!]!
 
   """A list of `OrganizationMembership` objects."""
-  nodes: [OrganizationMembership]!
+  nodes: [OrganizationMembership!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
@@ -4300,7 +1965,7 @@ type OrganizationMembershipsEdge {
   cursor: Cursor
 
   """The `OrganizationMembership` at the end of the edge."""
-  node: OrganizationMembership
+  node: OrganizationMembership!
 }
 
 """Methods to use when ordering `OrganizationMembership`."""
@@ -4332,8 +1997,6 @@ enum OrganizationMembershipsOrderBy {
 Represents an update to a `Organization`. Fields that are set will be updated.
 """
 input OrganizationPatch {
-  createdAt: Datetime
-  id: UUID
   name: String
   slug: String
 }
@@ -4356,26 +2019,6 @@ input OrganizationToManyConsultationFilter {
   Some related `Consultation` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
   some: ConsultationFilter
-}
-
-"""
-A filter to be used against many `OrganizationInvitation` object types. All fields are combined with a logical ‘and.’
-"""
-input OrganizationToManyOrganizationInvitationFilter {
-  """
-  Every related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: OrganizationInvitationFilter
-
-  """
-  No related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: OrganizationInvitationFilter
-
-  """
-  Some related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: OrganizationInvitationFilter
 }
 
 """
@@ -4403,10 +2046,10 @@ type OrganizationsConnection {
   """
   A list of edges which contains the `Organization` and cursor to aid in pagination.
   """
-  edges: [OrganizationsEdge]!
+  edges: [OrganizationsEdge!]!
 
   """A list of `Organization` objects."""
-  nodes: [Organization]!
+  nodes: [Organization!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
@@ -4421,7 +2064,7 @@ type OrganizationsEdge {
   cursor: Cursor
 
   """The `Organization` at the end of the edge."""
-  node: Organization
+  node: Organization!
 }
 
 """Methods to use when ordering `Organization`."""
@@ -4642,192 +2285,6 @@ type Query implements Node {
     offset: Int
   ): CurrentUserMemberOrganizationIdsConnection
 
-  """Get a single `Message`."""
-  message(id: UUID!): Message
-
-  """Get a single `MessageBodyRevision`."""
-  messageBodyRevision(id: UUID!): MessageBodyRevision
-
-  """Get a single `MessageBodyRevisionApproval`."""
-  messageBodyRevisionApproval(id: UUID!): MessageBodyRevisionApproval
-
-  """
-  Reads a single `MessageBodyRevisionApproval` using its globally unique `ID`.
-  """
-  messageBodyRevisionApprovalByNodeId(
-    """
-    The globally unique `ID` to be used in selecting a single `MessageBodyRevisionApproval`.
-    """
-    nodeId: ID!
-  ): MessageBodyRevisionApproval
-
-  """
-  Reads and enables pagination through a set of `MessageBodyRevisionApproval`.
-  """
-  messageBodyRevisionApprovals(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionApprovalCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionApprovalFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevisionApproval`."""
-    orderBy: [MessageBodyRevisionApprovalsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionApprovalsConnection
-
-  """Reads a single `MessageBodyRevision` using its globally unique `ID`."""
-  messageBodyRevisionByNodeId(
-    """
-    The globally unique `ID` to be used in selecting a single `MessageBodyRevision`.
-    """
-    nodeId: ID!
-  ): MessageBodyRevision
-
-  """Get a single `MessageBodyRevisionComment`."""
-  messageBodyRevisionComment(id: UUID!): MessageBodyRevisionComment
-
-  """
-  Reads a single `MessageBodyRevisionComment` using its globally unique `ID`.
-  """
-  messageBodyRevisionCommentByNodeId(
-    """
-    The globally unique `ID` to be used in selecting a single `MessageBodyRevisionComment`.
-    """
-    nodeId: ID!
-  ): MessageBodyRevisionComment
-
-  """
-  Reads and enables pagination through a set of `MessageBodyRevisionComment`.
-  """
-  messageBodyRevisionComments(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionCommentCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionCommentFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevisionComment`."""
-    orderBy: [MessageBodyRevisionCommentsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionCommentsConnection
-
-  """Reads and enables pagination through a set of `MessageBodyRevision`."""
-  messageBodyRevisions(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevision`."""
-    orderBy: [MessageBodyRevisionsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionsConnection
-
-  """Reads a single `Message` using its globally unique `ID`."""
-  messageByNodeId(
-    """The globally unique `ID` to be used in selecting a single `Message`."""
-    nodeId: ID!
-  ): Message
-
-  """Reads and enables pagination through a set of `Message`."""
-  messages(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `Message`."""
-    orderBy: [MessagesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessagesConnection
-
   """Fetches an object given its globally unique `ID`."""
   node(
     """The globally unique `ID`."""
@@ -4853,61 +2310,6 @@ type Query implements Node {
   """Get a single `Organization`."""
   organizationBySlug(slug: String!): Organization
   organizationForInvitation(code: String, invitationId: UUID!): Organization
-
-  """Get a single `OrganizationInvitation`."""
-  organizationInvitation(id: UUID!): OrganizationInvitation
-
-  """
-  Reads a single `OrganizationInvitation` using its globally unique `ID`.
-  """
-  organizationInvitationByNodeId(
-    """
-    The globally unique `ID` to be used in selecting a single `OrganizationInvitation`.
-    """
-    nodeId: ID!
-  ): OrganizationInvitation
-
-  """Get a single `OrganizationInvitation`."""
-  organizationInvitationByOrganizationIdAndEmail(email: String!, organizationId: UUID!): OrganizationInvitation
-
-  """Get a single `OrganizationInvitation`."""
-  organizationInvitationByOrganizationIdAndUserId(organizationId: UUID!, userId: UUID!): OrganizationInvitation
-
-  """
-  Reads and enables pagination through a set of `OrganizationInvitation`.
-  """
-  organizationInvitations(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OrganizationInvitationCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OrganizationInvitationFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `OrganizationInvitation`."""
-    orderBy: [OrganizationInvitationsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationInvitationsConnection
 
   """Get a single `OrganizationMembership`."""
   organizationMembership(id: UUID!): OrganizationMembership
@@ -5645,270 +3047,6 @@ type UpdateConsultationPayload {
   query: Query
 }
 
-"""
-All input for the `updateMessageBodyRevisionApprovalByNodeId` mutation.
-"""
-input UpdateMessageBodyRevisionApprovalByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `MessageBodyRevisionApproval` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `MessageBodyRevisionApproval` being updated.
-  """
-  patch: MessageBodyRevisionApprovalPatch!
-}
-
-"""All input for the `updateMessageBodyRevisionApproval` mutation."""
-input UpdateMessageBodyRevisionApprovalInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-
-  """
-  An object where the defined keys will be set on the `MessageBodyRevisionApproval` being updated.
-  """
-  patch: MessageBodyRevisionApprovalPatch!
-}
-
-"""The output of our update `MessageBodyRevisionApproval` mutation."""
-type UpdateMessageBodyRevisionApprovalPayload {
-  """
-  Reads a single `User` that is related to this `MessageBodyRevisionApproval`.
-  """
-  approver: User
-
-  """
-  Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionApproval`.
-  """
-  bodyRevision: MessageBodyRevision
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """The `MessageBodyRevisionApproval` that was updated by this mutation."""
-  messageBodyRevisionApproval: MessageBodyRevisionApproval
-
-  """An edge for our `MessageBodyRevisionApproval`. May be used by Relay 1."""
-  messageBodyRevisionApprovalEdge(
-    """The method to use when ordering `MessageBodyRevisionApproval`."""
-    orderBy: [MessageBodyRevisionApprovalsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionApprovalsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `updateMessageBodyRevisionByNodeId` mutation."""
-input UpdateMessageBodyRevisionByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `MessageBodyRevision` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `MessageBodyRevision` being updated.
-  """
-  patch: MessageBodyRevisionPatch!
-}
-
-"""All input for the `updateMessageBodyRevisionCommentByNodeId` mutation."""
-input UpdateMessageBodyRevisionCommentByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `MessageBodyRevisionComment` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `MessageBodyRevisionComment` being updated.
-  """
-  patch: MessageBodyRevisionCommentPatch!
-}
-
-"""All input for the `updateMessageBodyRevisionComment` mutation."""
-input UpdateMessageBodyRevisionCommentInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-
-  """
-  An object where the defined keys will be set on the `MessageBodyRevisionComment` being updated.
-  """
-  patch: MessageBodyRevisionCommentPatch!
-}
-
-"""The output of our update `MessageBodyRevisionComment` mutation."""
-type UpdateMessageBodyRevisionCommentPayload {
-  """
-  Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionComment`.
-  """
-  bodyRevision: MessageBodyRevision
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `User` that is related to this `MessageBodyRevisionComment`.
-  """
-  commenter: User
-
-  """The `MessageBodyRevisionComment` that was updated by this mutation."""
-  messageBodyRevisionComment: MessageBodyRevisionComment
-
-  """An edge for our `MessageBodyRevisionComment`. May be used by Relay 1."""
-  messageBodyRevisionCommentEdge(
-    """The method to use when ordering `MessageBodyRevisionComment`."""
-    orderBy: [MessageBodyRevisionCommentsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionCommentsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `updateMessageBodyRevision` mutation."""
-input UpdateMessageBodyRevisionInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-
-  """
-  An object where the defined keys will be set on the `MessageBodyRevision` being updated.
-  """
-  patch: MessageBodyRevisionPatch!
-}
-
-"""The output of our update `MessageBodyRevision` mutation."""
-type UpdateMessageBodyRevisionPayload {
-  """Reads a single `User` that is related to this `MessageBodyRevision`."""
-  author: User
-
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `Message` that is related to this `MessageBodyRevision`.
-  """
-  message: Message
-
-  """The `MessageBodyRevision` that was updated by this mutation."""
-  messageBodyRevision: MessageBodyRevision
-
-  """An edge for our `MessageBodyRevision`. May be used by Relay 1."""
-  messageBodyRevisionEdge(
-    """The method to use when ordering `MessageBodyRevision`."""
-    orderBy: [MessageBodyRevisionsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-}
-
-"""All input for the `updateMessageByNodeId` mutation."""
-input UpdateMessageByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `Message` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `Message` being updated.
-  """
-  patch: MessagePatch!
-}
-
-"""All input for the `updateMessage` mutation."""
-input UpdateMessageInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-
-  """
-  An object where the defined keys will be set on the `Message` being updated.
-  """
-  patch: MessagePatch!
-}
-
-"""The output of our update `Message` mutation."""
-type UpdateMessagePayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """Reads a single `Consultation` that is related to this `Message`."""
-  consultation: Consultation
-
-  """The `Message` that was updated by this mutation."""
-  message: Message
-
-  """An edge for our `Message`. May be used by Relay 1."""
-  messageEdge(
-    """The method to use when ordering `Message`."""
-    orderBy: [MessagesOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): MessagesEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `User` that is related to this `Message`."""
-  sender: User
-}
-
 """All input for the `updateOrganizationByNodeId` mutation."""
 input UpdateOrganizationByNodeIdInput {
   """
@@ -5958,194 +3096,6 @@ input UpdateOrganizationInput {
   patch: OrganizationPatch!
 }
 
-"""All input for the `updateOrganizationInvitationByNodeId` mutation."""
-input UpdateOrganizationInvitationByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `OrganizationInvitation` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `OrganizationInvitation` being updated.
-  """
-  patch: OrganizationInvitationPatch!
-}
-
-"""
-All input for the `updateOrganizationInvitationByOrganizationIdAndEmail` mutation.
-"""
-input UpdateOrganizationInvitationByOrganizationIdAndEmailInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  email: String!
-  organizationId: UUID!
-
-  """
-  An object where the defined keys will be set on the `OrganizationInvitation` being updated.
-  """
-  patch: OrganizationInvitationPatch!
-}
-
-"""
-All input for the `updateOrganizationInvitationByOrganizationIdAndUserId` mutation.
-"""
-input UpdateOrganizationInvitationByOrganizationIdAndUserIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  organizationId: UUID!
-
-  """
-  An object where the defined keys will be set on the `OrganizationInvitation` being updated.
-  """
-  patch: OrganizationInvitationPatch!
-  userId: UUID!
-}
-
-"""All input for the `updateOrganizationInvitation` mutation."""
-input UpdateOrganizationInvitationInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-
-  """
-  An object where the defined keys will be set on the `OrganizationInvitation` being updated.
-  """
-  patch: OrganizationInvitationPatch!
-}
-
-"""The output of our update `OrganizationInvitation` mutation."""
-type UpdateOrganizationInvitationPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `Organization` that is related to this `OrganizationInvitation`.
-  """
-  organization: Organization
-
-  """The `OrganizationInvitation` that was updated by this mutation."""
-  organizationInvitation: OrganizationInvitation
-
-  """An edge for our `OrganizationInvitation`. May be used by Relay 1."""
-  organizationInvitationEdge(
-    """The method to use when ordering `OrganizationInvitation`."""
-    orderBy: [OrganizationInvitationsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): OrganizationInvitationsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `User` that is related to this `OrganizationInvitation`.
-  """
-  user: User
-}
-
-"""All input for the `updateOrganizationMembershipByNodeId` mutation."""
-input UpdateOrganizationMembershipByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `OrganizationMembership` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `OrganizationMembership` being updated.
-  """
-  patch: OrganizationMembershipPatch!
-}
-
-"""
-All input for the `updateOrganizationMembershipByOrganizationIdAndUserId` mutation.
-"""
-input UpdateOrganizationMembershipByOrganizationIdAndUserIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  organizationId: UUID!
-
-  """
-  An object where the defined keys will be set on the `OrganizationMembership` being updated.
-  """
-  patch: OrganizationMembershipPatch!
-  userId: UUID!
-}
-
-"""All input for the `updateOrganizationMembership` mutation."""
-input UpdateOrganizationMembershipInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-
-  """
-  An object where the defined keys will be set on the `OrganizationMembership` being updated.
-  """
-  patch: OrganizationMembershipPatch!
-}
-
-"""The output of our update `OrganizationMembership` mutation."""
-type UpdateOrganizationMembershipPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Reads a single `Organization` that is related to this `OrganizationMembership`.
-  """
-  organization: Organization
-
-  """The `OrganizationMembership` that was updated by this mutation."""
-  organizationMembership: OrganizationMembership
-
-  """An edge for our `OrganizationMembership`. May be used by Relay 1."""
-  organizationMembershipEdge(
-    """The method to use when ordering `OrganizationMembership`."""
-    orderBy: [OrganizationMembershipsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): OrganizationMembershipsEdge
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """
-  Reads a single `User` that is related to this `OrganizationMembership`.
-  """
-  user: User
-}
-
 """The output of our update `Organization` mutation."""
 type UpdateOrganizationPayload {
   """
@@ -6167,88 +3117,6 @@ type UpdateOrganizationPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-}
-
-"""All input for the `updateUserAuthenticationByNodeId` mutation."""
-input UpdateUserAuthenticationByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `UserAuthentication` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `UserAuthentication` being updated.
-  """
-  patch: UserAuthenticationPatch!
-}
-
-"""
-All input for the `updateUserAuthenticationByServiceAndIdentifier` mutation.
-"""
-input UpdateUserAuthenticationByServiceAndIdentifierInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """A unique identifier for the user within the login service."""
-  identifier: String!
-
-  """
-  An object where the defined keys will be set on the `UserAuthentication` being updated.
-  """
-  patch: UserAuthenticationPatch!
-
-  """The login service used, e.g. `twitter` or `github`."""
-  service: String!
-}
-
-"""All input for the `updateUserAuthentication` mutation."""
-input UpdateUserAuthenticationInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-
-  """
-  An object where the defined keys will be set on the `UserAuthentication` being updated.
-  """
-  patch: UserAuthenticationPatch!
-}
-
-"""The output of our update `UserAuthentication` mutation."""
-type UpdateUserAuthenticationPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `User` that is related to this `UserAuthentication`."""
-  user: User
-
-  """The `UserAuthentication` that was updated by this mutation."""
-  userAuthentication: UserAuthentication
-
-  """An edge for our `UserAuthentication`. May be used by Relay 1."""
-  userAuthenticationEdge(
-    """The method to use when ordering `UserAuthentication`."""
-    orderBy: [UserAuthenticationsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): UserAuthenticationsEdge
 }
 
 """All input for the `updateUserByNodeId` mutation."""
@@ -6285,84 +3153,6 @@ input UpdateUserByUsernameInput {
 
   """Public-facing username (or 'handle') of the user."""
   username: String!
-}
-
-"""All input for the `updateUserEmailByNodeId` mutation."""
-input UpdateUserEmailByNodeIdInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """
-  The globally unique `ID` which will identify a single `UserEmail` to be updated.
-  """
-  nodeId: ID!
-
-  """
-  An object where the defined keys will be set on the `UserEmail` being updated.
-  """
-  patch: UserEmailPatch!
-}
-
-"""All input for the `updateUserEmailByUserIdAndEmail` mutation."""
-input UpdateUserEmailByUserIdAndEmailInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-
-  """The users email address, in `a@b.c` format."""
-  email: String!
-
-  """
-  An object where the defined keys will be set on the `UserEmail` being updated.
-  """
-  patch: UserEmailPatch!
-  userId: UUID!
-}
-
-"""All input for the `updateUserEmail` mutation."""
-input UpdateUserEmailInput {
-  """
-  An arbitrary string value with no semantic meaning. Will be included in the
-  payload verbatim. May be used to track mutations by the client.
-  """
-  clientMutationId: String
-  id: UUID!
-
-  """
-  An object where the defined keys will be set on the `UserEmail` being updated.
-  """
-  patch: UserEmailPatch!
-}
-
-"""The output of our update `UserEmail` mutation."""
-type UpdateUserEmailPayload {
-  """
-  The exact same `clientMutationId` that was provided in the mutation input,
-  unchanged and unused. May be used by a client to track mutations.
-  """
-  clientMutationId: String
-
-  """
-  Our root query field type. Allows us to run any query from our mutation payload.
-  """
-  query: Query
-
-  """Reads a single `User` that is related to this `UserEmail`."""
-  user: User
-
-  """The `UserEmail` that was updated by this mutation."""
-  userEmail: UserEmail
-
-  """An edge for our `UserEmail`. May be used by Relay 1."""
-  userEmailEdge(
-    """The method to use when ordering `UserEmail`."""
-    orderBy: [UserEmailsOrderBy!]! = [PRIMARY_KEY_ASC]
-  ): UserEmailsEdge
 }
 
 """All input for the `updateUser` mutation."""
@@ -6407,40 +3197,6 @@ type UpdateUserPayload {
 
 """A user who can log in to the application."""
 type User implements Node {
-  """Reads and enables pagination through a set of `MessageBodyRevision`."""
-  authoredMessageBodyRevisions(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevision`."""
-    orderBy: [MessageBodyRevisionsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionsConnection!
-
   """Optional avatar URL."""
   avatarUrl: String
 
@@ -6489,112 +3245,6 @@ type User implements Node {
   isAdmin: Boolean!
   isVerified: Boolean!
 
-  """
-  Reads and enables pagination through a set of `MessageBodyRevisionApproval`.
-  """
-  messageBodyRevisionApprovalsByApproverId(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionApprovalCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionApprovalFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevisionApproval`."""
-    orderBy: [MessageBodyRevisionApprovalsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionApprovalsConnection!
-
-  """
-  Reads and enables pagination through a set of `MessageBodyRevisionComment`.
-  """
-  messageBodyRevisionCommentsByCommenterId(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageBodyRevisionCommentCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageBodyRevisionCommentFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `MessageBodyRevisionComment`."""
-    orderBy: [MessageBodyRevisionCommentsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessageBodyRevisionCommentsConnection!
-
-  """Reads and enables pagination through a set of `Message`."""
-  messagesBySenderId(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: MessageCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: MessageFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `Message`."""
-    orderBy: [MessagesOrderBy!] = [PRIMARY_KEY_ASC]
-  ): MessagesConnection!
-
   """Public-facing name (or pseudonym) of the user."""
   name: String
 
@@ -6602,42 +3252,6 @@ type User implements Node {
   A globally unique identifier. Can be used in various places throughout the system to identify this single value.
   """
   nodeId: ID!
-
-  """
-  Reads and enables pagination through a set of `OrganizationInvitation`.
-  """
-  organizationInvitations(
-    """Read all values in the set after (below) this cursor."""
-    after: Cursor
-
-    """Read all values in the set before (above) this cursor."""
-    before: Cursor
-
-    """
-    A condition to be used in determining which values should be returned by the collection.
-    """
-    condition: OrganizationInvitationCondition
-
-    """
-    A filter to be used in determining which values should be returned by the collection.
-    """
-    filter: OrganizationInvitationFilter
-
-    """Only read the first `n` values of the set."""
-    first: Int
-
-    """Only read the last `n` values of the set."""
-    last: Int
-
-    """
-    Skip the first `n` values from our `after` cursor, an alternative to cursor
-    based pagination. May not be used with `last`.
-    """
-    offset: Int
-
-    """The method to use when ordering `OrganizationInvitation`."""
-    orderBy: [OrganizationInvitationsOrderBy!] = [PRIMARY_KEY_ASC]
-  ): OrganizationInvitationsConnection!
 
   """
   Reads and enables pagination through a set of `OrganizationMembership`.
@@ -6840,51 +3454,15 @@ input UserAuthenticationFilter {
   userId: UUIDFilter
 }
 
-"""An input for mutations affecting `UserAuthentication`"""
-input UserAuthenticationInput {
-  createdAt: Datetime
-
-  """Additional profile details extracted from this login method"""
-  details: JSON
-  id: UUID
-
-  """A unique identifier for the user within the login service."""
-  identifier: String!
-
-  """The login service used, e.g. `twitter` or `github`."""
-  service: String!
-  updatedAt: Datetime
-  userId: UUID!
-}
-
-"""
-Represents an update to a `UserAuthentication`. Fields that are set will be updated.
-"""
-input UserAuthenticationPatch {
-  createdAt: Datetime
-
-  """Additional profile details extracted from this login method"""
-  details: JSON
-  id: UUID
-
-  """A unique identifier for the user within the login service."""
-  identifier: String
-
-  """The login service used, e.g. `twitter` or `github`."""
-  service: String
-  updatedAt: Datetime
-  userId: UUID
-}
-
 """A connection to a list of `UserAuthentication` values."""
 type UserAuthenticationsConnection {
   """
   A list of edges which contains the `UserAuthentication` and cursor to aid in pagination.
   """
-  edges: [UserAuthenticationsEdge]!
+  edges: [UserAuthenticationsEdge!]!
 
   """A list of `UserAuthentication` objects."""
-  nodes: [UserAuthentication]!
+  nodes: [UserAuthentication!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
@@ -6901,7 +3479,7 @@ type UserAuthenticationsEdge {
   cursor: Cursor
 
   """The `UserAuthentication` at the end of the edge."""
-  node: UserAuthentication
+  node: UserAuthentication!
 }
 
 """Methods to use when ordering `UserAuthentication`."""
@@ -7049,38 +3627,8 @@ input UserEmailFilter {
 
 """An input for mutations affecting `UserEmail`"""
 input UserEmailInput {
-  createdAt: Datetime
-
   """The users email address, in `a@b.c` format."""
   email: String!
-  id: UUID
-  isPrimary: Boolean
-
-  """
-  True if the user has is_verified their email address (by clicking the link in the email we sent them, or logging in with a social login provider), false otherwise.
-  """
-  isVerified: Boolean
-  updatedAt: Datetime
-  userId: UUID
-}
-
-"""
-Represents an update to a `UserEmail`. Fields that are set will be updated.
-"""
-input UserEmailPatch {
-  createdAt: Datetime
-
-  """The users email address, in `a@b.c` format."""
-  email: String
-  id: UUID
-  isPrimary: Boolean
-
-  """
-  True if the user has is_verified their email address (by clicking the link in the email we sent them, or logging in with a social login provider), false otherwise.
-  """
-  isVerified: Boolean
-  updatedAt: Datetime
-  userId: UUID
 }
 
 """A connection to a list of `UserEmail` values."""
@@ -7088,10 +3636,10 @@ type UserEmailsConnection {
   """
   A list of edges which contains the `UserEmail` and cursor to aid in pagination.
   """
-  edges: [UserEmailsEdge]!
+  edges: [UserEmailsEdge!]!
 
   """A list of `UserEmail` objects."""
-  nodes: [UserEmail]!
+  nodes: [UserEmail!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
@@ -7106,7 +3654,7 @@ type UserEmailsEdge {
   cursor: Cursor
 
   """The `UserEmail` at the end of the edge."""
-  node: UserEmail
+  node: UserEmail!
 }
 
 """Methods to use when ordering `UserEmail`."""
@@ -7137,12 +3685,6 @@ input UserFilter {
   """Checks for all expressions in this list."""
   and: [UserFilter!]
 
-  """Filter by the object’s `authoredMessageBodyRevisions` relation."""
-  authoredMessageBodyRevisions: UserToManyMessageBodyRevisionFilter
-
-  """Some related `authoredMessageBodyRevisions` exist."""
-  authoredMessageBodyRevisionsExist: Boolean
-
   """Filter by the object’s `avatarUrl` field."""
   avatarUrl: StringFilter
 
@@ -7167,28 +3709,6 @@ input UserFilter {
   """Filter by the object’s `isVerified` field."""
   isVerified: BooleanFilter
 
-  """
-  Filter by the object’s `messageBodyRevisionApprovalsByApproverId` relation.
-  """
-  messageBodyRevisionApprovalsByApproverId: UserToManyMessageBodyRevisionApprovalFilter
-
-  """Some related `messageBodyRevisionApprovalsByApproverId` exist."""
-  messageBodyRevisionApprovalsByApproverIdExist: Boolean
-
-  """
-  Filter by the object’s `messageBodyRevisionCommentsByCommenterId` relation.
-  """
-  messageBodyRevisionCommentsByCommenterId: UserToManyMessageBodyRevisionCommentFilter
-
-  """Some related `messageBodyRevisionCommentsByCommenterId` exist."""
-  messageBodyRevisionCommentsByCommenterIdExist: Boolean
-
-  """Filter by the object’s `messagesBySenderId` relation."""
-  messagesBySenderId: UserToManyMessageFilter
-
-  """Some related `messagesBySenderId` exist."""
-  messagesBySenderIdExist: Boolean
-
   """Filter by the object’s `name` field."""
   name: StringFilter
 
@@ -7197,12 +3717,6 @@ input UserFilter {
 
   """Checks for any expressions in this list."""
   or: [UserFilter!]
-
-  """Filter by the object’s `organizationInvitations` relation."""
-  organizationInvitations: UserToManyOrganizationInvitationFilter
-
-  """Some related `organizationInvitations` exist."""
-  organizationInvitationsExist: Boolean
 
   """Filter by the object’s `organizationMemberships` relation."""
   organizationMemberships: UserToManyOrganizationMembershipFilter
@@ -7229,43 +3743,13 @@ input UserFilter {
   username: StringFilter
 }
 
-"""An input for mutations affecting `User`"""
-input UserInput {
-  """Optional avatar URL."""
-  avatarUrl: String
-  createdAt: Datetime
-
-  """Unique identifier for the user."""
-  id: UUID
-
-  """If true, the user has elevated privileges."""
-  isAdmin: Boolean
-  isVerified: Boolean
-
-  """Public-facing name (or pseudonym) of the user."""
-  name: String
-  updatedAt: Datetime
-
-  """Public-facing username (or 'handle') of the user."""
-  username: String!
-}
-
 """Represents an update to a `User`. Fields that are set will be updated."""
 input UserPatch {
   """Optional avatar URL."""
   avatarUrl: String
-  createdAt: Datetime
-
-  """Unique identifier for the user."""
-  id: UUID
-
-  """If true, the user has elevated privileges."""
-  isAdmin: Boolean
-  isVerified: Boolean
 
   """Public-facing name (or pseudonym) of the user."""
   name: String
-  updatedAt: Datetime
 
   """Public-facing username (or 'handle') of the user."""
   username: String
@@ -7289,106 +3773,6 @@ input UserToManyConsultationParticipantFilter {
   Some related `ConsultationParticipant` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
   some: ConsultationParticipantFilter
-}
-
-"""
-A filter to be used against many `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’
-"""
-input UserToManyMessageBodyRevisionApprovalFilter {
-  """
-  Every related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: MessageBodyRevisionApprovalFilter
-
-  """
-  No related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: MessageBodyRevisionApprovalFilter
-
-  """
-  Some related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: MessageBodyRevisionApprovalFilter
-}
-
-"""
-A filter to be used against many `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’
-"""
-input UserToManyMessageBodyRevisionCommentFilter {
-  """
-  Every related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: MessageBodyRevisionCommentFilter
-
-  """
-  No related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: MessageBodyRevisionCommentFilter
-
-  """
-  Some related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: MessageBodyRevisionCommentFilter
-}
-
-"""
-A filter to be used against many `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’
-"""
-input UserToManyMessageBodyRevisionFilter {
-  """
-  Every related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: MessageBodyRevisionFilter
-
-  """
-  No related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: MessageBodyRevisionFilter
-
-  """
-  Some related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: MessageBodyRevisionFilter
-}
-
-"""
-A filter to be used against many `Message` object types. All fields are combined with a logical ‘and.’
-"""
-input UserToManyMessageFilter {
-  """
-  Every related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: MessageFilter
-
-  """
-  No related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: MessageFilter
-
-  """
-  Some related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: MessageFilter
-}
-
-"""
-A filter to be used against many `OrganizationInvitation` object types. All fields are combined with a logical ‘and.’
-"""
-input UserToManyOrganizationInvitationFilter {
-  """
-  Every related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  every: OrganizationInvitationFilter
-
-  """
-  No related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  none: OrganizationInvitationFilter
-
-  """
-  Some related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’
-  """
-  some: OrganizationInvitationFilter
 }
 
 """
@@ -7456,10 +3840,10 @@ type UsersConnection {
   """
   A list of edges which contains the `User` and cursor to aid in pagination.
   """
-  edges: [UsersEdge]!
+  edges: [UsersEdge!]!
 
   """A list of `User` objects."""
-  nodes: [User]!
+  nodes: [User!]!
 
   """Information to aid in pagination."""
   pageInfo: PageInfo!
@@ -7474,7 +3858,7 @@ type UsersEdge {
   cursor: Cursor
 
   """The `User` at the end of the edge."""
-  node: User
+  node: User!
 }
 
 """Methods to use when ordering `User`."""

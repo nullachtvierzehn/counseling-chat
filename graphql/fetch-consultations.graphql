@@ -1,0 +1,23 @@
+query FetchConsultations(
+  $filter: ConsultationFilter
+  $orderBy: [ConsultationsOrderBy!]
+  $first: Int
+  $after: Cursor
+  $last: Int
+  $before: Cursor
+) {
+  consultations(
+    filter: $filter
+    orderBy: $orderBy
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+  ) {
+    nodes {
+      id
+      name
+      createdAt
+    }
+  }
+}

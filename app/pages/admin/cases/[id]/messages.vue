@@ -6,6 +6,6 @@
 
 <script lang="ts" setup>
 definePageMeta({
-  name: "messages-of-case"
+  name: "consultation-by-id/messages"
 })
 </script>

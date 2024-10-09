@@ -4,7 +4,7 @@
     <nav>
       <ul>
         <li>
-          <NuxtLink :to="{ name: 'messages-of-case' }">
+          <NuxtLink :to="{ name: 'consultation-by-id/messages' }">
             Nachrichten
           </NuxtLink>
         </li>
@@ -14,3 +14,9 @@
     <NuxtPage />
   </article>
 </template>
+
+<script lang="ts" setup>
+definePageMeta({
+  name: "consultation-by-id"
+})
+</script>

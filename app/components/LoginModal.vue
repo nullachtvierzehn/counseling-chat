@@ -1,28 +1,33 @@
 <template>
-  <UModal v-model="isOpen">
+  <UModal
+    v-model="isOpen"
+    role="dialog"
+    aria-labelledby="login-modal-title"
+    tabindex="-1"
+  >
     <template #header>
-      <h1>Login</h1>
+      <h1 id="login-modal-title">
+        Login
+      </h1>
     </template>
 
-    <UForm
-      :state="state"
-      :schema="schema"
-      class="m-4 grid gap-2"
-      @submit="onSubmit"
-    >
-      <UFormGroup label="Username oder E-Mail" name="login">
-        <UInput v-model="state.login" />
-      </UFormGroup>
-      <UFormGroup label="Passwort" name="password">
-        <UInput v-model="state.password" type="password" />
-      </UFormGroup>
-      <UButton type="submit">
-        OK
-      </UButton>
-    </UForm>
-
-    <template #footer>
-      <h1>Login</h1>
+    <template #default>
+      <UForm
+        :state="state"
+        :schema="schema"
+        class="m-4 grid gap-2"
+        @submit="onSubmit"
+      >
+        <UFormGroup label="Username oder E-Mail" name="login">
+          <UInput v-model="state.login" />
+        </UFormGroup>
+        <UFormGroup label="Passwort" name="password">
+          <UInput v-model="state.password" type="password" />
+        </UFormGroup>
+        <UButton type="submit">
+          OK
+        </UButton>
+      </UForm>
     </template>
   </UModal>
 </template>
@@ -53,6 +58,7 @@ type Schema = z.output<typeof schema>
 const { executeMutation: loginMutation } = useLoginMutation()
 
 const toast = useToast()
+const nuxt = useNuxtApp()
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   event.preventDefault()
@@ -60,6 +66,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   if (data?.login?.user) {
     toast.add({ title: "Erfolgreich eingeloggt.", description: "Willkommen zurück.", color: "green" })
     isOpen.value = false
+    nuxt.hooks.callHook("user:login", data.login.user)
   }
   else if (error)
     toast.add({ title: "Fehler beim Einloggen.", description: error.message, color: "red" })

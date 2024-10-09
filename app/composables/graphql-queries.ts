@@ -135,8 +135,6 @@ export type Consultation = Node & {
   consultationParticipants: ConsultationParticipantsConnection;
   createdAt: Scalars['Datetime']['output'];
   id: Scalars['UUID']['output'];
-  /** Reads and enables pagination through a set of `Message`. */
-  messages: MessagesConnection;
   name: Scalars['String']['output'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID']['output'];
@@ -156,18 +154,6 @@ export type ConsultationConsultationParticipantsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<ConsultationParticipantsOrderBy>>;
-};
-
-
-export type ConsultationMessagesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageCondition>;
-  filter?: InputMaybe<MessageFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessagesOrderBy>>;
 };
 
 /**
@@ -199,10 +185,6 @@ export type ConsultationFilter = {
   createdAt?: InputMaybe<DatetimeFilter>;
   /** Filter by the object’s `id` field. */
   id?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `messages` relation. */
-  messages?: InputMaybe<ConsultationToManyMessageFilter>;
-  /** Some related `messages` exist. */
-  messagesExist?: InputMaybe<Scalars['Boolean']['input']>;
   /** Filter by the object’s `name` field. */
   name?: InputMaybe<StringFilter>;
   /** Negates the expression. */
@@ -219,11 +201,8 @@ export type ConsultationFilter = {
 
 /** An input for mutations affecting `Consultation` */
 export type ConsultationInput = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   name: Scalars['String']['input'];
-  organizationId: Scalars['UUID']['input'];
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
 };
 
 export type ConsultationParticipant = Node & {
@@ -305,36 +284,27 @@ export type ConsultationParticipantFilter = {
 /** An input for mutations affecting `ConsultationParticipant` */
 export type ConsultationParticipantInput = {
   consultationId: Scalars['UUID']['input'];
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
   id?: InputMaybe<Scalars['UUID']['input']>;
   isClient?: InputMaybe<Scalars['Boolean']['input']>;
   isCounselor?: InputMaybe<Scalars['Boolean']['input']>;
   isSupervisor?: InputMaybe<Scalars['Boolean']['input']>;
-  sysPeriod?: InputMaybe<DatetimeRangeInput>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
   userId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 /** Represents an update to a `ConsultationParticipant`. Fields that are set will be updated. */
 export type ConsultationParticipantPatch = {
-  consultationId?: InputMaybe<Scalars['UUID']['input']>;
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
   isClient?: InputMaybe<Scalars['Boolean']['input']>;
   isCounselor?: InputMaybe<Scalars['Boolean']['input']>;
   isSupervisor?: InputMaybe<Scalars['Boolean']['input']>;
-  sysPeriod?: InputMaybe<DatetimeRangeInput>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-  userId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 /** A connection to a list of `ConsultationParticipant` values. */
 export type ConsultationParticipantsConnection = {
   __typename?: 'ConsultationParticipantsConnection';
   /** A list of edges which contains the `ConsultationParticipant` and cursor to aid in pagination. */
-  edges: Array<Maybe<ConsultationParticipantsEdge>>;
+  edges: Array<ConsultationParticipantsEdge>;
   /** A list of `ConsultationParticipant` objects. */
-  nodes: Array<Maybe<ConsultationParticipant>>;
+  nodes: Array<ConsultationParticipant>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** The count of *all* `ConsultationParticipant` you could get from the connection. */
@@ -347,7 +317,7 @@ export type ConsultationParticipantsEdge = {
   /** A cursor for use in pagination. */
   cursor: Maybe<Scalars['Cursor']['output']>;
   /** The `ConsultationParticipant` at the end of the edge. */
-  node: Maybe<ConsultationParticipant>;
+  node: ConsultationParticipant;
 };
 
 /** Methods to use when ordering `ConsultationParticipant`. */
@@ -374,11 +344,7 @@ export type ConsultationParticipantsOrderBy =
 
 /** Represents an update to a `Consultation`. Fields that are set will be updated. */
 export type ConsultationPatch = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
-  organizationId?: InputMaybe<Scalars['UUID']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
 };
 
 /** A filter to be used against many `ConsultationParticipant` object types. All fields are combined with a logical ‘and.’ */
@@ -391,23 +357,13 @@ export type ConsultationToManyConsultationParticipantFilter = {
   some?: InputMaybe<ConsultationParticipantFilter>;
 };
 
-/** A filter to be used against many `Message` object types. All fields are combined with a logical ‘and.’ */
-export type ConsultationToManyMessageFilter = {
-  /** Every related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<MessageFilter>;
-  /** No related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<MessageFilter>;
-  /** Some related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<MessageFilter>;
-};
-
 /** A connection to a list of `Consultation` values. */
 export type ConsultationsConnection = {
   __typename?: 'ConsultationsConnection';
   /** A list of edges which contains the `Consultation` and cursor to aid in pagination. */
-  edges: Array<Maybe<ConsultationsEdge>>;
+  edges: Array<ConsultationsEdge>;
   /** A list of `Consultation` objects. */
-  nodes: Array<Maybe<Consultation>>;
+  nodes: Array<Consultation>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** The count of *all* `Consultation` you could get from the connection. */
@@ -420,7 +376,7 @@ export type ConsultationsEdge = {
   /** A cursor for use in pagination. */
   cursor: Maybe<Scalars['Cursor']['output']>;
   /** The `Consultation` at the end of the edge. */
-  node: Maybe<Consultation>;
+  node: Consultation;
 };
 
 /** Methods to use when ordering `Consultation`. */
@@ -511,240 +467,18 @@ export type CreateConsultationPayloadConsultationEdgeArgs = {
   orderBy?: Array<ConsultationsOrderBy>;
 };
 
-/** All input for the create `MessageBodyRevisionApproval` mutation. */
-export type CreateMessageBodyRevisionApprovalInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `MessageBodyRevisionApproval` to be created by this mutation. */
-  messageBodyRevisionApproval: MessageBodyRevisionApprovalInput;
-};
-
-/** The output of our create `MessageBodyRevisionApproval` mutation. */
-export type CreateMessageBodyRevisionApprovalPayload = {
-  __typename?: 'CreateMessageBodyRevisionApprovalPayload';
-  /** Reads a single `User` that is related to this `MessageBodyRevisionApproval`. */
-  approver: Maybe<User>;
-  /** Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionApproval`. */
-  bodyRevision: Maybe<MessageBodyRevision>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** The `MessageBodyRevisionApproval` that was created by this mutation. */
-  messageBodyRevisionApproval: Maybe<MessageBodyRevisionApproval>;
-  /** An edge for our `MessageBodyRevisionApproval`. May be used by Relay 1. */
-  messageBodyRevisionApprovalEdge: Maybe<MessageBodyRevisionApprovalsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our create `MessageBodyRevisionApproval` mutation. */
-export type CreateMessageBodyRevisionApprovalPayloadMessageBodyRevisionApprovalEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionApprovalsOrderBy>;
-};
-
-/** All input for the create `MessageBodyRevisionComment` mutation. */
-export type CreateMessageBodyRevisionCommentInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `MessageBodyRevisionComment` to be created by this mutation. */
-  messageBodyRevisionComment: MessageBodyRevisionCommentInput;
-};
-
-/** The output of our create `MessageBodyRevisionComment` mutation. */
-export type CreateMessageBodyRevisionCommentPayload = {
-  __typename?: 'CreateMessageBodyRevisionCommentPayload';
-  /** Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionComment`. */
-  bodyRevision: Maybe<MessageBodyRevision>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `User` that is related to this `MessageBodyRevisionComment`. */
-  commenter: Maybe<User>;
-  /** The `MessageBodyRevisionComment` that was created by this mutation. */
-  messageBodyRevisionComment: Maybe<MessageBodyRevisionComment>;
-  /** An edge for our `MessageBodyRevisionComment`. May be used by Relay 1. */
-  messageBodyRevisionCommentEdge: Maybe<MessageBodyRevisionCommentsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our create `MessageBodyRevisionComment` mutation. */
-export type CreateMessageBodyRevisionCommentPayloadMessageBodyRevisionCommentEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionCommentsOrderBy>;
-};
-
-/** All input for the create `MessageBodyRevision` mutation. */
-export type CreateMessageBodyRevisionInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `MessageBodyRevision` to be created by this mutation. */
-  messageBodyRevision: MessageBodyRevisionInput;
-};
-
-/** The output of our create `MessageBodyRevision` mutation. */
-export type CreateMessageBodyRevisionPayload = {
-  __typename?: 'CreateMessageBodyRevisionPayload';
-  /** Reads a single `User` that is related to this `MessageBodyRevision`. */
-  author: Maybe<User>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Message` that is related to this `MessageBodyRevision`. */
-  message: Maybe<Message>;
-  /** The `MessageBodyRevision` that was created by this mutation. */
-  messageBodyRevision: Maybe<MessageBodyRevision>;
-  /** An edge for our `MessageBodyRevision`. May be used by Relay 1. */
-  messageBodyRevisionEdge: Maybe<MessageBodyRevisionsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our create `MessageBodyRevision` mutation. */
-export type CreateMessageBodyRevisionPayloadMessageBodyRevisionEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionsOrderBy>;
-};
-
-/** All input for the create `Message` mutation. */
-export type CreateMessageInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `Message` to be created by this mutation. */
-  message: MessageInput;
-};
-
-/** The output of our create `Message` mutation. */
-export type CreateMessagePayload = {
-  __typename?: 'CreateMessagePayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Consultation` that is related to this `Message`. */
-  consultation: Maybe<Consultation>;
-  /** The `Message` that was created by this mutation. */
-  message: Maybe<Message>;
-  /** An edge for our `Message`. May be used by Relay 1. */
-  messageEdge: Maybe<MessagesEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `Message`. */
-  sender: Maybe<User>;
-};
-
-
-/** The output of our create `Message` mutation. */
-export type CreateMessagePayloadMessageEdgeArgs = {
-  orderBy?: Array<MessagesOrderBy>;
-};
-
-/** All input for the create `Organization` mutation. */
+/** All input for the `createOrganization` mutation. */
 export type CreateOrganizationInput = {
   /**
    * An arbitrary string value with no semantic meaning. Will be included in the
    * payload verbatim. May be used to track mutations by the client.
    */
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `Organization` to be created by this mutation. */
-  organization: OrganizationInput;
+  name: Scalars['String']['input'];
+  slug: Scalars['String']['input'];
 };
 
-/** All input for the create `OrganizationInvitation` mutation. */
-export type CreateOrganizationInvitationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `OrganizationInvitation` to be created by this mutation. */
-  organizationInvitation: OrganizationInvitationInput;
-};
-
-/** The output of our create `OrganizationInvitation` mutation. */
-export type CreateOrganizationInvitationPayload = {
-  __typename?: 'CreateOrganizationInvitationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Organization` that is related to this `OrganizationInvitation`. */
-  organization: Maybe<Organization>;
-  /** The `OrganizationInvitation` that was created by this mutation. */
-  organizationInvitation: Maybe<OrganizationInvitation>;
-  /** An edge for our `OrganizationInvitation`. May be used by Relay 1. */
-  organizationInvitationEdge: Maybe<OrganizationInvitationsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `OrganizationInvitation`. */
-  user: Maybe<User>;
-};
-
-
-/** The output of our create `OrganizationInvitation` mutation. */
-export type CreateOrganizationInvitationPayloadOrganizationInvitationEdgeArgs = {
-  orderBy?: Array<OrganizationInvitationsOrderBy>;
-};
-
-/** All input for the create `OrganizationMembership` mutation. */
-export type CreateOrganizationMembershipInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `OrganizationMembership` to be created by this mutation. */
-  organizationMembership: OrganizationMembershipInput;
-};
-
-/** The output of our create `OrganizationMembership` mutation. */
-export type CreateOrganizationMembershipPayload = {
-  __typename?: 'CreateOrganizationMembershipPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Organization` that is related to this `OrganizationMembership`. */
-  organization: Maybe<Organization>;
-  /** The `OrganizationMembership` that was created by this mutation. */
-  organizationMembership: Maybe<OrganizationMembership>;
-  /** An edge for our `OrganizationMembership`. May be used by Relay 1. */
-  organizationMembershipEdge: Maybe<OrganizationMembershipsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `OrganizationMembership`. */
-  user: Maybe<User>;
-};
-
-
-/** The output of our create `OrganizationMembership` mutation. */
-export type CreateOrganizationMembershipPayloadOrganizationMembershipEdgeArgs = {
-  orderBy?: Array<OrganizationMembershipsOrderBy>;
-};
-
-/** The output of our create `Organization` mutation. */
+/** The output of our `createOrganization` mutation. */
 export type CreateOrganizationPayload = {
   __typename?: 'CreateOrganizationPayload';
   /**
@@ -752,7 +486,6 @@ export type CreateOrganizationPayload = {
    * unchanged and unused. May be used by a client to track mutations.
    */
   clientMutationId: Maybe<Scalars['String']['output']>;
-  /** The `Organization` that was created by this mutation. */
   organization: Maybe<Organization>;
   /** An edge for our `Organization`. May be used by Relay 1. */
   organizationEdge: Maybe<OrganizationsEdge>;
@@ -761,44 +494,9 @@ export type CreateOrganizationPayload = {
 };
 
 
-/** The output of our create `Organization` mutation. */
+/** The output of our `createOrganization` mutation. */
 export type CreateOrganizationPayloadOrganizationEdgeArgs = {
   orderBy?: Array<OrganizationsOrderBy>;
-};
-
-/** All input for the create `UserAuthentication` mutation. */
-export type CreateUserAuthenticationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `UserAuthentication` to be created by this mutation. */
-  userAuthentication: UserAuthenticationInput;
-};
-
-/** The output of our create `UserAuthentication` mutation. */
-export type CreateUserAuthenticationPayload = {
-  __typename?: 'CreateUserAuthenticationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `UserAuthentication`. */
-  user: Maybe<User>;
-  /** The `UserAuthentication` that was created by this mutation. */
-  userAuthentication: Maybe<UserAuthentication>;
-  /** An edge for our `UserAuthentication`. May be used by Relay 1. */
-  userAuthenticationEdge: Maybe<UserAuthenticationsEdge>;
-};
-
-
-/** The output of our create `UserAuthentication` mutation. */
-export type CreateUserAuthenticationPayloadUserAuthenticationEdgeArgs = {
-  orderBy?: Array<UserAuthenticationsOrderBy>;
 };
 
 /** All input for the create `UserEmail` mutation. */
@@ -834,39 +532,6 @@ export type CreateUserEmailPayload = {
 /** The output of our create `UserEmail` mutation. */
 export type CreateUserEmailPayloadUserEmailEdgeArgs = {
   orderBy?: Array<UserEmailsOrderBy>;
-};
-
-/** All input for the create `User` mutation. */
-export type CreateUserInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The `User` to be created by this mutation. */
-  user: UserInput;
-};
-
-/** The output of our create `User` mutation. */
-export type CreateUserPayload = {
-  __typename?: 'CreateUserPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** The `User` that was created by this mutation. */
-  user: Maybe<User>;
-  /** An edge for our `User`. May be used by Relay 1. */
-  userEdge: Maybe<UsersEdge>;
-};
-
-
-/** The output of our create `User` mutation. */
-export type CreateUserPayloadUserEdgeArgs = {
-  orderBy?: Array<UsersOrderBy>;
 };
 
 /** A connection to a list of `UUID` values. */
@@ -1144,219 +809,6 @@ export type DeleteConsultationPayloadConsultationEdgeArgs = {
   orderBy?: Array<ConsultationsOrderBy>;
 };
 
-/** All input for the `deleteMessageBodyRevisionApprovalByNodeId` mutation. */
-export type DeleteMessageBodyRevisionApprovalByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `MessageBodyRevisionApproval` to be deleted. */
-  nodeId: Scalars['ID']['input'];
-};
-
-/** All input for the `deleteMessageBodyRevisionApproval` mutation. */
-export type DeleteMessageBodyRevisionApprovalInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-};
-
-/** The output of our delete `MessageBodyRevisionApproval` mutation. */
-export type DeleteMessageBodyRevisionApprovalPayload = {
-  __typename?: 'DeleteMessageBodyRevisionApprovalPayload';
-  /** Reads a single `User` that is related to this `MessageBodyRevisionApproval`. */
-  approver: Maybe<User>;
-  /** Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionApproval`. */
-  bodyRevision: Maybe<MessageBodyRevision>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  deletedMessageBodyRevisionApprovalNodeId: Maybe<Scalars['ID']['output']>;
-  /** The `MessageBodyRevisionApproval` that was deleted by this mutation. */
-  messageBodyRevisionApproval: Maybe<MessageBodyRevisionApproval>;
-  /** An edge for our `MessageBodyRevisionApproval`. May be used by Relay 1. */
-  messageBodyRevisionApprovalEdge: Maybe<MessageBodyRevisionApprovalsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our delete `MessageBodyRevisionApproval` mutation. */
-export type DeleteMessageBodyRevisionApprovalPayloadMessageBodyRevisionApprovalEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionApprovalsOrderBy>;
-};
-
-/** All input for the `deleteMessageBodyRevisionByNodeId` mutation. */
-export type DeleteMessageBodyRevisionByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `MessageBodyRevision` to be deleted. */
-  nodeId: Scalars['ID']['input'];
-};
-
-/** All input for the `deleteMessageBodyRevisionCommentByNodeId` mutation. */
-export type DeleteMessageBodyRevisionCommentByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `MessageBodyRevisionComment` to be deleted. */
-  nodeId: Scalars['ID']['input'];
-};
-
-/** All input for the `deleteMessageBodyRevisionComment` mutation. */
-export type DeleteMessageBodyRevisionCommentInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-};
-
-/** The output of our delete `MessageBodyRevisionComment` mutation. */
-export type DeleteMessageBodyRevisionCommentPayload = {
-  __typename?: 'DeleteMessageBodyRevisionCommentPayload';
-  /** Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionComment`. */
-  bodyRevision: Maybe<MessageBodyRevision>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `User` that is related to this `MessageBodyRevisionComment`. */
-  commenter: Maybe<User>;
-  deletedMessageBodyRevisionCommentNodeId: Maybe<Scalars['ID']['output']>;
-  /** The `MessageBodyRevisionComment` that was deleted by this mutation. */
-  messageBodyRevisionComment: Maybe<MessageBodyRevisionComment>;
-  /** An edge for our `MessageBodyRevisionComment`. May be used by Relay 1. */
-  messageBodyRevisionCommentEdge: Maybe<MessageBodyRevisionCommentsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our delete `MessageBodyRevisionComment` mutation. */
-export type DeleteMessageBodyRevisionCommentPayloadMessageBodyRevisionCommentEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionCommentsOrderBy>;
-};
-
-/** All input for the `deleteMessageBodyRevision` mutation. */
-export type DeleteMessageBodyRevisionInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-};
-
-/** The output of our delete `MessageBodyRevision` mutation. */
-export type DeleteMessageBodyRevisionPayload = {
-  __typename?: 'DeleteMessageBodyRevisionPayload';
-  /** Reads a single `User` that is related to this `MessageBodyRevision`. */
-  author: Maybe<User>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  deletedMessageBodyRevisionNodeId: Maybe<Scalars['ID']['output']>;
-  /** Reads a single `Message` that is related to this `MessageBodyRevision`. */
-  message: Maybe<Message>;
-  /** The `MessageBodyRevision` that was deleted by this mutation. */
-  messageBodyRevision: Maybe<MessageBodyRevision>;
-  /** An edge for our `MessageBodyRevision`. May be used by Relay 1. */
-  messageBodyRevisionEdge: Maybe<MessageBodyRevisionsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our delete `MessageBodyRevision` mutation. */
-export type DeleteMessageBodyRevisionPayloadMessageBodyRevisionEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionsOrderBy>;
-};
-
-/** All input for the `deleteMessageByNodeId` mutation. */
-export type DeleteMessageByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `Message` to be deleted. */
-  nodeId: Scalars['ID']['input'];
-};
-
-/** All input for the `deleteMessage` mutation. */
-export type DeleteMessageInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-};
-
-/** The output of our delete `Message` mutation. */
-export type DeleteMessagePayload = {
-  __typename?: 'DeleteMessagePayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Consultation` that is related to this `Message`. */
-  consultation: Maybe<Consultation>;
-  deletedMessageNodeId: Maybe<Scalars['ID']['output']>;
-  /** The `Message` that was deleted by this mutation. */
-  message: Maybe<Message>;
-  /** An edge for our `Message`. May be used by Relay 1. */
-  messageEdge: Maybe<MessagesEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `Message`. */
-  sender: Maybe<User>;
-};
-
-
-/** The output of our delete `Message` mutation. */
-export type DeleteMessagePayloadMessageEdgeArgs = {
-  orderBy?: Array<MessagesOrderBy>;
-};
-
-/** All input for the `deleteOrganizationByNodeId` mutation. */
-export type DeleteOrganizationByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `Organization` to be deleted. */
-  nodeId: Scalars['ID']['input'];
-};
-
-/** All input for the `deleteOrganizationBySlug` mutation. */
-export type DeleteOrganizationBySlugInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  slug: Scalars['String']['input'];
-};
-
 /** All input for the `deleteOrganization` mutation. */
 export type DeleteOrganizationInput = {
   /**
@@ -1364,139 +816,10 @@ export type DeleteOrganizationInput = {
    * payload verbatim. May be used to track mutations by the client.
    */
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-};
-
-/** All input for the `deleteOrganizationInvitationByNodeId` mutation. */
-export type DeleteOrganizationInvitationByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `OrganizationInvitation` to be deleted. */
-  nodeId: Scalars['ID']['input'];
-};
-
-/** All input for the `deleteOrganizationInvitationByOrganizationIdAndEmail` mutation. */
-export type DeleteOrganizationInvitationByOrganizationIdAndEmailInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
   organizationId: Scalars['UUID']['input'];
 };
 
-/** All input for the `deleteOrganizationInvitationByOrganizationIdAndUserId` mutation. */
-export type DeleteOrganizationInvitationByOrganizationIdAndUserIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  organizationId: Scalars['UUID']['input'];
-  userId: Scalars['UUID']['input'];
-};
-
-/** All input for the `deleteOrganizationInvitation` mutation. */
-export type DeleteOrganizationInvitationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-};
-
-/** The output of our delete `OrganizationInvitation` mutation. */
-export type DeleteOrganizationInvitationPayload = {
-  __typename?: 'DeleteOrganizationInvitationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  deletedOrganizationInvitationNodeId: Maybe<Scalars['ID']['output']>;
-  /** Reads a single `Organization` that is related to this `OrganizationInvitation`. */
-  organization: Maybe<Organization>;
-  /** The `OrganizationInvitation` that was deleted by this mutation. */
-  organizationInvitation: Maybe<OrganizationInvitation>;
-  /** An edge for our `OrganizationInvitation`. May be used by Relay 1. */
-  organizationInvitationEdge: Maybe<OrganizationInvitationsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `OrganizationInvitation`. */
-  user: Maybe<User>;
-};
-
-
-/** The output of our delete `OrganizationInvitation` mutation. */
-export type DeleteOrganizationInvitationPayloadOrganizationInvitationEdgeArgs = {
-  orderBy?: Array<OrganizationInvitationsOrderBy>;
-};
-
-/** All input for the `deleteOrganizationMembershipByNodeId` mutation. */
-export type DeleteOrganizationMembershipByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `OrganizationMembership` to be deleted. */
-  nodeId: Scalars['ID']['input'];
-};
-
-/** All input for the `deleteOrganizationMembershipByOrganizationIdAndUserId` mutation. */
-export type DeleteOrganizationMembershipByOrganizationIdAndUserIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  organizationId: Scalars['UUID']['input'];
-  userId: Scalars['UUID']['input'];
-};
-
-/** All input for the `deleteOrganizationMembership` mutation. */
-export type DeleteOrganizationMembershipInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-};
-
-/** The output of our delete `OrganizationMembership` mutation. */
-export type DeleteOrganizationMembershipPayload = {
-  __typename?: 'DeleteOrganizationMembershipPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  deletedOrganizationMembershipNodeId: Maybe<Scalars['ID']['output']>;
-  /** Reads a single `Organization` that is related to this `OrganizationMembership`. */
-  organization: Maybe<Organization>;
-  /** The `OrganizationMembership` that was deleted by this mutation. */
-  organizationMembership: Maybe<OrganizationMembership>;
-  /** An edge for our `OrganizationMembership`. May be used by Relay 1. */
-  organizationMembershipEdge: Maybe<OrganizationMembershipsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `OrganizationMembership`. */
-  user: Maybe<User>;
-};
-
-
-/** The output of our delete `OrganizationMembership` mutation. */
-export type DeleteOrganizationMembershipPayloadOrganizationMembershipEdgeArgs = {
-  orderBy?: Array<OrganizationMembershipsOrderBy>;
-};
-
-/** The output of our delete `Organization` mutation. */
+/** The output of our `deleteOrganization` mutation. */
 export type DeleteOrganizationPayload = {
   __typename?: 'DeleteOrganizationPayload';
   /**
@@ -1504,19 +827,8 @@ export type DeleteOrganizationPayload = {
    * unchanged and unused. May be used by a client to track mutations.
    */
   clientMutationId: Maybe<Scalars['String']['output']>;
-  deletedOrganizationNodeId: Maybe<Scalars['ID']['output']>;
-  /** The `Organization` that was deleted by this mutation. */
-  organization: Maybe<Organization>;
-  /** An edge for our `Organization`. May be used by Relay 1. */
-  organizationEdge: Maybe<OrganizationsEdge>;
   /** Our root query field type. Allows us to run any query from our mutation payload. */
   query: Maybe<Query>;
-};
-
-
-/** The output of our delete `Organization` mutation. */
-export type DeleteOrganizationPayloadOrganizationEdgeArgs = {
-  orderBy?: Array<OrganizationsOrderBy>;
 };
 
 /** All input for the `deleteUserAuthenticationByNodeId` mutation. */
@@ -1578,28 +890,6 @@ export type DeleteUserAuthenticationPayloadUserAuthenticationEdgeArgs = {
   orderBy?: Array<UserAuthenticationsOrderBy>;
 };
 
-/** All input for the `deleteUserByNodeId` mutation. */
-export type DeleteUserByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `User` to be deleted. */
-  nodeId: Scalars['ID']['input'];
-};
-
-/** All input for the `deleteUserByUsername` mutation. */
-export type DeleteUserByUsernameInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** Public-facing username (or 'handle') of the user. */
-  username: Scalars['String']['input'];
-};
-
 /** All input for the `deleteUserEmailByNodeId` mutation. */
 export type DeleteUserEmailByNodeIdInput = {
   /**
@@ -1656,40 +946,6 @@ export type DeleteUserEmailPayload = {
 /** The output of our delete `UserEmail` mutation. */
 export type DeleteUserEmailPayloadUserEmailEdgeArgs = {
   orderBy?: Array<UserEmailsOrderBy>;
-};
-
-/** All input for the `deleteUser` mutation. */
-export type DeleteUserInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** Unique identifier for the user. */
-  id: Scalars['UUID']['input'];
-};
-
-/** The output of our delete `User` mutation. */
-export type DeleteUserPayload = {
-  __typename?: 'DeleteUserPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  deletedUserNodeId: Maybe<Scalars['ID']['output']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** The `User` that was deleted by this mutation. */
-  user: Maybe<User>;
-  /** An edge for our `User`. May be used by Relay 1. */
-  userEdge: Maybe<UsersEdge>;
-};
-
-
-/** The output of our delete `User` mutation. */
-export type DeleteUserPayloadUserEdgeArgs = {
-  orderBy?: Array<UsersOrderBy>;
 };
 
 /** All input for the `forgotPassword` mutation. */
@@ -1822,561 +1078,6 @@ export type MakeEmailPrimaryPayloadUserEmailEdgeArgs = {
   orderBy?: Array<UserEmailsOrderBy>;
 };
 
-export type Message = Node & {
-  __typename?: 'Message';
-  /** Reads a single `Consultation` that is related to this `Message`. */
-  consultation: Maybe<Consultation>;
-  consultationId: Scalars['UUID']['output'];
-  createdAt: Scalars['Datetime']['output'];
-  id: Scalars['UUID']['output'];
-  isForClients: Scalars['Boolean']['output'];
-  isForStaff: Scalars['Boolean']['output'];
-  /** Reads and enables pagination through a set of `MessageBodyRevision`. */
-  messageBodyRevisions: MessageBodyRevisionsConnection;
-  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
-  nodeId: Scalars['ID']['output'];
-  /** Reads a single `User` that is related to this `Message`. */
-  sender: Maybe<User>;
-  senderId: Maybe<Scalars['UUID']['output']>;
-};
-
-
-export type MessageMessageBodyRevisionsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionCondition>;
-  filter?: InputMaybe<MessageBodyRevisionFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionsOrderBy>>;
-};
-
-export type MessageBodyRevision = Node & {
-  __typename?: 'MessageBodyRevision';
-  /** Reads a single `User` that is related to this `MessageBodyRevision`. */
-  author: Maybe<User>;
-  authorId: Maybe<Scalars['UUID']['output']>;
-  content: Scalars['String']['output'];
-  createdAt: Scalars['Datetime']['output'];
-  id: Scalars['UUID']['output'];
-  /** Reads a single `Message` that is related to this `MessageBodyRevision`. */
-  message: Maybe<Message>;
-  /** Reads and enables pagination through a set of `MessageBodyRevisionApproval`. */
-  messageBodyRevisionApprovalsByBodyRevisionId: MessageBodyRevisionApprovalsConnection;
-  /** Reads and enables pagination through a set of `MessageBodyRevisionComment`. */
-  messageBodyRevisionCommentsByBodyRevisionId: MessageBodyRevisionCommentsConnection;
-  messageId: Scalars['UUID']['output'];
-  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
-  nodeId: Scalars['ID']['output'];
-  updatedAt: Scalars['Datetime']['output'];
-};
-
-
-export type MessageBodyRevisionMessageBodyRevisionApprovalsByBodyRevisionIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionApprovalCondition>;
-  filter?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionApprovalsOrderBy>>;
-};
-
-
-export type MessageBodyRevisionMessageBodyRevisionCommentsByBodyRevisionIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionCommentCondition>;
-  filter?: InputMaybe<MessageBodyRevisionCommentFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionCommentsOrderBy>>;
-};
-
-export type MessageBodyRevisionApproval = Node & {
-  __typename?: 'MessageBodyRevisionApproval';
-  /** Reads a single `User` that is related to this `MessageBodyRevisionApproval`. */
-  approver: Maybe<User>;
-  approverId: Maybe<Scalars['UUID']['output']>;
-  /** Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionApproval`. */
-  bodyRevision: Maybe<MessageBodyRevision>;
-  bodyRevisionId: Scalars['UUID']['output'];
-  createdAt: Scalars['Datetime']['output'];
-  id: Scalars['UUID']['output'];
-  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
-  nodeId: Scalars['ID']['output'];
-};
-
-/**
- * A condition to be used against `MessageBodyRevisionApproval` object types. All
- * fields are tested for equality and combined with a logical ‘and.’
- */
-export type MessageBodyRevisionApprovalCondition = {
-  /** Checks for equality with the object’s `approverId` field. */
-  approverId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `bodyRevisionId` field. */
-  bodyRevisionId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `createdAt` field. */
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** A filter to be used against `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’ */
-export type MessageBodyRevisionApprovalFilter = {
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<MessageBodyRevisionApprovalFilter>>;
-  /** Filter by the object’s `approver` relation. */
-  approver?: InputMaybe<UserFilter>;
-  /** A related `approver` exists. */
-  approverExists?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `approverId` field. */
-  approverId?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `bodyRevision` relation. */
-  bodyRevision?: InputMaybe<MessageBodyRevisionFilter>;
-  /** Filter by the object’s `bodyRevisionId` field. */
-  bodyRevisionId?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `createdAt` field. */
-  createdAt?: InputMaybe<DatetimeFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<UuidFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<MessageBodyRevisionApprovalFilter>>;
-};
-
-/** An input for mutations affecting `MessageBodyRevisionApproval` */
-export type MessageBodyRevisionApprovalInput = {
-  approverId?: InputMaybe<Scalars['UUID']['input']>;
-  bodyRevisionId: Scalars['UUID']['input'];
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** Represents an update to a `MessageBodyRevisionApproval`. Fields that are set will be updated. */
-export type MessageBodyRevisionApprovalPatch = {
-  approverId?: InputMaybe<Scalars['UUID']['input']>;
-  bodyRevisionId?: InputMaybe<Scalars['UUID']['input']>;
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** A connection to a list of `MessageBodyRevisionApproval` values. */
-export type MessageBodyRevisionApprovalsConnection = {
-  __typename?: 'MessageBodyRevisionApprovalsConnection';
-  /** A list of edges which contains the `MessageBodyRevisionApproval` and cursor to aid in pagination. */
-  edges: Array<Maybe<MessageBodyRevisionApprovalsEdge>>;
-  /** A list of `MessageBodyRevisionApproval` objects. */
-  nodes: Array<Maybe<MessageBodyRevisionApproval>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `MessageBodyRevisionApproval` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-/** A `MessageBodyRevisionApproval` edge in the connection. */
-export type MessageBodyRevisionApprovalsEdge = {
-  __typename?: 'MessageBodyRevisionApprovalsEdge';
-  /** A cursor for use in pagination. */
-  cursor: Maybe<Scalars['Cursor']['output']>;
-  /** The `MessageBodyRevisionApproval` at the end of the edge. */
-  node: Maybe<MessageBodyRevisionApproval>;
-};
-
-/** Methods to use when ordering `MessageBodyRevisionApproval`. */
-export type MessageBodyRevisionApprovalsOrderBy =
-  | 'APPROVER_ID_ASC'
-  | 'APPROVER_ID_DESC'
-  | 'BODY_REVISION_ID_ASC'
-  | 'BODY_REVISION_ID_DESC'
-  | 'CREATED_AT_ASC'
-  | 'CREATED_AT_DESC'
-  | 'ID_ASC'
-  | 'ID_DESC'
-  | 'NATURAL'
-  | 'PRIMARY_KEY_ASC'
-  | 'PRIMARY_KEY_DESC';
-
-export type MessageBodyRevisionComment = Node & {
-  __typename?: 'MessageBodyRevisionComment';
-  /** Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionComment`. */
-  bodyRevision: Maybe<MessageBodyRevision>;
-  bodyRevisionId: Scalars['UUID']['output'];
-  /** Reads a single `User` that is related to this `MessageBodyRevisionComment`. */
-  commenter: Maybe<User>;
-  commenterId: Maybe<Scalars['UUID']['output']>;
-  content: Scalars['String']['output'];
-  createdAt: Scalars['Datetime']['output'];
-  id: Scalars['UUID']['output'];
-  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
-  nodeId: Scalars['ID']['output'];
-  updatedAt: Scalars['Datetime']['output'];
-};
-
-/**
- * A condition to be used against `MessageBodyRevisionComment` object types. All
- * fields are tested for equality and combined with a logical ‘and.’
- */
-export type MessageBodyRevisionCommentCondition = {
-  /** Checks for equality with the object’s `bodyRevisionId` field. */
-  bodyRevisionId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `commenterId` field. */
-  commenterId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `content` field. */
-  content?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `createdAt` field. */
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `updatedAt` field. */
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-};
-
-/** A filter to be used against `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’ */
-export type MessageBodyRevisionCommentFilter = {
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<MessageBodyRevisionCommentFilter>>;
-  /** Filter by the object’s `bodyRevision` relation. */
-  bodyRevision?: InputMaybe<MessageBodyRevisionFilter>;
-  /** Filter by the object’s `bodyRevisionId` field. */
-  bodyRevisionId?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `commenter` relation. */
-  commenter?: InputMaybe<UserFilter>;
-  /** A related `commenter` exists. */
-  commenterExists?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `commenterId` field. */
-  commenterId?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `content` field. */
-  content?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `createdAt` field. */
-  createdAt?: InputMaybe<DatetimeFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<UuidFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<MessageBodyRevisionCommentFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<MessageBodyRevisionCommentFilter>>;
-  /** Filter by the object’s `updatedAt` field. */
-  updatedAt?: InputMaybe<DatetimeFilter>;
-};
-
-/** An input for mutations affecting `MessageBodyRevisionComment` */
-export type MessageBodyRevisionCommentInput = {
-  bodyRevisionId: Scalars['UUID']['input'];
-  commenterId?: InputMaybe<Scalars['UUID']['input']>;
-  content: Scalars['String']['input'];
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-};
-
-/** Represents an update to a `MessageBodyRevisionComment`. Fields that are set will be updated. */
-export type MessageBodyRevisionCommentPatch = {
-  bodyRevisionId?: InputMaybe<Scalars['UUID']['input']>;
-  commenterId?: InputMaybe<Scalars['UUID']['input']>;
-  content?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-};
-
-/** A connection to a list of `MessageBodyRevisionComment` values. */
-export type MessageBodyRevisionCommentsConnection = {
-  __typename?: 'MessageBodyRevisionCommentsConnection';
-  /** A list of edges which contains the `MessageBodyRevisionComment` and cursor to aid in pagination. */
-  edges: Array<Maybe<MessageBodyRevisionCommentsEdge>>;
-  /** A list of `MessageBodyRevisionComment` objects. */
-  nodes: Array<Maybe<MessageBodyRevisionComment>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `MessageBodyRevisionComment` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-/** A `MessageBodyRevisionComment` edge in the connection. */
-export type MessageBodyRevisionCommentsEdge = {
-  __typename?: 'MessageBodyRevisionCommentsEdge';
-  /** A cursor for use in pagination. */
-  cursor: Maybe<Scalars['Cursor']['output']>;
-  /** The `MessageBodyRevisionComment` at the end of the edge. */
-  node: Maybe<MessageBodyRevisionComment>;
-};
-
-/** Methods to use when ordering `MessageBodyRevisionComment`. */
-export type MessageBodyRevisionCommentsOrderBy =
-  | 'BODY_REVISION_ID_ASC'
-  | 'BODY_REVISION_ID_DESC'
-  | 'COMMENTER_ID_ASC'
-  | 'COMMENTER_ID_DESC'
-  | 'CONTENT_ASC'
-  | 'CONTENT_DESC'
-  | 'CREATED_AT_ASC'
-  | 'CREATED_AT_DESC'
-  | 'ID_ASC'
-  | 'ID_DESC'
-  | 'NATURAL'
-  | 'PRIMARY_KEY_ASC'
-  | 'PRIMARY_KEY_DESC'
-  | 'UPDATED_AT_ASC'
-  | 'UPDATED_AT_DESC';
-
-/**
- * A condition to be used against `MessageBodyRevision` object types. All fields
- * are tested for equality and combined with a logical ‘and.’
- */
-export type MessageBodyRevisionCondition = {
-  /** Checks for equality with the object’s `authorId` field. */
-  authorId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `content` field. */
-  content?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `createdAt` field. */
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `messageId` field. */
-  messageId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `updatedAt` field. */
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-};
-
-/** A filter to be used against `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’ */
-export type MessageBodyRevisionFilter = {
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<MessageBodyRevisionFilter>>;
-  /** Filter by the object’s `author` relation. */
-  author?: InputMaybe<UserFilter>;
-  /** A related `author` exists. */
-  authorExists?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `authorId` field. */
-  authorId?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `content` field. */
-  content?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `createdAt` field. */
-  createdAt?: InputMaybe<DatetimeFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `message` relation. */
-  message?: InputMaybe<MessageFilter>;
-  /** Filter by the object’s `messageBodyRevisionApprovalsByBodyRevisionId` relation. */
-  messageBodyRevisionApprovalsByBodyRevisionId?: InputMaybe<MessageBodyRevisionToManyMessageBodyRevisionApprovalFilter>;
-  /** Some related `messageBodyRevisionApprovalsByBodyRevisionId` exist. */
-  messageBodyRevisionApprovalsByBodyRevisionIdExist?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `messageBodyRevisionCommentsByBodyRevisionId` relation. */
-  messageBodyRevisionCommentsByBodyRevisionId?: InputMaybe<MessageBodyRevisionToManyMessageBodyRevisionCommentFilter>;
-  /** Some related `messageBodyRevisionCommentsByBodyRevisionId` exist. */
-  messageBodyRevisionCommentsByBodyRevisionIdExist?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `messageId` field. */
-  messageId?: InputMaybe<UuidFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<MessageBodyRevisionFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<MessageBodyRevisionFilter>>;
-  /** Filter by the object’s `updatedAt` field. */
-  updatedAt?: InputMaybe<DatetimeFilter>;
-};
-
-/** An input for mutations affecting `MessageBodyRevision` */
-export type MessageBodyRevisionInput = {
-  authorId?: InputMaybe<Scalars['UUID']['input']>;
-  content: Scalars['String']['input'];
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  messageId: Scalars['UUID']['input'];
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-};
-
-/** Represents an update to a `MessageBodyRevision`. Fields that are set will be updated. */
-export type MessageBodyRevisionPatch = {
-  authorId?: InputMaybe<Scalars['UUID']['input']>;
-  content?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  messageId?: InputMaybe<Scalars['UUID']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-};
-
-/** A filter to be used against many `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’ */
-export type MessageBodyRevisionToManyMessageBodyRevisionApprovalFilter = {
-  /** Every related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-  /** No related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-  /** Some related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-};
-
-/** A filter to be used against many `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’ */
-export type MessageBodyRevisionToManyMessageBodyRevisionCommentFilter = {
-  /** Every related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<MessageBodyRevisionCommentFilter>;
-  /** No related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<MessageBodyRevisionCommentFilter>;
-  /** Some related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<MessageBodyRevisionCommentFilter>;
-};
-
-/** A connection to a list of `MessageBodyRevision` values. */
-export type MessageBodyRevisionsConnection = {
-  __typename?: 'MessageBodyRevisionsConnection';
-  /** A list of edges which contains the `MessageBodyRevision` and cursor to aid in pagination. */
-  edges: Array<Maybe<MessageBodyRevisionsEdge>>;
-  /** A list of `MessageBodyRevision` objects. */
-  nodes: Array<Maybe<MessageBodyRevision>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `MessageBodyRevision` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-/** A `MessageBodyRevision` edge in the connection. */
-export type MessageBodyRevisionsEdge = {
-  __typename?: 'MessageBodyRevisionsEdge';
-  /** A cursor for use in pagination. */
-  cursor: Maybe<Scalars['Cursor']['output']>;
-  /** The `MessageBodyRevision` at the end of the edge. */
-  node: Maybe<MessageBodyRevision>;
-};
-
-/** Methods to use when ordering `MessageBodyRevision`. */
-export type MessageBodyRevisionsOrderBy =
-  | 'AUTHOR_ID_ASC'
-  | 'AUTHOR_ID_DESC'
-  | 'CONTENT_ASC'
-  | 'CONTENT_DESC'
-  | 'CREATED_AT_ASC'
-  | 'CREATED_AT_DESC'
-  | 'ID_ASC'
-  | 'ID_DESC'
-  | 'MESSAGE_ID_ASC'
-  | 'MESSAGE_ID_DESC'
-  | 'NATURAL'
-  | 'PRIMARY_KEY_ASC'
-  | 'PRIMARY_KEY_DESC'
-  | 'UPDATED_AT_ASC'
-  | 'UPDATED_AT_DESC';
-
-/** A condition to be used against `Message` object types. All fields are tested for equality and combined with a logical ‘and.’ */
-export type MessageCondition = {
-  /** Checks for equality with the object’s `consultationId` field. */
-  consultationId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `createdAt` field. */
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `isForClients` field. */
-  isForClients?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Checks for equality with the object’s `isForStaff` field. */
-  isForStaff?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Checks for equality with the object’s `senderId` field. */
-  senderId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** A filter to be used against `Message` object types. All fields are combined with a logical ‘and.’ */
-export type MessageFilter = {
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<MessageFilter>>;
-  /** Filter by the object’s `consultation` relation. */
-  consultation?: InputMaybe<ConsultationFilter>;
-  /** Filter by the object’s `consultationId` field. */
-  consultationId?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `createdAt` field. */
-  createdAt?: InputMaybe<DatetimeFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `isForClients` field. */
-  isForClients?: InputMaybe<BooleanFilter>;
-  /** Filter by the object’s `isForStaff` field. */
-  isForStaff?: InputMaybe<BooleanFilter>;
-  /** Filter by the object’s `messageBodyRevisions` relation. */
-  messageBodyRevisions?: InputMaybe<MessageToManyMessageBodyRevisionFilter>;
-  /** Some related `messageBodyRevisions` exist. */
-  messageBodyRevisionsExist?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Negates the expression. */
-  not?: InputMaybe<MessageFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<MessageFilter>>;
-  /** Filter by the object’s `sender` relation. */
-  sender?: InputMaybe<UserFilter>;
-  /** A related `sender` exists. */
-  senderExists?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `senderId` field. */
-  senderId?: InputMaybe<UuidFilter>;
-};
-
-/** An input for mutations affecting `Message` */
-export type MessageInput = {
-  consultationId: Scalars['UUID']['input'];
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isForClients?: InputMaybe<Scalars['Boolean']['input']>;
-  isForStaff?: InputMaybe<Scalars['Boolean']['input']>;
-  senderId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** Represents an update to a `Message`. Fields that are set will be updated. */
-export type MessagePatch = {
-  consultationId?: InputMaybe<Scalars['UUID']['input']>;
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isForClients?: InputMaybe<Scalars['Boolean']['input']>;
-  isForStaff?: InputMaybe<Scalars['Boolean']['input']>;
-  senderId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** A filter to be used against many `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’ */
-export type MessageToManyMessageBodyRevisionFilter = {
-  /** Every related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<MessageBodyRevisionFilter>;
-  /** No related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<MessageBodyRevisionFilter>;
-  /** Some related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<MessageBodyRevisionFilter>;
-};
-
-/** A connection to a list of `Message` values. */
-export type MessagesConnection = {
-  __typename?: 'MessagesConnection';
-  /** A list of edges which contains the `Message` and cursor to aid in pagination. */
-  edges: Array<Maybe<MessagesEdge>>;
-  /** A list of `Message` objects. */
-  nodes: Array<Maybe<Message>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `Message` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-/** A `Message` edge in the connection. */
-export type MessagesEdge = {
-  __typename?: 'MessagesEdge';
-  /** A cursor for use in pagination. */
-  cursor: Maybe<Scalars['Cursor']['output']>;
-  /** The `Message` at the end of the edge. */
-  node: Maybe<Message>;
-};
-
-/** Methods to use when ordering `Message`. */
-export type MessagesOrderBy =
-  | 'CONSULTATION_ID_ASC'
-  | 'CONSULTATION_ID_DESC'
-  | 'CREATED_AT_ASC'
-  | 'CREATED_AT_DESC'
-  | 'ID_ASC'
-  | 'ID_DESC'
-  | 'IS_FOR_CLIENTS_ASC'
-  | 'IS_FOR_CLIENTS_DESC'
-  | 'IS_FOR_STAFF_ASC'
-  | 'IS_FOR_STAFF_DESC'
-  | 'NATURAL'
-  | 'PRIMARY_KEY_ASC'
-  | 'PRIMARY_KEY_DESC'
-  | 'SENDER_ID_ASC'
-  | 'SENDER_ID_DESC';
-
 /** The root mutation type which contains root level fields which mutate data. */
 export type Mutation = {
   __typename?: 'Mutation';
@@ -2389,24 +1090,7 @@ export type Mutation = {
   createConsultation: Maybe<CreateConsultationPayload>;
   /** Creates a single `ConsultationParticipant`. */
   createConsultationParticipant: Maybe<CreateConsultationParticipantPayload>;
-  /** Creates a single `Message`. */
-  createMessage: Maybe<CreateMessagePayload>;
-  /** Creates a single `MessageBodyRevision`. */
-  createMessageBodyRevision: Maybe<CreateMessageBodyRevisionPayload>;
-  /** Creates a single `MessageBodyRevisionApproval`. */
-  createMessageBodyRevisionApproval: Maybe<CreateMessageBodyRevisionApprovalPayload>;
-  /** Creates a single `MessageBodyRevisionComment`. */
-  createMessageBodyRevisionComment: Maybe<CreateMessageBodyRevisionCommentPayload>;
-  /** Creates a single `Organization`. */
   createOrganization: Maybe<CreateOrganizationPayload>;
-  /** Creates a single `OrganizationInvitation`. */
-  createOrganizationInvitation: Maybe<CreateOrganizationInvitationPayload>;
-  /** Creates a single `OrganizationMembership`. */
-  createOrganizationMembership: Maybe<CreateOrganizationMembershipPayload>;
-  /** Creates a single `User`. */
-  createUser: Maybe<CreateUserPayload>;
-  /** Creates a single `UserAuthentication`. */
-  createUserAuthentication: Maybe<CreateUserAuthenticationPayload>;
   /** Creates a single `UserEmail`. */
   createUserEmail: Maybe<CreateUserEmailPayload>;
   /** Deletes a single `Consultation` using a unique key. */
@@ -2419,54 +1103,13 @@ export type Mutation = {
   deleteConsultationParticipantByConsultationIdAndUserId: Maybe<DeleteConsultationParticipantPayload>;
   /** Deletes a single `ConsultationParticipant` using its globally unique id. */
   deleteConsultationParticipantByNodeId: Maybe<DeleteConsultationParticipantPayload>;
-  /** Deletes a single `Message` using a unique key. */
-  deleteMessage: Maybe<DeleteMessagePayload>;
-  /** Deletes a single `MessageBodyRevision` using a unique key. */
-  deleteMessageBodyRevision: Maybe<DeleteMessageBodyRevisionPayload>;
-  /** Deletes a single `MessageBodyRevisionApproval` using a unique key. */
-  deleteMessageBodyRevisionApproval: Maybe<DeleteMessageBodyRevisionApprovalPayload>;
-  /** Deletes a single `MessageBodyRevisionApproval` using its globally unique id. */
-  deleteMessageBodyRevisionApprovalByNodeId: Maybe<DeleteMessageBodyRevisionApprovalPayload>;
-  /** Deletes a single `MessageBodyRevision` using its globally unique id. */
-  deleteMessageBodyRevisionByNodeId: Maybe<DeleteMessageBodyRevisionPayload>;
-  /** Deletes a single `MessageBodyRevisionComment` using a unique key. */
-  deleteMessageBodyRevisionComment: Maybe<DeleteMessageBodyRevisionCommentPayload>;
-  /** Deletes a single `MessageBodyRevisionComment` using its globally unique id. */
-  deleteMessageBodyRevisionCommentByNodeId: Maybe<DeleteMessageBodyRevisionCommentPayload>;
-  /** Deletes a single `Message` using its globally unique id. */
-  deleteMessageByNodeId: Maybe<DeleteMessagePayload>;
-  /** Deletes a single `Organization` using a unique key. */
   deleteOrganization: Maybe<DeleteOrganizationPayload>;
-  /** Deletes a single `Organization` using its globally unique id. */
-  deleteOrganizationByNodeId: Maybe<DeleteOrganizationPayload>;
-  /** Deletes a single `Organization` using a unique key. */
-  deleteOrganizationBySlug: Maybe<DeleteOrganizationPayload>;
-  /** Deletes a single `OrganizationInvitation` using a unique key. */
-  deleteOrganizationInvitation: Maybe<DeleteOrganizationInvitationPayload>;
-  /** Deletes a single `OrganizationInvitation` using its globally unique id. */
-  deleteOrganizationInvitationByNodeId: Maybe<DeleteOrganizationInvitationPayload>;
-  /** Deletes a single `OrganizationInvitation` using a unique key. */
-  deleteOrganizationInvitationByOrganizationIdAndEmail: Maybe<DeleteOrganizationInvitationPayload>;
-  /** Deletes a single `OrganizationInvitation` using a unique key. */
-  deleteOrganizationInvitationByOrganizationIdAndUserId: Maybe<DeleteOrganizationInvitationPayload>;
-  /** Deletes a single `OrganizationMembership` using a unique key. */
-  deleteOrganizationMembership: Maybe<DeleteOrganizationMembershipPayload>;
-  /** Deletes a single `OrganizationMembership` using its globally unique id. */
-  deleteOrganizationMembershipByNodeId: Maybe<DeleteOrganizationMembershipPayload>;
-  /** Deletes a single `OrganizationMembership` using a unique key. */
-  deleteOrganizationMembershipByOrganizationIdAndUserId: Maybe<DeleteOrganizationMembershipPayload>;
-  /** Deletes a single `User` using a unique key. */
-  deleteUser: Maybe<DeleteUserPayload>;
   /** Deletes a single `UserAuthentication` using a unique key. */
   deleteUserAuthentication: Maybe<DeleteUserAuthenticationPayload>;
   /** Deletes a single `UserAuthentication` using its globally unique id. */
   deleteUserAuthenticationByNodeId: Maybe<DeleteUserAuthenticationPayload>;
   /** Deletes a single `UserAuthentication` using a unique key. */
   deleteUserAuthenticationByServiceAndIdentifier: Maybe<DeleteUserAuthenticationPayload>;
-  /** Deletes a single `User` using its globally unique id. */
-  deleteUserByNodeId: Maybe<DeleteUserPayload>;
-  /** Deletes a single `User` using a unique key. */
-  deleteUserByUsername: Maybe<DeleteUserPayload>;
   /** Deletes a single `UserEmail` using a unique key. */
   deleteUserEmail: Maybe<DeleteUserEmailPayload>;
   /** Deletes a single `UserEmail` using its globally unique id. */
@@ -2503,60 +1146,18 @@ export type Mutation = {
   updateConsultationParticipantByConsultationIdAndUserId: Maybe<UpdateConsultationParticipantPayload>;
   /** Updates a single `ConsultationParticipant` using its globally unique id and a patch. */
   updateConsultationParticipantByNodeId: Maybe<UpdateConsultationParticipantPayload>;
-  /** Updates a single `Message` using a unique key and a patch. */
-  updateMessage: Maybe<UpdateMessagePayload>;
-  /** Updates a single `MessageBodyRevision` using a unique key and a patch. */
-  updateMessageBodyRevision: Maybe<UpdateMessageBodyRevisionPayload>;
-  /** Updates a single `MessageBodyRevisionApproval` using a unique key and a patch. */
-  updateMessageBodyRevisionApproval: Maybe<UpdateMessageBodyRevisionApprovalPayload>;
-  /** Updates a single `MessageBodyRevisionApproval` using its globally unique id and a patch. */
-  updateMessageBodyRevisionApprovalByNodeId: Maybe<UpdateMessageBodyRevisionApprovalPayload>;
-  /** Updates a single `MessageBodyRevision` using its globally unique id and a patch. */
-  updateMessageBodyRevisionByNodeId: Maybe<UpdateMessageBodyRevisionPayload>;
-  /** Updates a single `MessageBodyRevisionComment` using a unique key and a patch. */
-  updateMessageBodyRevisionComment: Maybe<UpdateMessageBodyRevisionCommentPayload>;
-  /** Updates a single `MessageBodyRevisionComment` using its globally unique id and a patch. */
-  updateMessageBodyRevisionCommentByNodeId: Maybe<UpdateMessageBodyRevisionCommentPayload>;
-  /** Updates a single `Message` using its globally unique id and a patch. */
-  updateMessageByNodeId: Maybe<UpdateMessagePayload>;
   /** Updates a single `Organization` using a unique key and a patch. */
   updateOrganization: Maybe<UpdateOrganizationPayload>;
   /** Updates a single `Organization` using its globally unique id and a patch. */
   updateOrganizationByNodeId: Maybe<UpdateOrganizationPayload>;
   /** Updates a single `Organization` using a unique key and a patch. */
   updateOrganizationBySlug: Maybe<UpdateOrganizationPayload>;
-  /** Updates a single `OrganizationInvitation` using a unique key and a patch. */
-  updateOrganizationInvitation: Maybe<UpdateOrganizationInvitationPayload>;
-  /** Updates a single `OrganizationInvitation` using its globally unique id and a patch. */
-  updateOrganizationInvitationByNodeId: Maybe<UpdateOrganizationInvitationPayload>;
-  /** Updates a single `OrganizationInvitation` using a unique key and a patch. */
-  updateOrganizationInvitationByOrganizationIdAndEmail: Maybe<UpdateOrganizationInvitationPayload>;
-  /** Updates a single `OrganizationInvitation` using a unique key and a patch. */
-  updateOrganizationInvitationByOrganizationIdAndUserId: Maybe<UpdateOrganizationInvitationPayload>;
-  /** Updates a single `OrganizationMembership` using a unique key and a patch. */
-  updateOrganizationMembership: Maybe<UpdateOrganizationMembershipPayload>;
-  /** Updates a single `OrganizationMembership` using its globally unique id and a patch. */
-  updateOrganizationMembershipByNodeId: Maybe<UpdateOrganizationMembershipPayload>;
-  /** Updates a single `OrganizationMembership` using a unique key and a patch. */
-  updateOrganizationMembershipByOrganizationIdAndUserId: Maybe<UpdateOrganizationMembershipPayload>;
   /** Updates a single `User` using a unique key and a patch. */
   updateUser: Maybe<UpdateUserPayload>;
-  /** Updates a single `UserAuthentication` using a unique key and a patch. */
-  updateUserAuthentication: Maybe<UpdateUserAuthenticationPayload>;
-  /** Updates a single `UserAuthentication` using its globally unique id and a patch. */
-  updateUserAuthenticationByNodeId: Maybe<UpdateUserAuthenticationPayload>;
-  /** Updates a single `UserAuthentication` using a unique key and a patch. */
-  updateUserAuthenticationByServiceAndIdentifier: Maybe<UpdateUserAuthenticationPayload>;
   /** Updates a single `User` using its globally unique id and a patch. */
   updateUserByNodeId: Maybe<UpdateUserPayload>;
   /** Updates a single `User` using a unique key and a patch. */
   updateUserByUsername: Maybe<UpdateUserPayload>;
-  /** Updates a single `UserEmail` using a unique key and a patch. */
-  updateUserEmail: Maybe<UpdateUserEmailPayload>;
-  /** Updates a single `UserEmail` using its globally unique id and a patch. */
-  updateUserEmailByNodeId: Maybe<UpdateUserEmailPayload>;
-  /** Updates a single `UserEmail` using a unique key and a patch. */
-  updateUserEmailByUserIdAndEmail: Maybe<UpdateUserEmailPayload>;
   /** Once you have received a verification token for your email, you may call this mutation with that token to make your email verified. */
   verifyEmail: Maybe<VerifyEmailPayload>;
 };
@@ -2593,56 +1194,8 @@ export type MutationCreateConsultationParticipantArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateMessageArgs = {
-  input: CreateMessageInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateMessageBodyRevisionArgs = {
-  input: CreateMessageBodyRevisionInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateMessageBodyRevisionApprovalArgs = {
-  input: CreateMessageBodyRevisionApprovalInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateMessageBodyRevisionCommentArgs = {
-  input: CreateMessageBodyRevisionCommentInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
 export type MutationCreateOrganizationArgs = {
   input: CreateOrganizationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateOrganizationInvitationArgs = {
-  input: CreateOrganizationInvitationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateOrganizationMembershipArgs = {
-  input: CreateOrganizationMembershipInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateUserArgs = {
-  input: CreateUserInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationCreateUserAuthenticationArgs = {
-  input: CreateUserAuthenticationInput;
 };
 
 
@@ -2683,116 +1236,8 @@ export type MutationDeleteConsultationParticipantByNodeIdArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteMessageArgs = {
-  input: DeleteMessageInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteMessageBodyRevisionArgs = {
-  input: DeleteMessageBodyRevisionInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteMessageBodyRevisionApprovalArgs = {
-  input: DeleteMessageBodyRevisionApprovalInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteMessageBodyRevisionApprovalByNodeIdArgs = {
-  input: DeleteMessageBodyRevisionApprovalByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteMessageBodyRevisionByNodeIdArgs = {
-  input: DeleteMessageBodyRevisionByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteMessageBodyRevisionCommentArgs = {
-  input: DeleteMessageBodyRevisionCommentInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteMessageBodyRevisionCommentByNodeIdArgs = {
-  input: DeleteMessageBodyRevisionCommentByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteMessageByNodeIdArgs = {
-  input: DeleteMessageByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
 export type MutationDeleteOrganizationArgs = {
   input: DeleteOrganizationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationByNodeIdArgs = {
-  input: DeleteOrganizationByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationBySlugArgs = {
-  input: DeleteOrganizationBySlugInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationInvitationArgs = {
-  input: DeleteOrganizationInvitationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationInvitationByNodeIdArgs = {
-  input: DeleteOrganizationInvitationByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationInvitationByOrganizationIdAndEmailArgs = {
-  input: DeleteOrganizationInvitationByOrganizationIdAndEmailInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationInvitationByOrganizationIdAndUserIdArgs = {
-  input: DeleteOrganizationInvitationByOrganizationIdAndUserIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationMembershipArgs = {
-  input: DeleteOrganizationMembershipInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationMembershipByNodeIdArgs = {
-  input: DeleteOrganizationMembershipByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteOrganizationMembershipByOrganizationIdAndUserIdArgs = {
-  input: DeleteOrganizationMembershipByOrganizationIdAndUserIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteUserArgs = {
-  input: DeleteUserInput;
 };
 
 
@@ -2811,18 +1256,6 @@ export type MutationDeleteUserAuthenticationByNodeIdArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationDeleteUserAuthenticationByServiceAndIdentifierArgs = {
   input: DeleteUserAuthenticationByServiceAndIdentifierInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteUserByNodeIdArgs = {
-  input: DeleteUserByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationDeleteUserByUsernameArgs = {
-  input: DeleteUserByUsernameInput;
 };
 
 
@@ -2941,54 +1374,6 @@ export type MutationUpdateConsultationParticipantByNodeIdArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateMessageArgs = {
-  input: UpdateMessageInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateMessageBodyRevisionArgs = {
-  input: UpdateMessageBodyRevisionInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateMessageBodyRevisionApprovalArgs = {
-  input: UpdateMessageBodyRevisionApprovalInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateMessageBodyRevisionApprovalByNodeIdArgs = {
-  input: UpdateMessageBodyRevisionApprovalByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateMessageBodyRevisionByNodeIdArgs = {
-  input: UpdateMessageBodyRevisionByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateMessageBodyRevisionCommentArgs = {
-  input: UpdateMessageBodyRevisionCommentInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateMessageBodyRevisionCommentByNodeIdArgs = {
-  input: UpdateMessageBodyRevisionCommentByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateMessageByNodeIdArgs = {
-  input: UpdateMessageByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateOrganizationArgs = {
   input: UpdateOrganizationInput;
 };
@@ -3007,68 +1392,8 @@ export type MutationUpdateOrganizationBySlugArgs = {
 
 
 /** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateOrganizationInvitationArgs = {
-  input: UpdateOrganizationInvitationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateOrganizationInvitationByNodeIdArgs = {
-  input: UpdateOrganizationInvitationByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateOrganizationInvitationByOrganizationIdAndEmailArgs = {
-  input: UpdateOrganizationInvitationByOrganizationIdAndEmailInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateOrganizationInvitationByOrganizationIdAndUserIdArgs = {
-  input: UpdateOrganizationInvitationByOrganizationIdAndUserIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateOrganizationMembershipArgs = {
-  input: UpdateOrganizationMembershipInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateOrganizationMembershipByNodeIdArgs = {
-  input: UpdateOrganizationMembershipByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateOrganizationMembershipByOrganizationIdAndUserIdArgs = {
-  input: UpdateOrganizationMembershipByOrganizationIdAndUserIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateUserArgs = {
   input: UpdateUserInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateUserAuthenticationArgs = {
-  input: UpdateUserAuthenticationInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateUserAuthenticationByNodeIdArgs = {
-  input: UpdateUserAuthenticationByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateUserAuthenticationByServiceAndIdentifierArgs = {
-  input: UpdateUserAuthenticationByServiceAndIdentifierInput;
 };
 
 
@@ -3081,24 +1406,6 @@ export type MutationUpdateUserByNodeIdArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateUserByUsernameArgs = {
   input: UpdateUserByUsernameInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateUserEmailArgs = {
-  input: UpdateUserEmailInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateUserEmailByNodeIdArgs = {
-  input: UpdateUserEmailByNodeIdInput;
-};
-
-
-/** The root mutation type which contains root level fields which mutate data. */
-export type MutationUpdateUserEmailByUserIdAndEmailArgs = {
-  input: UpdateUserEmailByUserIdAndEmailInput;
 };
 
 
@@ -3124,8 +1431,6 @@ export type Organization = Node & {
   name: Scalars['String']['output'];
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID']['output'];
-  /** Reads and enables pagination through a set of `OrganizationInvitation`. */
-  organizationInvitations: OrganizationInvitationsConnection;
   /** Reads and enables pagination through a set of `OrganizationMembership`. */
   organizationMemberships: OrganizationMembershipsConnection;
   slug: Scalars['String']['output'];
@@ -3141,18 +1446,6 @@ export type OrganizationConsultationsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<ConsultationsOrderBy>>;
-};
-
-
-export type OrganizationOrganizationInvitationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<OrganizationInvitationCondition>;
-  filter?: InputMaybe<OrganizationInvitationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OrganizationInvitationsOrderBy>>;
 };
 
 
@@ -3208,10 +1501,6 @@ export type OrganizationFilter = {
   not?: InputMaybe<OrganizationFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<OrganizationFilter>>;
-  /** Filter by the object’s `organizationInvitations` relation. */
-  organizationInvitations?: InputMaybe<OrganizationToManyOrganizationInvitationFilter>;
-  /** Some related `organizationInvitations` exist. */
-  organizationInvitationsExist?: InputMaybe<Scalars['Boolean']['input']>;
   /** Filter by the object’s `organizationMemberships` relation. */
   organizationMemberships?: InputMaybe<OrganizationToManyOrganizationMembershipFilter>;
   /** Some related `organizationMemberships` exist. */
@@ -3219,128 +1508,6 @@ export type OrganizationFilter = {
   /** Filter by the object’s `slug` field. */
   slug?: InputMaybe<StringFilter>;
 };
-
-/** An input for mutations affecting `Organization` */
-export type OrganizationInput = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  name: Scalars['String']['input'];
-  slug: Scalars['String']['input'];
-};
-
-export type OrganizationInvitation = Node & {
-  __typename?: 'OrganizationInvitation';
-  code: Maybe<Scalars['String']['output']>;
-  email: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
-  nodeId: Scalars['ID']['output'];
-  /** Reads a single `Organization` that is related to this `OrganizationInvitation`. */
-  organization: Maybe<Organization>;
-  organizationId: Scalars['UUID']['output'];
-  /** Reads a single `User` that is related to this `OrganizationInvitation`. */
-  user: Maybe<User>;
-  userId: Maybe<Scalars['UUID']['output']>;
-};
-
-/**
- * A condition to be used against `OrganizationInvitation` object types. All fields
- * are tested for equality and combined with a logical ‘and.’
- */
-export type OrganizationInvitationCondition = {
-  /** Checks for equality with the object’s `code` field. */
-  code?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `email` field. */
-  email?: InputMaybe<Scalars['String']['input']>;
-  /** Checks for equality with the object’s `id` field. */
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `organizationId` field. */
-  organizationId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Checks for equality with the object’s `userId` field. */
-  userId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** A filter to be used against `OrganizationInvitation` object types. All fields are combined with a logical ‘and.’ */
-export type OrganizationInvitationFilter = {
-  /** Checks for all expressions in this list. */
-  and?: InputMaybe<Array<OrganizationInvitationFilter>>;
-  /** Filter by the object’s `code` field. */
-  code?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `email` field. */
-  email?: InputMaybe<StringFilter>;
-  /** Filter by the object’s `id` field. */
-  id?: InputMaybe<UuidFilter>;
-  /** Negates the expression. */
-  not?: InputMaybe<OrganizationInvitationFilter>;
-  /** Checks for any expressions in this list. */
-  or?: InputMaybe<Array<OrganizationInvitationFilter>>;
-  /** Filter by the object’s `organization` relation. */
-  organization?: InputMaybe<OrganizationFilter>;
-  /** Filter by the object’s `organizationId` field. */
-  organizationId?: InputMaybe<UuidFilter>;
-  /** Filter by the object’s `user` relation. */
-  user?: InputMaybe<UserFilter>;
-  /** A related `user` exists. */
-  userExists?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `userId` field. */
-  userId?: InputMaybe<UuidFilter>;
-};
-
-/** An input for mutations affecting `OrganizationInvitation` */
-export type OrganizationInvitationInput = {
-  code?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  organizationId: Scalars['UUID']['input'];
-  userId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** Represents an update to a `OrganizationInvitation`. Fields that are set will be updated. */
-export type OrganizationInvitationPatch = {
-  code?: InputMaybe<Scalars['String']['input']>;
-  email?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  organizationId?: InputMaybe<Scalars['UUID']['input']>;
-  userId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** A connection to a list of `OrganizationInvitation` values. */
-export type OrganizationInvitationsConnection = {
-  __typename?: 'OrganizationInvitationsConnection';
-  /** A list of edges which contains the `OrganizationInvitation` and cursor to aid in pagination. */
-  edges: Array<Maybe<OrganizationInvitationsEdge>>;
-  /** A list of `OrganizationInvitation` objects. */
-  nodes: Array<Maybe<OrganizationInvitation>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
-  /** The count of *all* `OrganizationInvitation` you could get from the connection. */
-  totalCount: Scalars['Int']['output'];
-};
-
-/** A `OrganizationInvitation` edge in the connection. */
-export type OrganizationInvitationsEdge = {
-  __typename?: 'OrganizationInvitationsEdge';
-  /** A cursor for use in pagination. */
-  cursor: Maybe<Scalars['Cursor']['output']>;
-  /** The `OrganizationInvitation` at the end of the edge. */
-  node: Maybe<OrganizationInvitation>;
-};
-
-/** Methods to use when ordering `OrganizationInvitation`. */
-export type OrganizationInvitationsOrderBy =
-  | 'CODE_ASC'
-  | 'CODE_DESC'
-  | 'EMAIL_ASC'
-  | 'EMAIL_DESC'
-  | 'ID_ASC'
-  | 'ID_DESC'
-  | 'NATURAL'
-  | 'ORGANIZATION_ID_ASC'
-  | 'ORGANIZATION_ID_DESC'
-  | 'PRIMARY_KEY_ASC'
-  | 'PRIMARY_KEY_DESC'
-  | 'USER_ID_ASC'
-  | 'USER_ID_DESC';
 
 export type OrganizationMembership = Node & {
   __typename?: 'OrganizationMembership';
@@ -3418,39 +1585,13 @@ export type OrganizationMembershipFilter = {
   userId?: InputMaybe<UuidFilter>;
 };
 
-/** An input for mutations affecting `OrganizationMembership` */
-export type OrganizationMembershipInput = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isBillingContact?: InputMaybe<Scalars['Boolean']['input']>;
-  isCounselor?: InputMaybe<Scalars['Boolean']['input']>;
-  isDispatcher?: InputMaybe<Scalars['Boolean']['input']>;
-  isOwner?: InputMaybe<Scalars['Boolean']['input']>;
-  isSupervisor?: InputMaybe<Scalars['Boolean']['input']>;
-  organizationId: Scalars['UUID']['input'];
-  userId: Scalars['UUID']['input'];
-};
-
-/** Represents an update to a `OrganizationMembership`. Fields that are set will be updated. */
-export type OrganizationMembershipPatch = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isBillingContact?: InputMaybe<Scalars['Boolean']['input']>;
-  isCounselor?: InputMaybe<Scalars['Boolean']['input']>;
-  isDispatcher?: InputMaybe<Scalars['Boolean']['input']>;
-  isOwner?: InputMaybe<Scalars['Boolean']['input']>;
-  isSupervisor?: InputMaybe<Scalars['Boolean']['input']>;
-  organizationId?: InputMaybe<Scalars['UUID']['input']>;
-  userId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
 /** A connection to a list of `OrganizationMembership` values. */
 export type OrganizationMembershipsConnection = {
   __typename?: 'OrganizationMembershipsConnection';
   /** A list of edges which contains the `OrganizationMembership` and cursor to aid in pagination. */
-  edges: Array<Maybe<OrganizationMembershipsEdge>>;
+  edges: Array<OrganizationMembershipsEdge>;
   /** A list of `OrganizationMembership` objects. */
-  nodes: Array<Maybe<OrganizationMembership>>;
+  nodes: Array<OrganizationMembership>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** The count of *all* `OrganizationMembership` you could get from the connection. */
@@ -3463,7 +1604,7 @@ export type OrganizationMembershipsEdge = {
   /** A cursor for use in pagination. */
   cursor: Maybe<Scalars['Cursor']['output']>;
   /** The `OrganizationMembership` at the end of the edge. */
-  node: Maybe<OrganizationMembership>;
+  node: OrganizationMembership;
 };
 
 /** Methods to use when ordering `OrganizationMembership`. */
@@ -3492,8 +1633,6 @@ export type OrganizationMembershipsOrderBy =
 
 /** Represents an update to a `Organization`. Fields that are set will be updated. */
 export type OrganizationPatch = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   slug?: InputMaybe<Scalars['String']['input']>;
 };
@@ -3506,16 +1645,6 @@ export type OrganizationToManyConsultationFilter = {
   none?: InputMaybe<ConsultationFilter>;
   /** Some related `Consultation` matches the filter criteria. All fields are combined with a logical ‘and.’ */
   some?: InputMaybe<ConsultationFilter>;
-};
-
-/** A filter to be used against many `OrganizationInvitation` object types. All fields are combined with a logical ‘and.’ */
-export type OrganizationToManyOrganizationInvitationFilter = {
-  /** Every related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<OrganizationInvitationFilter>;
-  /** No related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<OrganizationInvitationFilter>;
-  /** Some related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<OrganizationInvitationFilter>;
 };
 
 /** A filter to be used against many `OrganizationMembership` object types. All fields are combined with a logical ‘and.’ */
@@ -3532,9 +1661,9 @@ export type OrganizationToManyOrganizationMembershipFilter = {
 export type OrganizationsConnection = {
   __typename?: 'OrganizationsConnection';
   /** A list of edges which contains the `Organization` and cursor to aid in pagination. */
-  edges: Array<Maybe<OrganizationsEdge>>;
+  edges: Array<OrganizationsEdge>;
   /** A list of `Organization` objects. */
-  nodes: Array<Maybe<Organization>>;
+  nodes: Array<Organization>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** The count of *all* `Organization` you could get from the connection. */
@@ -3547,7 +1676,7 @@ export type OrganizationsEdge = {
   /** A cursor for use in pagination. */
   cursor: Maybe<Scalars['Cursor']['output']>;
   /** The `Organization` at the end of the edge. */
-  node: Maybe<Organization>;
+  node: Organization;
 };
 
 /** Methods to use when ordering `Organization`. */
@@ -3606,30 +1735,6 @@ export type Query = Node & {
   currentUserInvitedOrganizationIds: Maybe<CurrentUserInvitedOrganizationIdsConnection>;
   /** Reads and enables pagination through a set of `Uuid`. */
   currentUserMemberOrganizationIds: Maybe<CurrentUserMemberOrganizationIdsConnection>;
-  /** Get a single `Message`. */
-  message: Maybe<Message>;
-  /** Get a single `MessageBodyRevision`. */
-  messageBodyRevision: Maybe<MessageBodyRevision>;
-  /** Get a single `MessageBodyRevisionApproval`. */
-  messageBodyRevisionApproval: Maybe<MessageBodyRevisionApproval>;
-  /** Reads a single `MessageBodyRevisionApproval` using its globally unique `ID`. */
-  messageBodyRevisionApprovalByNodeId: Maybe<MessageBodyRevisionApproval>;
-  /** Reads and enables pagination through a set of `MessageBodyRevisionApproval`. */
-  messageBodyRevisionApprovals: Maybe<MessageBodyRevisionApprovalsConnection>;
-  /** Reads a single `MessageBodyRevision` using its globally unique `ID`. */
-  messageBodyRevisionByNodeId: Maybe<MessageBodyRevision>;
-  /** Get a single `MessageBodyRevisionComment`. */
-  messageBodyRevisionComment: Maybe<MessageBodyRevisionComment>;
-  /** Reads a single `MessageBodyRevisionComment` using its globally unique `ID`. */
-  messageBodyRevisionCommentByNodeId: Maybe<MessageBodyRevisionComment>;
-  /** Reads and enables pagination through a set of `MessageBodyRevisionComment`. */
-  messageBodyRevisionComments: Maybe<MessageBodyRevisionCommentsConnection>;
-  /** Reads and enables pagination through a set of `MessageBodyRevision`. */
-  messageBodyRevisions: Maybe<MessageBodyRevisionsConnection>;
-  /** Reads a single `Message` using its globally unique `ID`. */
-  messageByNodeId: Maybe<Message>;
-  /** Reads and enables pagination through a set of `Message`. */
-  messages: Maybe<MessagesConnection>;
   /** Fetches an object given its globally unique `ID`. */
   node: Maybe<Node>;
   /** The root query type must be a `Node` to work well with Relay 1 mutations. This just resolves to `query`. */
@@ -3641,16 +1746,6 @@ export type Query = Node & {
   /** Get a single `Organization`. */
   organizationBySlug: Maybe<Organization>;
   organizationForInvitation: Maybe<Organization>;
-  /** Get a single `OrganizationInvitation`. */
-  organizationInvitation: Maybe<OrganizationInvitation>;
-  /** Reads a single `OrganizationInvitation` using its globally unique `ID`. */
-  organizationInvitationByNodeId: Maybe<OrganizationInvitation>;
-  /** Get a single `OrganizationInvitation`. */
-  organizationInvitationByOrganizationIdAndEmail: Maybe<OrganizationInvitation>;
-  /** Get a single `OrganizationInvitation`. */
-  organizationInvitationByOrganizationIdAndUserId: Maybe<OrganizationInvitation>;
-  /** Reads and enables pagination through a set of `OrganizationInvitation`. */
-  organizationInvitations: Maybe<OrganizationInvitationsConnection>;
   /** Get a single `OrganizationMembership`. */
   organizationMembership: Maybe<OrganizationMembership>;
   /** Reads a single `OrganizationMembership` using its globally unique `ID`. */
@@ -3784,106 +1879,6 @@ export type QueryCurrentUserMemberOrganizationIdsArgs = {
 
 
 /** The root query type which gives access points into the data universe. */
-export type QueryMessageArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionApprovalArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionApprovalByNodeIdArgs = {
-  nodeId: Scalars['ID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionApprovalsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionApprovalCondition>;
-  filter?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionApprovalsOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionByNodeIdArgs = {
-  nodeId: Scalars['ID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionCommentArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionCommentByNodeIdArgs = {
-  nodeId: Scalars['ID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionCommentsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionCommentCondition>;
-  filter?: InputMaybe<MessageBodyRevisionCommentFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionCommentsOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageBodyRevisionsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionCondition>;
-  filter?: InputMaybe<MessageBodyRevisionFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionsOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessageByNodeIdArgs = {
-  nodeId: Scalars['ID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryMessagesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageCondition>;
-  filter?: InputMaybe<MessageFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessagesOrderBy>>;
-};
-
-
-/** The root query type which gives access points into the data universe. */
 export type QueryNodeArgs = {
   nodeId: Scalars['ID']['input'];
 };
@@ -3911,45 +1906,6 @@ export type QueryOrganizationBySlugArgs = {
 export type QueryOrganizationForInvitationArgs = {
   code?: InputMaybe<Scalars['String']['input']>;
   invitationId: Scalars['UUID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationInvitationArgs = {
-  id: Scalars['UUID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationInvitationByNodeIdArgs = {
-  nodeId: Scalars['ID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationInvitationByOrganizationIdAndEmailArgs = {
-  email: Scalars['String']['input'];
-  organizationId: Scalars['UUID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationInvitationByOrganizationIdAndUserIdArgs = {
-  organizationId: Scalars['UUID']['input'];
-  userId: Scalars['UUID']['input'];
-};
-
-
-/** The root query type which gives access points into the data universe. */
-export type QueryOrganizationInvitationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<OrganizationInvitationCondition>;
-  filter?: InputMaybe<OrganizationInvitationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OrganizationInvitationsOrderBy>>;
 };
 
 
@@ -4479,210 +2435,6 @@ export type UpdateConsultationPayloadConsultationEdgeArgs = {
   orderBy?: Array<ConsultationsOrderBy>;
 };
 
-/** All input for the `updateMessageBodyRevisionApprovalByNodeId` mutation. */
-export type UpdateMessageBodyRevisionApprovalByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `MessageBodyRevisionApproval` to be updated. */
-  nodeId: Scalars['ID']['input'];
-  /** An object where the defined keys will be set on the `MessageBodyRevisionApproval` being updated. */
-  patch: MessageBodyRevisionApprovalPatch;
-};
-
-/** All input for the `updateMessageBodyRevisionApproval` mutation. */
-export type UpdateMessageBodyRevisionApprovalInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `MessageBodyRevisionApproval` being updated. */
-  patch: MessageBodyRevisionApprovalPatch;
-};
-
-/** The output of our update `MessageBodyRevisionApproval` mutation. */
-export type UpdateMessageBodyRevisionApprovalPayload = {
-  __typename?: 'UpdateMessageBodyRevisionApprovalPayload';
-  /** Reads a single `User` that is related to this `MessageBodyRevisionApproval`. */
-  approver: Maybe<User>;
-  /** Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionApproval`. */
-  bodyRevision: Maybe<MessageBodyRevision>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** The `MessageBodyRevisionApproval` that was updated by this mutation. */
-  messageBodyRevisionApproval: Maybe<MessageBodyRevisionApproval>;
-  /** An edge for our `MessageBodyRevisionApproval`. May be used by Relay 1. */
-  messageBodyRevisionApprovalEdge: Maybe<MessageBodyRevisionApprovalsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our update `MessageBodyRevisionApproval` mutation. */
-export type UpdateMessageBodyRevisionApprovalPayloadMessageBodyRevisionApprovalEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionApprovalsOrderBy>;
-};
-
-/** All input for the `updateMessageBodyRevisionByNodeId` mutation. */
-export type UpdateMessageBodyRevisionByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `MessageBodyRevision` to be updated. */
-  nodeId: Scalars['ID']['input'];
-  /** An object where the defined keys will be set on the `MessageBodyRevision` being updated. */
-  patch: MessageBodyRevisionPatch;
-};
-
-/** All input for the `updateMessageBodyRevisionCommentByNodeId` mutation. */
-export type UpdateMessageBodyRevisionCommentByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `MessageBodyRevisionComment` to be updated. */
-  nodeId: Scalars['ID']['input'];
-  /** An object where the defined keys will be set on the `MessageBodyRevisionComment` being updated. */
-  patch: MessageBodyRevisionCommentPatch;
-};
-
-/** All input for the `updateMessageBodyRevisionComment` mutation. */
-export type UpdateMessageBodyRevisionCommentInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `MessageBodyRevisionComment` being updated. */
-  patch: MessageBodyRevisionCommentPatch;
-};
-
-/** The output of our update `MessageBodyRevisionComment` mutation. */
-export type UpdateMessageBodyRevisionCommentPayload = {
-  __typename?: 'UpdateMessageBodyRevisionCommentPayload';
-  /** Reads a single `MessageBodyRevision` that is related to this `MessageBodyRevisionComment`. */
-  bodyRevision: Maybe<MessageBodyRevision>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `User` that is related to this `MessageBodyRevisionComment`. */
-  commenter: Maybe<User>;
-  /** The `MessageBodyRevisionComment` that was updated by this mutation. */
-  messageBodyRevisionComment: Maybe<MessageBodyRevisionComment>;
-  /** An edge for our `MessageBodyRevisionComment`. May be used by Relay 1. */
-  messageBodyRevisionCommentEdge: Maybe<MessageBodyRevisionCommentsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our update `MessageBodyRevisionComment` mutation. */
-export type UpdateMessageBodyRevisionCommentPayloadMessageBodyRevisionCommentEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionCommentsOrderBy>;
-};
-
-/** All input for the `updateMessageBodyRevision` mutation. */
-export type UpdateMessageBodyRevisionInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `MessageBodyRevision` being updated. */
-  patch: MessageBodyRevisionPatch;
-};
-
-/** The output of our update `MessageBodyRevision` mutation. */
-export type UpdateMessageBodyRevisionPayload = {
-  __typename?: 'UpdateMessageBodyRevisionPayload';
-  /** Reads a single `User` that is related to this `MessageBodyRevision`. */
-  author: Maybe<User>;
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Message` that is related to this `MessageBodyRevision`. */
-  message: Maybe<Message>;
-  /** The `MessageBodyRevision` that was updated by this mutation. */
-  messageBodyRevision: Maybe<MessageBodyRevision>;
-  /** An edge for our `MessageBodyRevision`. May be used by Relay 1. */
-  messageBodyRevisionEdge: Maybe<MessageBodyRevisionsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-};
-
-
-/** The output of our update `MessageBodyRevision` mutation. */
-export type UpdateMessageBodyRevisionPayloadMessageBodyRevisionEdgeArgs = {
-  orderBy?: Array<MessageBodyRevisionsOrderBy>;
-};
-
-/** All input for the `updateMessageByNodeId` mutation. */
-export type UpdateMessageByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `Message` to be updated. */
-  nodeId: Scalars['ID']['input'];
-  /** An object where the defined keys will be set on the `Message` being updated. */
-  patch: MessagePatch;
-};
-
-/** All input for the `updateMessage` mutation. */
-export type UpdateMessageInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `Message` being updated. */
-  patch: MessagePatch;
-};
-
-/** The output of our update `Message` mutation. */
-export type UpdateMessagePayload = {
-  __typename?: 'UpdateMessagePayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Consultation` that is related to this `Message`. */
-  consultation: Maybe<Consultation>;
-  /** The `Message` that was updated by this mutation. */
-  message: Maybe<Message>;
-  /** An edge for our `Message`. May be used by Relay 1. */
-  messageEdge: Maybe<MessagesEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `Message`. */
-  sender: Maybe<User>;
-};
-
-
-/** The output of our update `Message` mutation. */
-export type UpdateMessagePayloadMessageEdgeArgs = {
-  orderBy?: Array<MessagesOrderBy>;
-};
-
 /** All input for the `updateOrganizationByNodeId` mutation. */
 export type UpdateOrganizationByNodeIdInput = {
   /**
@@ -4720,147 +2472,6 @@ export type UpdateOrganizationInput = {
   patch: OrganizationPatch;
 };
 
-/** All input for the `updateOrganizationInvitationByNodeId` mutation. */
-export type UpdateOrganizationInvitationByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `OrganizationInvitation` to be updated. */
-  nodeId: Scalars['ID']['input'];
-  /** An object where the defined keys will be set on the `OrganizationInvitation` being updated. */
-  patch: OrganizationInvitationPatch;
-};
-
-/** All input for the `updateOrganizationInvitationByOrganizationIdAndEmail` mutation. */
-export type UpdateOrganizationInvitationByOrganizationIdAndEmailInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  email: Scalars['String']['input'];
-  organizationId: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `OrganizationInvitation` being updated. */
-  patch: OrganizationInvitationPatch;
-};
-
-/** All input for the `updateOrganizationInvitationByOrganizationIdAndUserId` mutation. */
-export type UpdateOrganizationInvitationByOrganizationIdAndUserIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  organizationId: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `OrganizationInvitation` being updated. */
-  patch: OrganizationInvitationPatch;
-  userId: Scalars['UUID']['input'];
-};
-
-/** All input for the `updateOrganizationInvitation` mutation. */
-export type UpdateOrganizationInvitationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `OrganizationInvitation` being updated. */
-  patch: OrganizationInvitationPatch;
-};
-
-/** The output of our update `OrganizationInvitation` mutation. */
-export type UpdateOrganizationInvitationPayload = {
-  __typename?: 'UpdateOrganizationInvitationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Organization` that is related to this `OrganizationInvitation`. */
-  organization: Maybe<Organization>;
-  /** The `OrganizationInvitation` that was updated by this mutation. */
-  organizationInvitation: Maybe<OrganizationInvitation>;
-  /** An edge for our `OrganizationInvitation`. May be used by Relay 1. */
-  organizationInvitationEdge: Maybe<OrganizationInvitationsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `OrganizationInvitation`. */
-  user: Maybe<User>;
-};
-
-
-/** The output of our update `OrganizationInvitation` mutation. */
-export type UpdateOrganizationInvitationPayloadOrganizationInvitationEdgeArgs = {
-  orderBy?: Array<OrganizationInvitationsOrderBy>;
-};
-
-/** All input for the `updateOrganizationMembershipByNodeId` mutation. */
-export type UpdateOrganizationMembershipByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `OrganizationMembership` to be updated. */
-  nodeId: Scalars['ID']['input'];
-  /** An object where the defined keys will be set on the `OrganizationMembership` being updated. */
-  patch: OrganizationMembershipPatch;
-};
-
-/** All input for the `updateOrganizationMembershipByOrganizationIdAndUserId` mutation. */
-export type UpdateOrganizationMembershipByOrganizationIdAndUserIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  organizationId: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `OrganizationMembership` being updated. */
-  patch: OrganizationMembershipPatch;
-  userId: Scalars['UUID']['input'];
-};
-
-/** All input for the `updateOrganizationMembership` mutation. */
-export type UpdateOrganizationMembershipInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `OrganizationMembership` being updated. */
-  patch: OrganizationMembershipPatch;
-};
-
-/** The output of our update `OrganizationMembership` mutation. */
-export type UpdateOrganizationMembershipPayload = {
-  __typename?: 'UpdateOrganizationMembershipPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Reads a single `Organization` that is related to this `OrganizationMembership`. */
-  organization: Maybe<Organization>;
-  /** The `OrganizationMembership` that was updated by this mutation. */
-  organizationMembership: Maybe<OrganizationMembership>;
-  /** An edge for our `OrganizationMembership`. May be used by Relay 1. */
-  organizationMembershipEdge: Maybe<OrganizationMembershipsEdge>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `OrganizationMembership`. */
-  user: Maybe<User>;
-};
-
-
-/** The output of our update `OrganizationMembership` mutation. */
-export type UpdateOrganizationMembershipPayloadOrganizationMembershipEdgeArgs = {
-  orderBy?: Array<OrganizationMembershipsOrderBy>;
-};
-
 /** The output of our update `Organization` mutation. */
 export type UpdateOrganizationPayload = {
   __typename?: 'UpdateOrganizationPayload';
@@ -4881,70 +2492,6 @@ export type UpdateOrganizationPayload = {
 /** The output of our update `Organization` mutation. */
 export type UpdateOrganizationPayloadOrganizationEdgeArgs = {
   orderBy?: Array<OrganizationsOrderBy>;
-};
-
-/** All input for the `updateUserAuthenticationByNodeId` mutation. */
-export type UpdateUserAuthenticationByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `UserAuthentication` to be updated. */
-  nodeId: Scalars['ID']['input'];
-  /** An object where the defined keys will be set on the `UserAuthentication` being updated. */
-  patch: UserAuthenticationPatch;
-};
-
-/** All input for the `updateUserAuthenticationByServiceAndIdentifier` mutation. */
-export type UpdateUserAuthenticationByServiceAndIdentifierInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** A unique identifier for the user within the login service. */
-  identifier: Scalars['String']['input'];
-  /** An object where the defined keys will be set on the `UserAuthentication` being updated. */
-  patch: UserAuthenticationPatch;
-  /** The login service used, e.g. `twitter` or `github`. */
-  service: Scalars['String']['input'];
-};
-
-/** All input for the `updateUserAuthentication` mutation. */
-export type UpdateUserAuthenticationInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `UserAuthentication` being updated. */
-  patch: UserAuthenticationPatch;
-};
-
-/** The output of our update `UserAuthentication` mutation. */
-export type UpdateUserAuthenticationPayload = {
-  __typename?: 'UpdateUserAuthenticationPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `UserAuthentication`. */
-  user: Maybe<User>;
-  /** The `UserAuthentication` that was updated by this mutation. */
-  userAuthentication: Maybe<UserAuthentication>;
-  /** An edge for our `UserAuthentication`. May be used by Relay 1. */
-  userAuthenticationEdge: Maybe<UserAuthenticationsEdge>;
-};
-
-
-/** The output of our update `UserAuthentication` mutation. */
-export type UpdateUserAuthenticationPayloadUserAuthenticationEdgeArgs = {
-  orderBy?: Array<UserAuthenticationsOrderBy>;
 };
 
 /** All input for the `updateUserByNodeId` mutation. */
@@ -4971,69 +2518,6 @@ export type UpdateUserByUsernameInput = {
   patch: UserPatch;
   /** Public-facing username (or 'handle') of the user. */
   username: Scalars['String']['input'];
-};
-
-/** All input for the `updateUserEmailByNodeId` mutation. */
-export type UpdateUserEmailByNodeIdInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The globally unique `ID` which will identify a single `UserEmail` to be updated. */
-  nodeId: Scalars['ID']['input'];
-  /** An object where the defined keys will be set on the `UserEmail` being updated. */
-  patch: UserEmailPatch;
-};
-
-/** All input for the `updateUserEmailByUserIdAndEmail` mutation. */
-export type UpdateUserEmailByUserIdAndEmailInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  /** The users email address, in `a@b.c` format. */
-  email: Scalars['String']['input'];
-  /** An object where the defined keys will be set on the `UserEmail` being updated. */
-  patch: UserEmailPatch;
-  userId: Scalars['UUID']['input'];
-};
-
-/** All input for the `updateUserEmail` mutation. */
-export type UpdateUserEmailInput = {
-  /**
-   * An arbitrary string value with no semantic meaning. Will be included in the
-   * payload verbatim. May be used to track mutations by the client.
-   */
-  clientMutationId?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['UUID']['input'];
-  /** An object where the defined keys will be set on the `UserEmail` being updated. */
-  patch: UserEmailPatch;
-};
-
-/** The output of our update `UserEmail` mutation. */
-export type UpdateUserEmailPayload = {
-  __typename?: 'UpdateUserEmailPayload';
-  /**
-   * The exact same `clientMutationId` that was provided in the mutation input,
-   * unchanged and unused. May be used by a client to track mutations.
-   */
-  clientMutationId: Maybe<Scalars['String']['output']>;
-  /** Our root query field type. Allows us to run any query from our mutation payload. */
-  query: Maybe<Query>;
-  /** Reads a single `User` that is related to this `UserEmail`. */
-  user: Maybe<User>;
-  /** The `UserEmail` that was updated by this mutation. */
-  userEmail: Maybe<UserEmail>;
-  /** An edge for our `UserEmail`. May be used by Relay 1. */
-  userEmailEdge: Maybe<UserEmailsEdge>;
-};
-
-
-/** The output of our update `UserEmail` mutation. */
-export type UpdateUserEmailPayloadUserEmailEdgeArgs = {
-  orderBy?: Array<UserEmailsOrderBy>;
 };
 
 /** All input for the `updateUser` mutation. */
@@ -5074,8 +2558,6 @@ export type UpdateUserPayloadUserEdgeArgs = {
 /** A user who can log in to the application. */
 export type User = Node & {
   __typename?: 'User';
-  /** Reads and enables pagination through a set of `MessageBodyRevision`. */
-  authoredMessageBodyRevisions: MessageBodyRevisionsConnection;
   /** Optional avatar URL. */
   avatarUrl: Maybe<Scalars['String']['output']>;
   /** Reads and enables pagination through a set of `ConsultationParticipant`. */
@@ -5087,18 +2569,10 @@ export type User = Node & {
   /** If true, the user has elevated privileges. */
   isAdmin: Scalars['Boolean']['output'];
   isVerified: Scalars['Boolean']['output'];
-  /** Reads and enables pagination through a set of `MessageBodyRevisionApproval`. */
-  messageBodyRevisionApprovalsByApproverId: MessageBodyRevisionApprovalsConnection;
-  /** Reads and enables pagination through a set of `MessageBodyRevisionComment`. */
-  messageBodyRevisionCommentsByCommenterId: MessageBodyRevisionCommentsConnection;
-  /** Reads and enables pagination through a set of `Message`. */
-  messagesBySenderId: MessagesConnection;
   /** Public-facing name (or pseudonym) of the user. */
   name: Maybe<Scalars['String']['output']>;
   /** A globally unique identifier. Can be used in various places throughout the system to identify this single value. */
   nodeId: Scalars['ID']['output'];
-  /** Reads and enables pagination through a set of `OrganizationInvitation`. */
-  organizationInvitations: OrganizationInvitationsConnection;
   /** Reads and enables pagination through a set of `OrganizationMembership`. */
   organizationMemberships: OrganizationMembershipsConnection;
   updatedAt: Scalars['Datetime']['output'];
@@ -5112,19 +2586,6 @@ export type User = Node & {
 
 
 /** A user who can log in to the application. */
-export type UserAuthoredMessageBodyRevisionsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionCondition>;
-  filter?: InputMaybe<MessageBodyRevisionFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionsOrderBy>>;
-};
-
-
-/** A user who can log in to the application. */
 export type UserConsultationParticipantsArgs = {
   after?: InputMaybe<Scalars['Cursor']['input']>;
   before?: InputMaybe<Scalars['Cursor']['input']>;
@@ -5134,58 +2595,6 @@ export type UserConsultationParticipantsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<ConsultationParticipantsOrderBy>>;
-};
-
-
-/** A user who can log in to the application. */
-export type UserMessageBodyRevisionApprovalsByApproverIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionApprovalCondition>;
-  filter?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionApprovalsOrderBy>>;
-};
-
-
-/** A user who can log in to the application. */
-export type UserMessageBodyRevisionCommentsByCommenterIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageBodyRevisionCommentCondition>;
-  filter?: InputMaybe<MessageBodyRevisionCommentFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessageBodyRevisionCommentsOrderBy>>;
-};
-
-
-/** A user who can log in to the application. */
-export type UserMessagesBySenderIdArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<MessageCondition>;
-  filter?: InputMaybe<MessageFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<MessagesOrderBy>>;
-};
-
-
-/** A user who can log in to the application. */
-export type UserOrganizationInvitationsArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  condition?: InputMaybe<OrganizationInvitationCondition>;
-  filter?: InputMaybe<OrganizationInvitationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<OrganizationInvitationsOrderBy>>;
 };
 
 
@@ -5293,41 +2702,13 @@ export type UserAuthenticationFilter = {
   userId?: InputMaybe<UuidFilter>;
 };
 
-/** An input for mutations affecting `UserAuthentication` */
-export type UserAuthenticationInput = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Additional profile details extracted from this login method */
-  details?: InputMaybe<Scalars['JSON']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  /** A unique identifier for the user within the login service. */
-  identifier: Scalars['String']['input'];
-  /** The login service used, e.g. `twitter` or `github`. */
-  service: Scalars['String']['input'];
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-  userId: Scalars['UUID']['input'];
-};
-
-/** Represents an update to a `UserAuthentication`. Fields that are set will be updated. */
-export type UserAuthenticationPatch = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Additional profile details extracted from this login method */
-  details?: InputMaybe<Scalars['JSON']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  /** A unique identifier for the user within the login service. */
-  identifier?: InputMaybe<Scalars['String']['input']>;
-  /** The login service used, e.g. `twitter` or `github`. */
-  service?: InputMaybe<Scalars['String']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-  userId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
 /** A connection to a list of `UserAuthentication` values. */
 export type UserAuthenticationsConnection = {
   __typename?: 'UserAuthenticationsConnection';
   /** A list of edges which contains the `UserAuthentication` and cursor to aid in pagination. */
-  edges: Array<Maybe<UserAuthenticationsEdge>>;
+  edges: Array<UserAuthenticationsEdge>;
   /** A list of `UserAuthentication` objects. */
-  nodes: Array<Maybe<UserAuthentication>>;
+  nodes: Array<UserAuthentication>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** The count of *all* `UserAuthentication` you could get from the connection. */
@@ -5340,7 +2721,7 @@ export type UserAuthenticationsEdge = {
   /** A cursor for use in pagination. */
   cursor: Maybe<Scalars['Cursor']['output']>;
   /** The `UserAuthentication` at the end of the edge. */
-  node: Maybe<UserAuthentication>;
+  node: UserAuthentication;
 };
 
 /** Methods to use when ordering `UserAuthentication`. */
@@ -5452,37 +2833,17 @@ export type UserEmailFilter = {
 
 /** An input for mutations affecting `UserEmail` */
 export type UserEmailInput = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
   /** The users email address, in `a@b.c` format. */
   email: Scalars['String']['input'];
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isPrimary?: InputMaybe<Scalars['Boolean']['input']>;
-  /** True if the user has is_verified their email address (by clicking the link in the email we sent them, or logging in with a social login provider), false otherwise. */
-  isVerified?: InputMaybe<Scalars['Boolean']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-  userId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-/** Represents an update to a `UserEmail`. Fields that are set will be updated. */
-export type UserEmailPatch = {
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** The users email address, in `a@b.c` format. */
-  email?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  isPrimary?: InputMaybe<Scalars['Boolean']['input']>;
-  /** True if the user has is_verified their email address (by clicking the link in the email we sent them, or logging in with a social login provider), false otherwise. */
-  isVerified?: InputMaybe<Scalars['Boolean']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-  userId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 /** A connection to a list of `UserEmail` values. */
 export type UserEmailsConnection = {
   __typename?: 'UserEmailsConnection';
   /** A list of edges which contains the `UserEmail` and cursor to aid in pagination. */
-  edges: Array<Maybe<UserEmailsEdge>>;
+  edges: Array<UserEmailsEdge>;
   /** A list of `UserEmail` objects. */
-  nodes: Array<Maybe<UserEmail>>;
+  nodes: Array<UserEmail>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** The count of *all* `UserEmail` you could get from the connection. */
@@ -5495,7 +2856,7 @@ export type UserEmailsEdge = {
   /** A cursor for use in pagination. */
   cursor: Maybe<Scalars['Cursor']['output']>;
   /** The `UserEmail` at the end of the edge. */
-  node: Maybe<UserEmail>;
+  node: UserEmail;
 };
 
 /** Methods to use when ordering `UserEmail`. */
@@ -5522,10 +2883,6 @@ export type UserEmailsOrderBy =
 export type UserFilter = {
   /** Checks for all expressions in this list. */
   and?: InputMaybe<Array<UserFilter>>;
-  /** Filter by the object’s `authoredMessageBodyRevisions` relation. */
-  authoredMessageBodyRevisions?: InputMaybe<UserToManyMessageBodyRevisionFilter>;
-  /** Some related `authoredMessageBodyRevisions` exist. */
-  authoredMessageBodyRevisionsExist?: InputMaybe<Scalars['Boolean']['input']>;
   /** Filter by the object’s `avatarUrl` field. */
   avatarUrl?: InputMaybe<StringFilter>;
   /** Filter by the object’s `consultationParticipants` relation. */
@@ -5542,28 +2899,12 @@ export type UserFilter = {
   isAdmin?: InputMaybe<BooleanFilter>;
   /** Filter by the object’s `isVerified` field. */
   isVerified?: InputMaybe<BooleanFilter>;
-  /** Filter by the object’s `messageBodyRevisionApprovalsByApproverId` relation. */
-  messageBodyRevisionApprovalsByApproverId?: InputMaybe<UserToManyMessageBodyRevisionApprovalFilter>;
-  /** Some related `messageBodyRevisionApprovalsByApproverId` exist. */
-  messageBodyRevisionApprovalsByApproverIdExist?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `messageBodyRevisionCommentsByCommenterId` relation. */
-  messageBodyRevisionCommentsByCommenterId?: InputMaybe<UserToManyMessageBodyRevisionCommentFilter>;
-  /** Some related `messageBodyRevisionCommentsByCommenterId` exist. */
-  messageBodyRevisionCommentsByCommenterIdExist?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Filter by the object’s `messagesBySenderId` relation. */
-  messagesBySenderId?: InputMaybe<UserToManyMessageFilter>;
-  /** Some related `messagesBySenderId` exist. */
-  messagesBySenderIdExist?: InputMaybe<Scalars['Boolean']['input']>;
   /** Filter by the object’s `name` field. */
   name?: InputMaybe<StringFilter>;
   /** Negates the expression. */
   not?: InputMaybe<UserFilter>;
   /** Checks for any expressions in this list. */
   or?: InputMaybe<Array<UserFilter>>;
-  /** Filter by the object’s `organizationInvitations` relation. */
-  organizationInvitations?: InputMaybe<UserToManyOrganizationInvitationFilter>;
-  /** Some related `organizationInvitations` exist. */
-  organizationInvitationsExist?: InputMaybe<Scalars['Boolean']['input']>;
   /** Filter by the object’s `organizationMemberships` relation. */
   organizationMemberships?: InputMaybe<UserToManyOrganizationMembershipFilter>;
   /** Some related `organizationMemberships` exist. */
@@ -5582,36 +2923,12 @@ export type UserFilter = {
   username?: InputMaybe<StringFilter>;
 };
 
-/** An input for mutations affecting `User` */
-export type UserInput = {
-  /** Optional avatar URL. */
-  avatarUrl?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Unique identifier for the user. */
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  /** If true, the user has elevated privileges. */
-  isAdmin?: InputMaybe<Scalars['Boolean']['input']>;
-  isVerified?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Public-facing name (or pseudonym) of the user. */
-  name?: InputMaybe<Scalars['String']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Public-facing username (or 'handle') of the user. */
-  username: Scalars['String']['input'];
-};
-
 /** Represents an update to a `User`. Fields that are set will be updated. */
 export type UserPatch = {
   /** Optional avatar URL. */
   avatarUrl?: InputMaybe<Scalars['String']['input']>;
-  createdAt?: InputMaybe<Scalars['Datetime']['input']>;
-  /** Unique identifier for the user. */
-  id?: InputMaybe<Scalars['UUID']['input']>;
-  /** If true, the user has elevated privileges. */
-  isAdmin?: InputMaybe<Scalars['Boolean']['input']>;
-  isVerified?: InputMaybe<Scalars['Boolean']['input']>;
   /** Public-facing name (or pseudonym) of the user. */
   name?: InputMaybe<Scalars['String']['input']>;
-  updatedAt?: InputMaybe<Scalars['Datetime']['input']>;
   /** Public-facing username (or 'handle') of the user. */
   username?: InputMaybe<Scalars['String']['input']>;
 };
@@ -5624,56 +2941,6 @@ export type UserToManyConsultationParticipantFilter = {
   none?: InputMaybe<ConsultationParticipantFilter>;
   /** Some related `ConsultationParticipant` matches the filter criteria. All fields are combined with a logical ‘and.’ */
   some?: InputMaybe<ConsultationParticipantFilter>;
-};
-
-/** A filter to be used against many `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’ */
-export type UserToManyMessageBodyRevisionApprovalFilter = {
-  /** Every related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-  /** No related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-  /** Some related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<MessageBodyRevisionApprovalFilter>;
-};
-
-/** A filter to be used against many `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’ */
-export type UserToManyMessageBodyRevisionCommentFilter = {
-  /** Every related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<MessageBodyRevisionCommentFilter>;
-  /** No related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<MessageBodyRevisionCommentFilter>;
-  /** Some related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<MessageBodyRevisionCommentFilter>;
-};
-
-/** A filter to be used against many `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’ */
-export type UserToManyMessageBodyRevisionFilter = {
-  /** Every related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<MessageBodyRevisionFilter>;
-  /** No related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<MessageBodyRevisionFilter>;
-  /** Some related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<MessageBodyRevisionFilter>;
-};
-
-/** A filter to be used against many `Message` object types. All fields are combined with a logical ‘and.’ */
-export type UserToManyMessageFilter = {
-  /** Every related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<MessageFilter>;
-  /** No related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<MessageFilter>;
-  /** Some related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<MessageFilter>;
-};
-
-/** A filter to be used against many `OrganizationInvitation` object types. All fields are combined with a logical ‘and.’ */
-export type UserToManyOrganizationInvitationFilter = {
-  /** Every related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  every?: InputMaybe<OrganizationInvitationFilter>;
-  /** No related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  none?: InputMaybe<OrganizationInvitationFilter>;
-  /** Some related `OrganizationInvitation` matches the filter criteria. All fields are combined with a logical ‘and.’ */
-  some?: InputMaybe<OrganizationInvitationFilter>;
 };
 
 /** A filter to be used against many `OrganizationMembership` object types. All fields are combined with a logical ‘and.’ */
@@ -5710,9 +2977,9 @@ export type UserToManyUserEmailFilter = {
 export type UsersConnection = {
   __typename?: 'UsersConnection';
   /** A list of edges which contains the `User` and cursor to aid in pagination. */
-  edges: Array<Maybe<UsersEdge>>;
+  edges: Array<UsersEdge>;
   /** A list of `User` objects. */
-  nodes: Array<Maybe<User>>;
+  nodes: Array<User>;
   /** Information to aid in pagination. */
   pageInfo: PageInfo;
   /** The count of *all* `User` you could get from the connection. */
@@ -5725,7 +2992,7 @@ export type UsersEdge = {
   /** A cursor for use in pagination. */
   cursor: Maybe<Scalars['Cursor']['output']>;
   /** The `User` at the end of the edge. */
-  node: Maybe<User>;
+  node: User;
 };
 
 /** Methods to use when ordering `User`. */
@@ -5782,6 +3049,18 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginPayload', user: { __typename?: 'User', id: string, username: string } } | null };
 
+export type FetchConsultationsQueryVariables = Exact<{
+  filter?: InputMaybe<ConsultationFilter>;
+  orderBy?: InputMaybe<Array<ConsultationsOrderBy> | ConsultationsOrderBy>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+}>;
+
+
+export type FetchConsultationsQuery = { __typename?: 'Query', consultations: { __typename?: 'ConsultationsConnection', nodes: Array<{ __typename?: 'Consultation', id: string, name: string, createdAt: string }> } | null };
+
 
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
@@ -5796,4 +3075,26 @@ export const LoginDocument = gql`
 
 export function useLoginMutation() {
   return Urql.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument);
+};
+export const FetchConsultationsDocument = gql`
+    query FetchConsultations($filter: ConsultationFilter, $orderBy: [ConsultationsOrderBy!], $first: Int, $after: Cursor, $last: Int, $before: Cursor) {
+  consultations(
+    filter: $filter
+    orderBy: $orderBy
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+  ) {
+    nodes {
+      id
+      name
+      createdAt
+    }
+  }
+}
+    `;
+
+export function useFetchConsultationsQuery(options?: Omit<Urql.UseQueryArgs<never, FetchConsultationsQueryVariables | undefined>, 'query'>) {
+  return Urql.useQuery<FetchConsultationsQuery, FetchConsultationsQueryVariables | undefined>({ query: FetchConsultationsDocument, variables: undefined, ...options });
 };

@@ -50,12 +50,12 @@
       <!-- Selection of found cases. -->
       <nav>
         <ul>
-          <li>
-            <NuxtLink to="/admin/cases/1">
-              <h2>Thomas Müller</h2>
+          <li v-for="{ id, name, createdAt } in consultations" :key="id">
+            <NuxtLink :to="{ name: 'consultation-by-id', params: { id } }">
+              <h2>{{ name }}</h2>
               <dl>
                 <dt>Gestart</dt>
-                <dd>12.08.2024</dd>
+                <dd>{{ createdAt }}</dd>
               </dl>
             </NuxtLink>
           </li>
@@ -81,6 +81,9 @@ const [active] = useToggle(true)
 const [closed] = useToggle(false)
 const [hasUnreadMessages] = useToggle(false)
 const [hasUnansweredMessages] = useToggle(false)
+
+const { data: consultationData } = await useFetchConsultationsQuery()
+const consultations = computed(() => consultationData.value?.consultations?.nodes ?? [])
 </script>
 
 <style lang="css" scoped>
