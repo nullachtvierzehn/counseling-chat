@@ -119,10 +119,57 @@ type ConfirmAccountDeletionPayload {
 }
 
 type Consultation implements Node {
+  createdAt: Datetime!
+  id: UUID!
+
+  """Reads and enables pagination through a set of `Message`."""
+  messages(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Message`."""
+    orderBy: [MessagesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessagesConnection!
+  name: String!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+
+  """Reads a single `Organization` that is related to this `Consultation`."""
+  organization: Organization
+  organizationId: UUID!
+
   """
   Reads and enables pagination through a set of `ConsultationParticipant`.
   """
-  consultationParticipants(
+  participations(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
 
@@ -154,18 +201,6 @@ type Consultation implements Node {
     """The method to use when ordering `ConsultationParticipant`."""
     orderBy: [ConsultationParticipantsOrderBy!] = [PRIMARY_KEY_ASC]
   ): ConsultationParticipantsConnection!
-  createdAt: Datetime!
-  id: UUID!
-  name: String!
-
-  """
-  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
-  """
-  nodeId: ID!
-
-  """Reads a single `Organization` that is related to this `Consultation`."""
-  organization: Organization
-  organizationId: UUID!
   updatedAt: Datetime!
 }
 
@@ -197,17 +232,17 @@ input ConsultationFilter {
   """Checks for all expressions in this list."""
   and: [ConsultationFilter!]
 
-  """Filter by the object’s `consultationParticipants` relation."""
-  consultationParticipants: ConsultationToManyConsultationParticipantFilter
-
-  """Some related `consultationParticipants` exist."""
-  consultationParticipantsExist: Boolean
-
   """Filter by the object’s `createdAt` field."""
   createdAt: DatetimeFilter
 
   """Filter by the object’s `id` field."""
   id: UUIDFilter
+
+  """Filter by the object’s `messages` relation."""
+  messages: ConsultationToManyMessageFilter
+
+  """Some related `messages` exist."""
+  messagesExist: Boolean
 
   """Filter by the object’s `name` field."""
   name: StringFilter
@@ -224,6 +259,12 @@ input ConsultationFilter {
   """Filter by the object’s `organizationId` field."""
   organizationId: UUIDFilter
 
+  """Filter by the object’s `participations` relation."""
+  participations: ConsultationToManyConsultationParticipantFilter
+
+  """Some related `participations` exist."""
+  participationsExist: Boolean
+
   """Filter by the object’s `updatedAt` field."""
   updatedAt: DatetimeFilter
 }
@@ -235,9 +276,7 @@ input ConsultationInput {
 }
 
 type ConsultationParticipant implements Node {
-  """
-  Reads a single `Consultation` that is related to this `ConsultationParticipant`.
-  """
+  "\nThe consultation this participant is part of.\n"
   consultation: Consultation
   consultationId: UUID!
   createdAt: Datetime!
@@ -437,6 +476,26 @@ input ConsultationToManyConsultationParticipantFilter {
   some: ConsultationParticipantFilter
 }
 
+"""
+A filter to be used against many `Message` object types. All fields are combined with a logical ‘and.’
+"""
+input ConsultationToManyMessageFilter {
+  """
+  Every related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: MessageFilter
+
+  """
+  No related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: MessageFilter
+
+  """
+  Some related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: MessageFilter
+}
+
 """A connection to a list of `Consultation` values."""
 type ConsultationsConnection {
   """
@@ -512,9 +571,7 @@ type CreateConsultationParticipantPayload {
   """
   clientMutationId: String
 
-  """
-  Reads a single `Consultation` that is related to this `ConsultationParticipant`.
-  """
+  "\nThe consultation this participant is part of.\n"
   consultation: Consultation
 
   """The `ConsultationParticipant` that was created by this mutation."""
@@ -556,6 +613,47 @@ type CreateConsultationPayload {
 
   """Reads a single `Organization` that is related to this `Consultation`."""
   organization: Organization
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the create `Folder` mutation."""
+input CreateFolderInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """The `Folder` to be created by this mutation."""
+  folder: FolderInput!
+}
+
+"""The output of our create `Folder` mutation."""
+type CreateFolderPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Folder` that was created by this mutation."""
+  folder: Folder
+
+  """An edge for our `Folder`. May be used by Relay 1."""
+  folderEdge(
+    """The method to use when ordering `Folder`."""
+    orderBy: [FoldersOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): FoldersEdge
+
+  """Reads a single `Organization` that is related to this `Folder`."""
+  organization: Organization
+
+  """Reads a single `Folder` that is related to this `Folder`."""
+  parent: Folder
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -943,9 +1041,7 @@ type DeleteConsultationParticipantPayload {
   """
   clientMutationId: String
 
-  """
-  Reads a single `Consultation` that is related to this `ConsultationParticipant`.
-  """
+  "\nThe consultation this participant is part of.\n"
   consultation: Consultation
 
   """The `ConsultationParticipant` that was deleted by this mutation."""
@@ -989,6 +1085,60 @@ type DeleteConsultationPayload {
 
   """Reads a single `Organization` that is related to this `Consultation`."""
   organization: Organization
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the `deleteFolderByNodeId` mutation."""
+input DeleteFolderByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Folder` to be deleted.
+  """
+  nodeId: ID!
+}
+
+"""All input for the `deleteFolder` mutation."""
+input DeleteFolderInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+}
+
+"""The output of our delete `Folder` mutation."""
+type DeleteFolderPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+  deletedFolderNodeId: ID
+
+  """The `Folder` that was deleted by this mutation."""
+  folder: Folder
+
+  """An edge for our `Folder`. May be used by Relay 1."""
+  folderEdge(
+    """The method to use when ordering `Folder`."""
+    orderBy: [FoldersOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): FoldersEdge
+
+  """Reads a single `Organization` that is related to this `Folder`."""
+  organization: Organization
+
+  """Reads a single `Folder` that is related to this `Folder`."""
+  parent: Folder
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -1152,6 +1302,210 @@ type DeleteUserEmailPayload {
   ): UserEmailsEdge
 }
 
+type Folder implements Node {
+  """Reads and enables pagination through a set of `Folder`."""
+  childFolders(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FolderCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: FolderFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Folder`."""
+    orderBy: [FoldersOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FoldersConnection!
+  createdAt: Datetime!
+  id: UUID!
+  name: String!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+
+  """Reads a single `Organization` that is related to this `Folder`."""
+  organization: Organization
+  organizationId: UUID!
+
+  """Reads a single `Folder` that is related to this `Folder`."""
+  parent: Folder
+  parentId: UUID
+  updatedAt: Datetime!
+}
+
+"""
+A condition to be used against `Folder` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input FolderCondition {
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `name` field."""
+  name: String
+
+  """Checks for equality with the object’s `organizationId` field."""
+  organizationId: UUID
+
+  """Checks for equality with the object’s `parentId` field."""
+  parentId: UUID
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
+}
+
+"""
+A filter to be used against `Folder` object types. All fields are combined with a logical ‘and.’
+"""
+input FolderFilter {
+  """Checks for all expressions in this list."""
+  and: [FolderFilter!]
+
+  """Filter by the object’s `childFolders` relation."""
+  childFolders: FolderToManyFolderFilter
+
+  """Some related `childFolders` exist."""
+  childFoldersExist: Boolean
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `name` field."""
+  name: StringFilter
+
+  """Negates the expression."""
+  not: FolderFilter
+
+  """Checks for any expressions in this list."""
+  or: [FolderFilter!]
+
+  """Filter by the object’s `organization` relation."""
+  organization: OrganizationFilter
+
+  """Filter by the object’s `organizationId` field."""
+  organizationId: UUIDFilter
+
+  """Filter by the object’s `parent` relation."""
+  parent: FolderFilter
+
+  """A related `parent` exists."""
+  parentExists: Boolean
+
+  """Filter by the object’s `parentId` field."""
+  parentId: UUIDFilter
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+}
+
+"""An input for mutations affecting `Folder`"""
+input FolderInput {
+  name: String!
+  organizationId: UUID!
+  parentId: UUID
+}
+
+"""
+Represents an update to a `Folder`. Fields that are set will be updated.
+"""
+input FolderPatch {
+  name: String
+  organizationId: UUID
+  parentId: UUID
+}
+
+"""
+A filter to be used against many `Folder` object types. All fields are combined with a logical ‘and.’
+"""
+input FolderToManyFolderFilter {
+  """
+  Every related `Folder` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: FolderFilter
+
+  """
+  No related `Folder` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: FolderFilter
+
+  """
+  Some related `Folder` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: FolderFilter
+}
+
+"""A connection to a list of `Folder` values."""
+type FoldersConnection {
+  """
+  A list of edges which contains the `Folder` and cursor to aid in pagination.
+  """
+  edges: [FoldersEdge!]!
+
+  """A list of `Folder` objects."""
+  nodes: [Folder!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Folder` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Folder` edge in the connection."""
+type FoldersEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Folder` at the end of the edge."""
+  node: Folder!
+}
+
+"""Methods to use when ordering `Folder`."""
+enum FoldersOrderBy {
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  ID_ASC
+  ID_DESC
+  NAME_ASC
+  NAME_DESC
+  NATURAL
+  ORGANIZATION_ID_ASC
+  ORGANIZATION_ID_DESC
+  PARENT_ID_ASC
+  PARENT_ID_DESC
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+}
+
 """All input for the `forgotPassword` mutation."""
 input ForgotPasswordInput {
   """
@@ -1311,6 +1665,697 @@ type MakeEmailPrimaryPayload {
   ): UserEmailsEdge
 }
 
+type Message implements Node {
+  """Reads and enables pagination through a set of `MessageBodyRevision`."""
+  bodyRevisions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevision`."""
+    orderBy: [MessageBodyRevisionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionsConnection!
+
+  """Reads a single `Consultation` that is related to this `Message`."""
+  consultation: Consultation
+  consultationId: UUID!
+  createdAt: Datetime!
+  id: UUID!
+  isForClients: Boolean!
+  isForStaff: Boolean!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+
+  """Reads a single `User` that is related to this `Message`."""
+  sender: User
+  senderId: UUID
+}
+
+type MessageBodyRevision implements Node {
+  """
+  Reads and enables pagination through a set of `MessageBodyRevisionApproval`.
+  """
+  approvals(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionApprovalCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionApprovalFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevisionApproval`."""
+    orderBy: [MessageBodyRevisionApprovalsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionApprovalsConnection!
+
+  """Reads a single `User` that is related to this `MessageBodyRevision`."""
+  author: User
+  authorId: UUID
+
+  """
+  Reads and enables pagination through a set of `MessageBodyRevisionComment`.
+  """
+  comments(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionCommentCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionCommentFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevisionComment`."""
+    orderBy: [MessageBodyRevisionCommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionCommentsConnection!
+  content: String!
+  createdAt: Datetime!
+  id: UUID!
+
+  """The message that this revision is a part of."""
+  message: Message
+  messageId: UUID!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  updatedAt: Datetime!
+}
+
+type MessageBodyRevisionApproval implements Node {
+  """
+  Reads a single `User` that is related to this `MessageBodyRevisionApproval`.
+  """
+  approver: User
+  approverId: UUID
+
+  """The revision that this approval is for."""
+  bodyRevision: MessageBodyRevision
+  bodyRevisionId: UUID!
+  createdAt: Datetime!
+  id: UUID!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+}
+
+"""
+A condition to be used against `MessageBodyRevisionApproval` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input MessageBodyRevisionApprovalCondition {
+  """Checks for equality with the object’s `approverId` field."""
+  approverId: UUID
+
+  """Checks for equality with the object’s `bodyRevisionId` field."""
+  bodyRevisionId: UUID
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+}
+
+"""
+A filter to be used against `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’
+"""
+input MessageBodyRevisionApprovalFilter {
+  """Checks for all expressions in this list."""
+  and: [MessageBodyRevisionApprovalFilter!]
+
+  """Filter by the object’s `approver` relation."""
+  approver: UserFilter
+
+  """A related `approver` exists."""
+  approverExists: Boolean
+
+  """Filter by the object’s `approverId` field."""
+  approverId: UUIDFilter
+
+  """Filter by the object’s `bodyRevision` relation."""
+  bodyRevision: MessageBodyRevisionFilter
+
+  """Filter by the object’s `bodyRevisionId` field."""
+  bodyRevisionId: UUIDFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Negates the expression."""
+  not: MessageBodyRevisionApprovalFilter
+
+  """Checks for any expressions in this list."""
+  or: [MessageBodyRevisionApprovalFilter!]
+}
+
+"""A connection to a list of `MessageBodyRevisionApproval` values."""
+type MessageBodyRevisionApprovalsConnection {
+  """
+  A list of edges which contains the `MessageBodyRevisionApproval` and cursor to aid in pagination.
+  """
+  edges: [MessageBodyRevisionApprovalsEdge!]!
+
+  """A list of `MessageBodyRevisionApproval` objects."""
+  nodes: [MessageBodyRevisionApproval!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `MessageBodyRevisionApproval` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `MessageBodyRevisionApproval` edge in the connection."""
+type MessageBodyRevisionApprovalsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `MessageBodyRevisionApproval` at the end of the edge."""
+  node: MessageBodyRevisionApproval!
+}
+
+"""Methods to use when ordering `MessageBodyRevisionApproval`."""
+enum MessageBodyRevisionApprovalsOrderBy {
+  APPROVER_ID_ASC
+  APPROVER_ID_DESC
+  BODY_REVISION_ID_ASC
+  BODY_REVISION_ID_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+}
+
+type MessageBodyRevisionComment implements Node {
+  """The revision that this comment is for."""
+  bodyRevision: MessageBodyRevision
+  bodyRevisionId: UUID!
+
+  """
+  Reads a single `User` that is related to this `MessageBodyRevisionComment`.
+  """
+  commenter: User
+  commenterId: UUID
+  content: String!
+  createdAt: Datetime!
+  id: UUID!
+
+  """
+  A globally unique identifier. Can be used in various places throughout the system to identify this single value.
+  """
+  nodeId: ID!
+  updatedAt: Datetime!
+}
+
+"""
+A condition to be used against `MessageBodyRevisionComment` object types. All
+fields are tested for equality and combined with a logical ‘and.’
+"""
+input MessageBodyRevisionCommentCondition {
+  """Checks for equality with the object’s `bodyRevisionId` field."""
+  bodyRevisionId: UUID
+
+  """Checks for equality with the object’s `commenterId` field."""
+  commenterId: UUID
+
+  """Checks for equality with the object’s `content` field."""
+  content: String
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
+}
+
+"""
+A filter to be used against `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’
+"""
+input MessageBodyRevisionCommentFilter {
+  """Checks for all expressions in this list."""
+  and: [MessageBodyRevisionCommentFilter!]
+
+  """Filter by the object’s `bodyRevision` relation."""
+  bodyRevision: MessageBodyRevisionFilter
+
+  """Filter by the object’s `bodyRevisionId` field."""
+  bodyRevisionId: UUIDFilter
+
+  """Filter by the object’s `commenter` relation."""
+  commenter: UserFilter
+
+  """A related `commenter` exists."""
+  commenterExists: Boolean
+
+  """Filter by the object’s `commenterId` field."""
+  commenterId: UUIDFilter
+
+  """Filter by the object’s `content` field."""
+  content: StringFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Negates the expression."""
+  not: MessageBodyRevisionCommentFilter
+
+  """Checks for any expressions in this list."""
+  or: [MessageBodyRevisionCommentFilter!]
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+}
+
+"""A connection to a list of `MessageBodyRevisionComment` values."""
+type MessageBodyRevisionCommentsConnection {
+  """
+  A list of edges which contains the `MessageBodyRevisionComment` and cursor to aid in pagination.
+  """
+  edges: [MessageBodyRevisionCommentsEdge!]!
+
+  """A list of `MessageBodyRevisionComment` objects."""
+  nodes: [MessageBodyRevisionComment!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `MessageBodyRevisionComment` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `MessageBodyRevisionComment` edge in the connection."""
+type MessageBodyRevisionCommentsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `MessageBodyRevisionComment` at the end of the edge."""
+  node: MessageBodyRevisionComment!
+}
+
+"""Methods to use when ordering `MessageBodyRevisionComment`."""
+enum MessageBodyRevisionCommentsOrderBy {
+  BODY_REVISION_ID_ASC
+  BODY_REVISION_ID_DESC
+  COMMENTER_ID_ASC
+  COMMENTER_ID_DESC
+  CONTENT_ASC
+  CONTENT_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  ID_ASC
+  ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+}
+
+"""
+A condition to be used against `MessageBodyRevision` object types. All fields
+are tested for equality and combined with a logical ‘and.’
+"""
+input MessageBodyRevisionCondition {
+  """Checks for equality with the object’s `authorId` field."""
+  authorId: UUID
+
+  """Checks for equality with the object’s `content` field."""
+  content: String
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `messageId` field."""
+  messageId: UUID
+
+  """Checks for equality with the object’s `updatedAt` field."""
+  updatedAt: Datetime
+}
+
+"""
+A filter to be used against `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’
+"""
+input MessageBodyRevisionFilter {
+  """Checks for all expressions in this list."""
+  and: [MessageBodyRevisionFilter!]
+
+  """Filter by the object’s `approvals` relation."""
+  approvals: MessageBodyRevisionToManyMessageBodyRevisionApprovalFilter
+
+  """Some related `approvals` exist."""
+  approvalsExist: Boolean
+
+  """Filter by the object’s `author` relation."""
+  author: UserFilter
+
+  """A related `author` exists."""
+  authorExists: Boolean
+
+  """Filter by the object’s `authorId` field."""
+  authorId: UUIDFilter
+
+  """Filter by the object’s `comments` relation."""
+  comments: MessageBodyRevisionToManyMessageBodyRevisionCommentFilter
+
+  """Some related `comments` exist."""
+  commentsExist: Boolean
+
+  """Filter by the object’s `content` field."""
+  content: StringFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `message` relation."""
+  message: MessageFilter
+
+  """Filter by the object’s `messageId` field."""
+  messageId: UUIDFilter
+
+  """Negates the expression."""
+  not: MessageBodyRevisionFilter
+
+  """Checks for any expressions in this list."""
+  or: [MessageBodyRevisionFilter!]
+
+  """Filter by the object’s `updatedAt` field."""
+  updatedAt: DatetimeFilter
+}
+
+"""
+A filter to be used against many `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’
+"""
+input MessageBodyRevisionToManyMessageBodyRevisionApprovalFilter {
+  """
+  Every related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: MessageBodyRevisionApprovalFilter
+
+  """
+  No related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: MessageBodyRevisionApprovalFilter
+
+  """
+  Some related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: MessageBodyRevisionApprovalFilter
+}
+
+"""
+A filter to be used against many `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’
+"""
+input MessageBodyRevisionToManyMessageBodyRevisionCommentFilter {
+  """
+  Every related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: MessageBodyRevisionCommentFilter
+
+  """
+  No related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: MessageBodyRevisionCommentFilter
+
+  """
+  Some related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: MessageBodyRevisionCommentFilter
+}
+
+"""A connection to a list of `MessageBodyRevision` values."""
+type MessageBodyRevisionsConnection {
+  """
+  A list of edges which contains the `MessageBodyRevision` and cursor to aid in pagination.
+  """
+  edges: [MessageBodyRevisionsEdge!]!
+
+  """A list of `MessageBodyRevision` objects."""
+  nodes: [MessageBodyRevision!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """
+  The count of *all* `MessageBodyRevision` you could get from the connection.
+  """
+  totalCount: Int!
+}
+
+"""A `MessageBodyRevision` edge in the connection."""
+type MessageBodyRevisionsEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `MessageBodyRevision` at the end of the edge."""
+  node: MessageBodyRevision!
+}
+
+"""Methods to use when ordering `MessageBodyRevision`."""
+enum MessageBodyRevisionsOrderBy {
+  AUTHOR_ID_ASC
+  AUTHOR_ID_DESC
+  CONTENT_ASC
+  CONTENT_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  ID_ASC
+  ID_DESC
+  MESSAGE_ID_ASC
+  MESSAGE_ID_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  UPDATED_AT_ASC
+  UPDATED_AT_DESC
+}
+
+"""
+A condition to be used against `Message` object types. All fields are tested for equality and combined with a logical ‘and.’
+"""
+input MessageCondition {
+  """Checks for equality with the object’s `consultationId` field."""
+  consultationId: UUID
+
+  """Checks for equality with the object’s `createdAt` field."""
+  createdAt: Datetime
+
+  """Checks for equality with the object’s `id` field."""
+  id: UUID
+
+  """Checks for equality with the object’s `isForClients` field."""
+  isForClients: Boolean
+
+  """Checks for equality with the object’s `isForStaff` field."""
+  isForStaff: Boolean
+
+  """Checks for equality with the object’s `senderId` field."""
+  senderId: UUID
+}
+
+"""
+A filter to be used against `Message` object types. All fields are combined with a logical ‘and.’
+"""
+input MessageFilter {
+  """Checks for all expressions in this list."""
+  and: [MessageFilter!]
+
+  """Filter by the object’s `bodyRevisions` relation."""
+  bodyRevisions: MessageToManyMessageBodyRevisionFilter
+
+  """Some related `bodyRevisions` exist."""
+  bodyRevisionsExist: Boolean
+
+  """Filter by the object’s `consultation` relation."""
+  consultation: ConsultationFilter
+
+  """Filter by the object’s `consultationId` field."""
+  consultationId: UUIDFilter
+
+  """Filter by the object’s `createdAt` field."""
+  createdAt: DatetimeFilter
+
+  """Filter by the object’s `id` field."""
+  id: UUIDFilter
+
+  """Filter by the object’s `isForClients` field."""
+  isForClients: BooleanFilter
+
+  """Filter by the object’s `isForStaff` field."""
+  isForStaff: BooleanFilter
+
+  """Negates the expression."""
+  not: MessageFilter
+
+  """Checks for any expressions in this list."""
+  or: [MessageFilter!]
+
+  """Filter by the object’s `sender` relation."""
+  sender: UserFilter
+
+  """A related `sender` exists."""
+  senderExists: Boolean
+
+  """Filter by the object’s `senderId` field."""
+  senderId: UUIDFilter
+}
+
+"""
+A filter to be used against many `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’
+"""
+input MessageToManyMessageBodyRevisionFilter {
+  """
+  Every related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: MessageBodyRevisionFilter
+
+  """
+  No related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: MessageBodyRevisionFilter
+
+  """
+  Some related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: MessageBodyRevisionFilter
+}
+
+"""A connection to a list of `Message` values."""
+type MessagesConnection {
+  """
+  A list of edges which contains the `Message` and cursor to aid in pagination.
+  """
+  edges: [MessagesEdge!]!
+
+  """A list of `Message` objects."""
+  nodes: [Message!]!
+
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """The count of *all* `Message` you could get from the connection."""
+  totalCount: Int!
+}
+
+"""A `Message` edge in the connection."""
+type MessagesEdge {
+  """A cursor for use in pagination."""
+  cursor: Cursor
+
+  """The `Message` at the end of the edge."""
+  node: Message!
+}
+
+"""Methods to use when ordering `Message`."""
+enum MessagesOrderBy {
+  CONSULTATION_ID_ASC
+  CONSULTATION_ID_DESC
+  CREATED_AT_ASC
+  CREATED_AT_DESC
+  ID_ASC
+  ID_DESC
+  IS_FOR_CLIENTS_ASC
+  IS_FOR_CLIENTS_DESC
+  IS_FOR_STAFF_ASC
+  IS_FOR_STAFF_DESC
+  NATURAL
+  PRIMARY_KEY_ASC
+  PRIMARY_KEY_DESC
+  SENDER_ID_ASC
+  SENDER_ID_DESC
+}
+
 """
 The root mutation type which contains root level fields which mutate data.
 """
@@ -1355,6 +2400,14 @@ type Mutation {
     """
     input: CreateConsultationParticipantInput!
   ): CreateConsultationParticipantPayload
+
+  """Creates a single `Folder`."""
+  createFolder(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: CreateFolderInput!
+  ): CreateFolderPayload
   createOrganization(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1411,6 +2464,22 @@ type Mutation {
     """
     input: DeleteConsultationParticipantByNodeIdInput!
   ): DeleteConsultationParticipantPayload
+
+  """Deletes a single `Folder` using a unique key."""
+  deleteFolder(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteFolderInput!
+  ): DeleteFolderPayload
+
+  """Deletes a single `Folder` using its globally unique id."""
+  deleteFolderByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteFolderByNodeIdInput!
+  ): DeleteFolderPayload
   deleteOrganization(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -1611,6 +2680,22 @@ type Mutation {
     input: UpdateConsultationParticipantByNodeIdInput!
   ): UpdateConsultationParticipantPayload
 
+  """Updates a single `Folder` using a unique key and a patch."""
+  updateFolder(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateFolderInput!
+  ): UpdateFolderPayload
+
+  """Updates a single `Folder` using its globally unique id and a patch."""
+  updateFolderByNodeId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateFolderByNodeIdInput!
+  ): UpdateFolderPayload
+
   """Updates a single `Organization` using a unique key and a patch."""
   updateOrganization(
     """
@@ -1717,6 +2802,40 @@ type Organization implements Node {
   createdAt: Datetime!
   currentUserIsBillingContact: Boolean
   currentUserIsOwner: Boolean
+
+  """Reads and enables pagination through a set of `Folder`."""
+  folders(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FolderCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: FolderFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Folder`."""
+    orderBy: [FoldersOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FoldersConnection!
   id: UUID!
   name: String!
 
@@ -1810,6 +2929,12 @@ input OrganizationFilter {
 
   """Filter by the object’s `currentUserIsOwner` field."""
   currentUserIsOwner: BooleanFilter
+
+  """Filter by the object’s `folders` relation."""
+  folders: OrganizationToManyFolderFilter
+
+  """Some related `folders` exist."""
+  foldersExist: Boolean
 
   """Filter by the object’s `id` field."""
   id: UUIDFilter
@@ -2019,6 +3144,26 @@ input OrganizationToManyConsultationFilter {
   Some related `Consultation` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
   some: ConsultationFilter
+}
+
+"""
+A filter to be used against many `Folder` object types. All fields are combined with a logical ‘and.’
+"""
+input OrganizationToManyFolderFilter {
+  """
+  Every related `Folder` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: FolderFilter
+
+  """
+  No related `Folder` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: FolderFilter
+
+  """
+  Some related `Folder` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: FolderFilter
 }
 
 """
@@ -2284,6 +3429,235 @@ type Query implements Node {
     """
     offset: Int
   ): CurrentUserMemberOrganizationIdsConnection
+
+  """Get a single `Folder`."""
+  folder(id: UUID!): Folder
+
+  """Reads a single `Folder` using its globally unique `ID`."""
+  folderByNodeId(
+    """The globally unique `ID` to be used in selecting a single `Folder`."""
+    nodeId: ID!
+  ): Folder
+
+  """Reads and enables pagination through a set of `Folder`."""
+  folders(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: FolderCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: FolderFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Folder`."""
+    orderBy: [FoldersOrderBy!] = [PRIMARY_KEY_ASC]
+  ): FoldersConnection
+
+  """Get a single `Message`."""
+  message(id: UUID!): Message
+
+  """Get a single `MessageBodyRevision`."""
+  messageBodyRevision(id: UUID!): MessageBodyRevision
+
+  """Get a single `MessageBodyRevisionApproval`."""
+  messageBodyRevisionApproval(id: UUID!): MessageBodyRevisionApproval
+
+  """
+  Reads a single `MessageBodyRevisionApproval` using its globally unique `ID`.
+  """
+  messageBodyRevisionApprovalByNodeId(
+    """
+    The globally unique `ID` to be used in selecting a single `MessageBodyRevisionApproval`.
+    """
+    nodeId: ID!
+  ): MessageBodyRevisionApproval
+
+  """
+  Reads and enables pagination through a set of `MessageBodyRevisionApproval`.
+  """
+  messageBodyRevisionApprovals(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionApprovalCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionApprovalFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevisionApproval`."""
+    orderBy: [MessageBodyRevisionApprovalsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionApprovalsConnection
+
+  """Reads a single `MessageBodyRevision` using its globally unique `ID`."""
+  messageBodyRevisionByNodeId(
+    """
+    The globally unique `ID` to be used in selecting a single `MessageBodyRevision`.
+    """
+    nodeId: ID!
+  ): MessageBodyRevision
+
+  """Get a single `MessageBodyRevisionComment`."""
+  messageBodyRevisionComment(id: UUID!): MessageBodyRevisionComment
+
+  """
+  Reads a single `MessageBodyRevisionComment` using its globally unique `ID`.
+  """
+  messageBodyRevisionCommentByNodeId(
+    """
+    The globally unique `ID` to be used in selecting a single `MessageBodyRevisionComment`.
+    """
+    nodeId: ID!
+  ): MessageBodyRevisionComment
+
+  """
+  Reads and enables pagination through a set of `MessageBodyRevisionComment`.
+  """
+  messageBodyRevisionComments(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionCommentCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionCommentFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevisionComment`."""
+    orderBy: [MessageBodyRevisionCommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionCommentsConnection
+
+  """Reads and enables pagination through a set of `MessageBodyRevision`."""
+  messageBodyRevisions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevision`."""
+    orderBy: [MessageBodyRevisionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionsConnection
+
+  """Reads a single `Message` using its globally unique `ID`."""
+  messageByNodeId(
+    """The globally unique `ID` to be used in selecting a single `Message`."""
+    nodeId: ID!
+  ): Message
+
+  """Reads and enables pagination through a set of `Message`."""
+  messages(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Message`."""
+    orderBy: [MessagesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessagesConnection
 
   """Fetches an object given its globally unique `ID`."""
   node(
@@ -2996,9 +4370,7 @@ type UpdateConsultationParticipantPayload {
   """
   clientMutationId: String
 
-  """
-  Reads a single `Consultation` that is related to this `ConsultationParticipant`.
-  """
+  "\nThe consultation this participant is part of.\n"
   consultation: Consultation
 
   """The `ConsultationParticipant` that was updated by this mutation."""
@@ -3040,6 +4412,69 @@ type UpdateConsultationPayload {
 
   """Reads a single `Organization` that is related to this `Consultation`."""
   organization: Organization
+
+  """
+  Our root query field type. Allows us to run any query from our mutation payload.
+  """
+  query: Query
+}
+
+"""All input for the `updateFolderByNodeId` mutation."""
+input UpdateFolderByNodeIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+
+  """
+  The globally unique `ID` which will identify a single `Folder` to be updated.
+  """
+  nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Folder` being updated.
+  """
+  patch: FolderPatch!
+}
+
+"""All input for the `updateFolder` mutation."""
+input UpdateFolderInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  id: UUID!
+
+  """
+  An object where the defined keys will be set on the `Folder` being updated.
+  """
+  patch: FolderPatch!
+}
+
+"""The output of our update `Folder` mutation."""
+type UpdateFolderPayload {
+  """
+  The exact same `clientMutationId` that was provided in the mutation input,
+  unchanged and unused. May be used by a client to track mutations.
+  """
+  clientMutationId: String
+
+  """The `Folder` that was updated by this mutation."""
+  folder: Folder
+
+  """An edge for our `Folder`. May be used by Relay 1."""
+  folderEdge(
+    """The method to use when ordering `Folder`."""
+    orderBy: [FoldersOrderBy!]! = [PRIMARY_KEY_ASC]
+  ): FoldersEdge
+
+  """Reads a single `Organization` that is related to this `Folder`."""
+  organization: Organization
+
+  """Reads a single `Folder` that is related to this `Folder`."""
+  parent: Folder
 
   """
   Our root query field type. Allows us to run any query from our mutation payload.
@@ -3197,6 +4632,40 @@ type UpdateUserPayload {
 
 """A user who can log in to the application."""
 type User implements Node {
+  """Reads and enables pagination through a set of `MessageBodyRevision`."""
+  authoredMessageBodyRevisions(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevision`."""
+    orderBy: [MessageBodyRevisionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionsConnection!
+
   """Optional avatar URL."""
   avatarUrl: String
 
@@ -3244,6 +4713,112 @@ type User implements Node {
   """If true, the user has elevated privileges."""
   isAdmin: Boolean!
   isVerified: Boolean!
+
+  """
+  Reads and enables pagination through a set of `MessageBodyRevisionApproval`.
+  """
+  messageBodyRevisionApprovalsByApproverId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionApprovalCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionApprovalFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevisionApproval`."""
+    orderBy: [MessageBodyRevisionApprovalsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionApprovalsConnection!
+
+  """
+  Reads and enables pagination through a set of `MessageBodyRevisionComment`.
+  """
+  messageBodyRevisionCommentsByCommenterId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageBodyRevisionCommentCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageBodyRevisionCommentFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `MessageBodyRevisionComment`."""
+    orderBy: [MessageBodyRevisionCommentsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessageBodyRevisionCommentsConnection!
+
+  """Reads and enables pagination through a set of `Message`."""
+  messagesBySenderId(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: MessageCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: MessageFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Message`."""
+    orderBy: [MessagesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): MessagesConnection!
 
   """Public-facing name (or pseudonym) of the user."""
   name: String
@@ -3685,6 +5260,12 @@ input UserFilter {
   """Checks for all expressions in this list."""
   and: [UserFilter!]
 
+  """Filter by the object’s `authoredMessageBodyRevisions` relation."""
+  authoredMessageBodyRevisions: UserToManyMessageBodyRevisionFilter
+
+  """Some related `authoredMessageBodyRevisions` exist."""
+  authoredMessageBodyRevisionsExist: Boolean
+
   """Filter by the object’s `avatarUrl` field."""
   avatarUrl: StringFilter
 
@@ -3708,6 +5289,28 @@ input UserFilter {
 
   """Filter by the object’s `isVerified` field."""
   isVerified: BooleanFilter
+
+  """
+  Filter by the object’s `messageBodyRevisionApprovalsByApproverId` relation.
+  """
+  messageBodyRevisionApprovalsByApproverId: UserToManyMessageBodyRevisionApprovalFilter
+
+  """Some related `messageBodyRevisionApprovalsByApproverId` exist."""
+  messageBodyRevisionApprovalsByApproverIdExist: Boolean
+
+  """
+  Filter by the object’s `messageBodyRevisionCommentsByCommenterId` relation.
+  """
+  messageBodyRevisionCommentsByCommenterId: UserToManyMessageBodyRevisionCommentFilter
+
+  """Some related `messageBodyRevisionCommentsByCommenterId` exist."""
+  messageBodyRevisionCommentsByCommenterIdExist: Boolean
+
+  """Filter by the object’s `messagesBySenderId` relation."""
+  messagesBySenderId: UserToManyMessageFilter
+
+  """Some related `messagesBySenderId` exist."""
+  messagesBySenderIdExist: Boolean
 
   """Filter by the object’s `name` field."""
   name: StringFilter
@@ -3773,6 +5376,86 @@ input UserToManyConsultationParticipantFilter {
   Some related `ConsultationParticipant` matches the filter criteria. All fields are combined with a logical ‘and.’
   """
   some: ConsultationParticipantFilter
+}
+
+"""
+A filter to be used against many `MessageBodyRevisionApproval` object types. All fields are combined with a logical ‘and.’
+"""
+input UserToManyMessageBodyRevisionApprovalFilter {
+  """
+  Every related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: MessageBodyRevisionApprovalFilter
+
+  """
+  No related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: MessageBodyRevisionApprovalFilter
+
+  """
+  Some related `MessageBodyRevisionApproval` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: MessageBodyRevisionApprovalFilter
+}
+
+"""
+A filter to be used against many `MessageBodyRevisionComment` object types. All fields are combined with a logical ‘and.’
+"""
+input UserToManyMessageBodyRevisionCommentFilter {
+  """
+  Every related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: MessageBodyRevisionCommentFilter
+
+  """
+  No related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: MessageBodyRevisionCommentFilter
+
+  """
+  Some related `MessageBodyRevisionComment` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: MessageBodyRevisionCommentFilter
+}
+
+"""
+A filter to be used against many `MessageBodyRevision` object types. All fields are combined with a logical ‘and.’
+"""
+input UserToManyMessageBodyRevisionFilter {
+  """
+  Every related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: MessageBodyRevisionFilter
+
+  """
+  No related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: MessageBodyRevisionFilter
+
+  """
+  Some related `MessageBodyRevision` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: MessageBodyRevisionFilter
+}
+
+"""
+A filter to be used against many `Message` object types. All fields are combined with a logical ‘and.’
+"""
+input UserToManyMessageFilter {
+  """
+  Every related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  every: MessageFilter
+
+  """
+  No related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  none: MessageFilter
+
+  """
+  Some related `Message` matches the filter criteria. All fields are combined with a logical ‘and.’
+  """
+  some: MessageFilter
 }
 
 """

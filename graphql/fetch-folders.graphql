@@ -1,0 +1,40 @@
+query FetchFolders(
+  $filter: FolderFilter
+  $condition: FolderCondition
+  $orderBy: [FoldersOrderBy!]
+  $first: Int
+  $after: Cursor
+  $last: Int
+  $before: Cursor
+) {
+  folders(
+    filter: $filter
+    condition: $condition
+    orderBy: $orderBy
+    first: $first
+    after: $after
+    last: $last
+    before: $before
+  ) {
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    nodes {
+      ...ShortFolder
+      childFolders(orderBy: $orderBy, first: $first, last: $last) {
+        pageInfo {
+          hasNextPage
+          hasPreviousPage
+          startCursor
+          endCursor
+        }
+        nodes {
+          ...ShortFolder
+        }
+      }
+    }
+  }
+}

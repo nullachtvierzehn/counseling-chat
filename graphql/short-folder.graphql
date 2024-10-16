@@ -1,0 +1,6 @@
+fragment ShortFolder on Folder {
+  id
+  name
+  createdAt
+  updatedAt
+}

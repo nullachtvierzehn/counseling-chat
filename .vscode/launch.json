@@ -14,6 +14,16 @@
             "cwd": "${workspaceFolder}"
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Graphile Migrate",
+            "outputCapture": "std",
+            "program": "${workspaceFolder}/node_modules/graphile-migrate/dist/cli.js",
+            "args": ["watch"],
+            "cwd": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+        },
+        {
             "name": "Browser",
             "type": "chrome",
             "request": "launch",
@@ -42,7 +52,7 @@
     "compounds": [
         {
             "name": "Nuxt Fullstack",
-            "configurations": ["Nuxt", "Browser", "Worker", "GraphQL Codegenerator"]
+            "configurations": ["Nuxt", "Worker", "GraphQL Codegenerator", "Graphile Migrate"]
         }
     ]
 }

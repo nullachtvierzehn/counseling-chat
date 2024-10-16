@@ -20,10 +20,18 @@ SET row_security = off;
 -- Data for Name: consultations; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
 --
 
+INSERT INTO app_public.consultations (id, organization_id, name, created_at, updated_at) VALUES
+	('b4374be6-be46-43db-9dfb-1fef8f7a3bf8', 'fd3bbe58-da5a-4dcd-b306-41c31997230a', 'Beratung von Timo', '2024-10-16 11:59:53.390998+02', '2024-10-16 11:59:53.390998+02');
 
 
 --
 -- Data for Name: consultation_participants; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
+--
+
+
+
+--
+-- Data for Name: folders; Type: TABLE DATA; Schema: app_public; Owner: counseling_owner
 --
 
 
