@@ -1,0 +1,46 @@
+query GetConsultation($id: UUID!) {
+  consultation(id: $id) {
+    id
+    name
+    createdAt
+    participations {
+      nodes {
+        id
+        user {
+          id
+          username
+        }
+        isClient
+        isCounselor
+        isSupervisor
+        createdAt
+      }
+    }
+    messages(first: 10, orderBy: [CREATED_AT_DESC]) {
+      totalCount
+      pageInfo {
+        hasNextPage
+      }
+      nodes {
+        id
+        isForClients
+        isForStaff
+        createdAt
+        sender {
+          id
+          username
+        }
+        bodyRevisions(first: 1, orderBy: [CREATED_AT_DESC]) {
+          nodes {
+            id
+            content
+            author {
+              id
+              username
+            }
+          }
+        }
+      }
+    }
+  }
+}

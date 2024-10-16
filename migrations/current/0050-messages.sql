@@ -11,6 +11,9 @@ create table app_public.messages (
   created_at timestamptz not null default now()
 );
 
+grant select on app_public.messages to :DATABASE_VISITOR;
+
+
 create table app_public.message_body_revisions (
   id uuid primary key default gen_random_uuid(),
   message_id uuid not null
@@ -23,6 +26,11 @@ create table app_public.message_body_revisions (
   updated_at timestamptz not null default now()
 );
 
+comment on constraint message on app_public.message_body_revisions is E'@foreignFieldName bodyRevisions\nThe message that this revision is a part of.';
+
+grant select on app_public.message_body_revisions to :DATABASE_VISITOR;
+
+
 create table app_public.message_body_revision_approvals (
   id uuid primary key default gen_random_uuid(),
   body_revision_id uuid not null
@@ -32,6 +40,11 @@ create table app_public.message_body_revision_approvals (
     constraint approver references app_public.users (id) on update cascade on delete set null,
   created_at timestamptz not null default now()
 );
+
+comment on constraint body_revision on app_public.message_body_revision_approvals is E'@foreignFieldName approvals\nThe revision that this approval is for.';
+
+grant select on app_public.message_body_revision_approvals to :DATABASE_VISITOR;
+
 
 create table app_public.message_body_revision_comments (
   id uuid primary key default gen_random_uuid(),
@@ -44,3 +57,7 @@ create table app_public.message_body_revision_comments (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+comment on constraint body_revision on app_public.message_body_revision_comments is E'@foreignFieldName comments\nThe revision that this comment is for.';
+
+grant select on app_public.message_body_revision_comments to :DATABASE_VISITOR;

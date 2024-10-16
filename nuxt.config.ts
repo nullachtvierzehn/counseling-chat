@@ -10,6 +10,11 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+  css: [
+    "prosemirror-view/style/prosemirror.css",
+    "prosemirror-example-setup/style/style.css",
+    "prosemirror-menu/style/menu.css"
+  ],
   modules: ["@nuxt/eslint", "@vueuse/nuxt", "@nuxt/ui"],
   eslint: {
     config: {

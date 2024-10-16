@@ -70,6 +70,12 @@ create table app_public.consultation_participants (
     check (is_client <> (is_counselor or is_supervisor))
 );
 
+comment on constraint consultation on app_public.consultation_participants is $$
+@foreignFieldName participations
+
+The consultation this participant is part of.
+$$;
+
 alter table app_public.consultation_participants enable row level security;
 
 grant select on app_public.consultation_participants to :DATABASE_VISITOR;
