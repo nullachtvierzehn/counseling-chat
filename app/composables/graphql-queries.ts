@@ -897,6 +897,17 @@ export type DeleteFolderByNodeIdInput = {
   nodeId: Scalars['ID']['input'];
 };
 
+/** All input for the `deleteFolderByOrganizationIdAndParentId` mutation. */
+export type DeleteFolderByOrganizationIdAndParentIdInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  organizationId: Scalars['UUID']['input'];
+  parentId: Scalars['UUID']['input'];
+};
+
 /** All input for the `deleteFolder` mutation. */
 export type DeleteFolderInput = {
   /**
@@ -1076,6 +1087,8 @@ export type DeleteUserEmailPayloadUserEmailEdgeArgs = {
 export type Folder = Node & {
   __typename?: 'Folder';
   /** Reads and enables pagination through a set of `Folder`. */
+  ancestors: FoldersConnection;
+  /** Reads and enables pagination through a set of `Folder`. */
   childFolders: FoldersConnection;
   createdAt: Scalars['Datetime']['output'];
   id: Scalars['UUID']['output'];
@@ -1088,7 +1101,20 @@ export type Folder = Node & {
   /** Reads a single `Folder` that is related to this `Folder`. */
   parent: Maybe<Folder>;
   parentId: Maybe<Scalars['UUID']['output']>;
+  /** Reads and enables pagination through a set of `Folder`. */
+  siblings: FoldersConnection;
   updatedAt: Scalars['Datetime']['output'];
+};
+
+
+export type FolderAncestorsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  filter?: InputMaybe<FolderFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  includeSelf?: InputMaybe<Scalars['Boolean']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 
@@ -1101,6 +1127,17 @@ export type FolderChildFoldersArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<Array<FoldersOrderBy>>;
+};
+
+
+export type FolderSiblingsArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  filter?: InputMaybe<FolderFilter>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  includeSelf?: InputMaybe<Scalars['Boolean']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** A condition to be used against `Folder` object types. All fields are tested for equality and combined with a logical ‘and.’ */
@@ -1855,6 +1892,8 @@ export type Mutation = {
   deleteFolder: Maybe<DeleteFolderPayload>;
   /** Deletes a single `Folder` using its globally unique id. */
   deleteFolderByNodeId: Maybe<DeleteFolderPayload>;
+  /** Deletes a single `Folder` using a unique key. */
+  deleteFolderByOrganizationIdAndParentId: Maybe<DeleteFolderPayload>;
   deleteOrganization: Maybe<DeleteOrganizationPayload>;
   /** Deletes a single `UserAuthentication` using a unique key. */
   deleteUserAuthentication: Maybe<DeleteUserAuthenticationPayload>;
@@ -1902,6 +1941,8 @@ export type Mutation = {
   updateFolder: Maybe<UpdateFolderPayload>;
   /** Updates a single `Folder` using its globally unique id and a patch. */
   updateFolderByNodeId: Maybe<UpdateFolderPayload>;
+  /** Updates a single `Folder` using a unique key and a patch. */
+  updateFolderByOrganizationIdAndParentId: Maybe<UpdateFolderPayload>;
   /** Updates a single `Organization` using a unique key and a patch. */
   updateOrganization: Maybe<UpdateOrganizationPayload>;
   /** Updates a single `Organization` using its globally unique id and a patch. */
@@ -2006,6 +2047,12 @@ export type MutationDeleteFolderArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationDeleteFolderByNodeIdArgs = {
   input: DeleteFolderByNodeIdInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationDeleteFolderByOrganizationIdAndParentIdArgs = {
+  input: DeleteFolderByOrganizationIdAndParentIdInput;
 };
 
 
@@ -2156,6 +2203,12 @@ export type MutationUpdateFolderArgs = {
 /** The root mutation type which contains root level fields which mutate data. */
 export type MutationUpdateFolderByNodeIdArgs = {
   input: UpdateFolderByNodeIdInput;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationUpdateFolderByOrganizationIdAndParentIdArgs = {
+  input: UpdateFolderByOrganizationIdAndParentIdInput;
 };
 
 
@@ -2553,6 +2606,8 @@ export type Query = Node & {
   folder: Maybe<Folder>;
   /** Reads a single `Folder` using its globally unique `ID`. */
   folderByNodeId: Maybe<Folder>;
+  /** Get a single `Folder`. */
+  folderByOrganizationIdAndParentId: Maybe<Folder>;
   /** Reads and enables pagination through a set of `Folder`. */
   folders: Maybe<FoldersConnection>;
   /** Get a single `Message`. */
@@ -2731,6 +2786,13 @@ export type QueryFolderArgs = {
 /** The root query type which gives access points into the data universe. */
 export type QueryFolderByNodeIdArgs = {
   nodeId: Scalars['ID']['input'];
+};
+
+
+/** The root query type which gives access points into the data universe. */
+export type QueryFolderByOrganizationIdAndParentIdArgs = {
+  organizationId: Scalars['UUID']['input'];
+  parentId: Scalars['UUID']['input'];
 };
 
 
@@ -3417,6 +3479,19 @@ export type UpdateFolderByNodeIdInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   /** The globally unique `ID` which will identify a single `Folder` to be updated. */
   nodeId: Scalars['ID']['input'];
+  /** An object where the defined keys will be set on the `Folder` being updated. */
+  patch: FolderPatch;
+};
+
+/** All input for the `updateFolderByOrganizationIdAndParentId` mutation. */
+export type UpdateFolderByOrganizationIdAndParentIdInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  organizationId: Scalars['UUID']['input'];
+  parentId: Scalars['UUID']['input'];
   /** An object where the defined keys will be set on the `Folder` being updated. */
   patch: FolderPatch;
 };
@@ -4217,7 +4292,7 @@ export type FetchFoldersQueryVariables = Exact<{
 }>;
 
 
-export type FetchFoldersQuery = { __typename?: 'Query', folders: { __typename?: 'FoldersConnection', pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor: any | null, endCursor: any | null }, nodes: Array<{ __typename?: 'Folder', id: string, name: string, createdAt: string, updatedAt: string, childFolders: { __typename?: 'FoldersConnection', pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor: any | null, endCursor: any | null }, nodes: Array<{ __typename?: 'Folder', id: string, name: string, createdAt: string, updatedAt: string }> } }> } | null };
+export type FetchFoldersQuery = { __typename?: 'Query', folders: { __typename?: 'FoldersConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor: any | null, endCursor: any | null }, nodes: Array<{ __typename?: 'Folder', id: string, name: string, createdAt: string, updatedAt: string, childFolders: { __typename?: 'FoldersConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor: any | null, endCursor: any | null }, nodes: Array<{ __typename?: 'Folder', id: string, name: string, createdAt: string, updatedAt: string }> } }> } | null };
 
 export type GetConsultationQueryVariables = Exact<{
   id: Scalars['UUID']['input'];
@@ -4225,6 +4300,13 @@ export type GetConsultationQueryVariables = Exact<{
 
 
 export type GetConsultationQuery = { __typename?: 'Query', consultation: { __typename?: 'Consultation', id: string, name: string, createdAt: string, participations: { __typename?: 'ConsultationParticipantsConnection', nodes: Array<{ __typename?: 'ConsultationParticipant', id: string, isClient: boolean, isCounselor: boolean, isSupervisor: boolean, createdAt: string, user: { __typename?: 'User', id: string, username: string } | null }> }, messages: { __typename?: 'MessagesConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean }, nodes: Array<{ __typename?: 'Message', id: string, isForClients: boolean, isForStaff: boolean, createdAt: string, sender: { __typename?: 'User', id: string, username: string } | null, bodyRevisions: { __typename?: 'MessageBodyRevisionsConnection', nodes: Array<{ __typename?: 'MessageBodyRevision', id: string, content: string, author: { __typename?: 'User', id: string, username: string } | null }> } }> } } | null };
+
+export type GetFolderQueryVariables = Exact<{
+  id: Scalars['UUID']['input'];
+}>;
+
+
+export type GetFolderQuery = { __typename?: 'Query', folder: { __typename?: 'Folder', id: string, name: string, createdAt: string, updatedAt: string, ancestors: { __typename?: 'FoldersConnection', nodes: Array<{ __typename?: 'Folder', id: string, name: string, createdAt: string, updatedAt: string, siblings: { __typename?: 'FoldersConnection', nodes: Array<{ __typename?: 'Folder', id: string, name: string, createdAt: string, updatedAt: string }> } }> }, childFolders: { __typename?: 'FoldersConnection', nodes: Array<{ __typename?: 'Folder', id: string, name: string, createdAt: string, updatedAt: string }> } } | null };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -4301,6 +4383,7 @@ export const FetchFoldersDocument = gql`
     last: $last
     before: $before
   ) {
+    totalCount
     pageInfo {
       hasNextPage
       hasPreviousPage
@@ -4310,6 +4393,7 @@ export const FetchFoldersDocument = gql`
     nodes {
       ...ShortFolder
       childFolders(orderBy: $orderBy, first: $first, last: $last) {
+        totalCount
         pageInfo {
           hasNextPage
           hasPreviousPage
@@ -4379,6 +4463,32 @@ export const GetConsultationDocument = gql`
 
 export function useGetConsultationQuery(options?: Omit<Urql.UseQueryArgs<never, GetConsultationQueryVariables | undefined>, 'query'>) {
   return Urql.useQuery<GetConsultationQuery, GetConsultationQueryVariables | undefined>({ query: GetConsultationDocument, variables: undefined, ...options });
+};
+export const GetFolderDocument = gql`
+    query GetFolder($id: UUID!) {
+  folder(id: $id) {
+    ...ShortFolder
+    ancestors(includeSelf: true) {
+      nodes {
+        ...ShortFolder
+        siblings {
+          nodes {
+            ...ShortFolder
+          }
+        }
+      }
+    }
+    childFolders {
+      nodes {
+        ...ShortFolder
+      }
+    }
+  }
+}
+    ${ShortFolderFragmentDoc}`;
+
+export function useGetFolderQuery(options?: Omit<Urql.UseQueryArgs<never, GetFolderQueryVariables | undefined>, 'query'>) {
+  return Urql.useQuery<GetFolderQuery, GetFolderQueryVariables | undefined>({ query: GetFolderDocument, variables: undefined, ...options });
 };
 export const LogoutDocument = gql`
     mutation Logout {

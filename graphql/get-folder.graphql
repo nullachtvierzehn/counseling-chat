@@ -1,0 +1,24 @@
+query GetFolder($id: UUID!) {
+  folder(id: $id) {
+    ...ShortFolder
+
+    # Get ancestors and their siblings for navigatable breadcrumbs
+    ancestors(includeSelf: true) {
+      nodes {
+        ...ShortFolder
+        siblings {
+          nodes {
+            ...ShortFolder
+          }
+        }
+      }
+    }
+
+    # Get child folders for navigation
+    childFolders {
+      nodes {
+        ...ShortFolder
+      }
+    }
+  }
+}

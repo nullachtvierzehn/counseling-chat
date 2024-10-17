@@ -1106,6 +1106,17 @@ input DeleteFolderByNodeIdInput {
   nodeId: ID!
 }
 
+"""All input for the `deleteFolderByOrganizationIdAndParentId` mutation."""
+input DeleteFolderByOrganizationIdAndParentIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  organizationId: UUID!
+  parentId: UUID!
+}
+
 """All input for the `deleteFolder` mutation."""
 input DeleteFolderInput {
   """
@@ -1304,6 +1315,33 @@ type DeleteUserEmailPayload {
 
 type Folder implements Node {
   """Reads and enables pagination through a set of `Folder`."""
+  ancestors(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: FolderFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+    includeSelf: Boolean
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+  ): FoldersConnection!
+
+  """Reads and enables pagination through a set of `Folder`."""
   childFolders(
     """Read all values in the set after (below) this cursor."""
     after: Cursor
@@ -1352,6 +1390,33 @@ type Folder implements Node {
   """Reads a single `Folder` that is related to this `Folder`."""
   parent: Folder
   parentId: UUID
+
+  """Reads and enables pagination through a set of `Folder`."""
+  siblings(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: FolderFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+    includeSelf: Boolean
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+  ): FoldersConnection!
   updatedAt: Datetime!
 }
 
@@ -2480,6 +2545,14 @@ type Mutation {
     """
     input: DeleteFolderByNodeIdInput!
   ): DeleteFolderPayload
+
+  """Deletes a single `Folder` using a unique key."""
+  deleteFolderByOrganizationIdAndParentId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteFolderByOrganizationIdAndParentIdInput!
+  ): DeleteFolderPayload
   deleteOrganization(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -2694,6 +2767,14 @@ type Mutation {
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: UpdateFolderByNodeIdInput!
+  ): UpdateFolderPayload
+
+  """Updates a single `Folder` using a unique key and a patch."""
+  updateFolderByOrganizationIdAndParentId(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateFolderByOrganizationIdAndParentIdInput!
   ): UpdateFolderPayload
 
   """Updates a single `Organization` using a unique key and a patch."""
@@ -3438,6 +3519,9 @@ type Query implements Node {
     """The globally unique `ID` to be used in selecting a single `Folder`."""
     nodeId: ID!
   ): Folder
+
+  """Get a single `Folder`."""
+  folderByOrganizationIdAndParentId(organizationId: UUID!, parentId: UUID!): Folder
 
   """Reads and enables pagination through a set of `Folder`."""
   folders(
@@ -4431,6 +4515,22 @@ input UpdateFolderByNodeIdInput {
   The globally unique `ID` which will identify a single `Folder` to be updated.
   """
   nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Folder` being updated.
+  """
+  patch: FolderPatch!
+}
+
+"""All input for the `updateFolderByOrganizationIdAndParentId` mutation."""
+input UpdateFolderByOrganizationIdAndParentIdInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  organizationId: UUID!
+  parentId: UUID!
 
   """
   An object where the defined keys will be set on the `Folder` being updated.

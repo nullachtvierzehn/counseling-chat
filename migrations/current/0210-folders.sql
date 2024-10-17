@@ -3,16 +3,18 @@ create extension if not exists pg_trgm;
 create table if not exists app_public.folders (
   id uuid primary key default uuid_generate_v1mc(),
   organization_id uuid not null
-    constraint organization 
+    constraint organization
     references app_public.organizations (id)
     on update cascade on delete cascade,
-  parent_id uuid 
-    constraint parent 
+  parent_id uuid
+    constraint parent
     references app_public.folders (id)
     on update cascade on delete cascade,
   "name" text not null,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  constraint at_most_one_root_folder_per_organization
+    unique nulls distinct (organization_id, parent_id)
 );
 
 alter table app_public.folders enable row level security;
@@ -39,7 +41,7 @@ on app_public.folders
 for all
 using (exists(
   select from app_public.organization_memberships
-  where 
+  where
     organization_id = folders.organization_id
     and user_id = app_public.current_user_id()
     and is_owner

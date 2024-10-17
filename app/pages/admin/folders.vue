@@ -18,7 +18,14 @@
 
       <!-- Selection of found cases. -->
       <nav>
-        <FolderListItem v-for="folder in folders" :key="folder.id" :model-value="folder" />
+        <ul>
+          <FolderListItem
+            v-for="folder in folders"
+            :key="folder.id"
+            :model-value="folder"
+            :for-list="true"
+          />
+        </ul>
       </nav>
     </header>
 
@@ -34,13 +41,25 @@ definePageMeta({
   layout: "admin-panel"
 })
 
+const route = useRoute()
+
 const { data: foldersData } = await useFetchFoldersQuery({
   variables: computed(() => ({
     filter: { parentExists: false },
     orderBy: ["NAME_ASC"]
   }))
 })
+
 const folders = computed(() => foldersData.value?.folders?.nodes ?? [])
+
+watch(
+  [folders, route],
+  ([currentFolders, currentRoute]) => {
+    if (currentRoute.name === "all-folders" && currentFolders.length > 0)
+      navigateTo({ name: "folder-by-id", params: { id: currentFolders[0]!.id } })
+  },
+  { immediate: true }
+)
 </script>
 
   <style lang="css" scoped>

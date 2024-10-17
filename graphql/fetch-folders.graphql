@@ -16,6 +16,7 @@ query FetchFolders(
     last: $last
     before: $before
   ) {
+    totalCount
     pageInfo {
       hasNextPage
       hasPreviousPage
@@ -25,6 +26,7 @@ query FetchFolders(
     nodes {
       ...ShortFolder
       childFolders(orderBy: $orderBy, first: $first, last: $last) {
+        totalCount
         pageInfo {
           hasNextPage
           hasPreviousPage
