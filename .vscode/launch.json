@@ -10,7 +10,7 @@
             "name": "GraphQL Codegenerator",
             "outputCapture": "std",
             "program": "${workspaceFolder}/node_modules/@graphql-codegen/cli/esm/bin.js",
-            "args": ["--watch", "--config", "codegen.yml"],
+            "args": ["--watch", "--config", "codegen.ts"],
             "cwd": "${workspaceFolder}"
         },
         {
