@@ -4,6 +4,8 @@
   "eslint.format.enable": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
+  // Allow at-directives of tailwind
+  "css.customData": [".vscode/tailwind.json"],
   "eslint.validate": [
     "javascript",
     "javascriptreact",
