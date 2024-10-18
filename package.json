@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "codegen:graphql": "graphql-codegen --config codegen.yml",
+    "codegen:graphql": "graphql-codegen --config codegen.ts",
     "lint:eslint": "eslint .",
     "lint:prettier": "prettier . \"!**/*.{js,jsx,mjs,cjs,ts,tsx,vue}\" --check",
     "lint:fix": "prettier . \"!**/*.{js,jsx,mjs,cjs,ts,tsx,vue}\" --write --list-different && eslint . --fix"
@@ -16,7 +16,7 @@
   "dependencies": {
     "@graphile/simplify-inflection": "^8.0.0-beta.5",
     "@graphql-codegen/add": "^5.0.3",
-    "@graphql-codegen/cli": "^5.0.2",
+    "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/typescript": "^4.0.9",
     "@graphql-codegen/typescript-vue-urql": "^3.2.0",
     "@nuxt/kit": "^3.13.0",
@@ -69,5 +69,8 @@
     "inquirer": "^10.1.8",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2"
+  },
+  "overrides": {
+    "graphql": "^16.9.0"
   }
 }
