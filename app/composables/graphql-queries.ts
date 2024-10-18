@@ -33,6 +33,17 @@ export type Scalars = {
   UUID: { input: any; output: any; }
 };
 
+/** All input for the `acceptInvitationToOrganization` mutation. */
+export type AcceptInvitationToOrganizationInput = {
+  /**
+   * An arbitrary string value with no semantic meaning. Will be included in the
+   * payload verbatim. May be used to track mutations by the client.
+   */
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  code?: InputMaybe<Scalars['String']['input']>;
+  invitationId: Scalars['UUID']['input'];
+};
+
 /** The output of our `acceptInvitationToOrganization` mutation. */
 export type AcceptInvitationToOrganizationPayload = {
   __typename?: 'AcceptInvitationToOrganizationPayload';
@@ -1853,6 +1864,7 @@ export type MessagesOrderBy =
 /** The root mutation type which contains root level fields which mutate data. */
 export type Mutation = {
   __typename?: 'Mutation';
+  acceptInvitationToOrganization?: Maybe<AcceptInvitationToOrganizationPayload>;
   /** Enter your old password and a new password to change your password. */
   changePassword?: Maybe<ChangePasswordPayload>;
   /** If you're certain you want to delete your account, use `requestAccountDeletion` to request an account deletion token, and then supply the token through this mutation to complete account deletion. */
@@ -1945,6 +1957,12 @@ export type Mutation = {
   updateUserByUsername?: Maybe<UpdateUserPayload>;
   /** Once you have received a verification token for your email, you may call this mutation with that token to make your email verified. */
   verifyEmail?: Maybe<VerifyEmailPayload>;
+};
+
+
+/** The root mutation type which contains root level fields which mutate data. */
+export type MutationAcceptInvitationToOrganizationArgs = {
+  input: AcceptInvitationToOrganizationInput;
 };
 
 
@@ -4297,12 +4315,20 @@ export type LogoutMutation = { __typename?: 'Mutation', logout?: { __typename?: 
 
 export type ShortFolderFragment = { __typename?: 'Folder', id: any, name: string, createdAt: any, updatedAt: any };
 
+export type ShortOrganizationFragment = { __typename?: 'Organization', id: any, name: string };
+
 export const ShortFolderFragmentDoc = gql`
     fragment ShortFolder on Folder {
   id
   name
   createdAt
   updatedAt
+}
+    `;
+export const ShortOrganizationFragmentDoc = gql`
+    fragment ShortOrganization on Organization {
+  id
+  name
 }
     `;
 export const LoginDocument = gql`
