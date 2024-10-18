@@ -1,5 +1,5 @@
 import type { CodegenConfig } from "@graphql-codegen/cli"
-//import { addTypenameSelectionDocumentTransform } from "@graphql-codegen/client-preset"
+import { addTypenameSelectionDocumentTransform } from "@graphql-codegen/client-preset"
 
 const config: CodegenConfig = {
   schema: "./schema.graphql",
@@ -18,6 +18,14 @@ const config: CodegenConfig = {
         enumsAsTypes: true,
         useTypeImports: true
       }
+    },
+    "./app/utils/": {
+      preset: 'client',
+      presetConfig: {
+        fragmentMasking: false,
+        persistedDocuments: true
+      },
+      documentTransforms: [addTypenameSelectionDocumentTransform]
     }
   },
 
