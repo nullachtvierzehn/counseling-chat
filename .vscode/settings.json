@@ -1,8 +1,19 @@
 {
   "editor.formatOnSave": true,
   // Use eslint instead of prettier
-  "eslint.useFlatConfig": true,
   "eslint.format.enable": true,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "css",
+    "graphql"
+  ],
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
