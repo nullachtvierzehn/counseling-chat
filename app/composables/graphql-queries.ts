@@ -4256,6 +4256,13 @@ export type VerifyEmailPayload = {
   query?: Maybe<Query>;
 };
 
+export type RootfoldersQueryVariables = Exact<{
+  name: Scalars['String']['input'];
+}>;
+
+
+export type RootfoldersQuery = { __typename?: 'Query', folders?: { __typename?: 'FoldersConnection', nodes: Array<{ __typename?: 'Folder', id: any }> } | null };
+
 export type LoginMutationVariables = Exact<{
   username: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -4331,6 +4338,23 @@ export const ShortOrganizationFragmentDoc = gql`
   name
 }
     `;
+export const RootfoldersDocument = gql`
+    query Rootfolders($name: String!) {
+  folders(
+    filter: {parentExists: false}
+    condition: {name: $name}
+    orderBy: [NAME_ASC]
+  ) {
+    nodes {
+      id
+    }
+  }
+}
+    `;
+
+export function useRootfoldersQuery(options?: Omit<Urql.UseQueryArgs<never, RootfoldersQueryVariables | undefined>, 'query'>) {
+  return Urql.useQuery<RootfoldersQuery, RootfoldersQueryVariables | undefined>({ query: RootfoldersDocument, variables: undefined, ...options });
+};
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(input: {username: $username, password: $password}) {

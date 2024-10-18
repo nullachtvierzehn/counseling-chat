@@ -1,0 +1,5 @@
+# Ignore all auto-generated files
+gql.ts
+graphql.ts
+index.ts
+persisted-documents.json

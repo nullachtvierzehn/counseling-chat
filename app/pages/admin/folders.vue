@@ -36,12 +36,28 @@
 </template>
 
 <script lang="ts" setup>
+import { useTypedQuery } from '~/composables/urql';
+import { graphql } from '~/utils';
+
 definePageMeta({
   name: "all-folders",
   layout: "admin-panel"
 })
 
 const route = useRoute()
+
+const { data } = useTypedQuery({
+  query: graphql(/* GraphQL */ `
+    query Rootfolders($name: String!) {
+      folders(filter: { parentExists: false }, condition: {name: $name}, orderBy: [NAME_ASC]) {
+        nodes {
+          id
+        }
+      }
+    }
+  `),
+  variables: computed(() => ({ name: "Test" })),
+})
 
 const { data: foldersData } = await useFetchFoldersQuery({
   variables: computed(() => ({
@@ -62,12 +78,12 @@ watch(
 )
 </script>
 
-  <style lang="css" scoped>
-  #all-folders {
-    @apply grid;
-    grid:
-      "list detail" 1fr
-      / minmax(300px, 0.2fr) 0.8fr;
-    min-height: 100%;
-  }
-  </style>
+<style lang="css" scoped>
+#all-folders {
+  @apply grid;
+  grid:
+    "list detail" 1fr
+    / minmax(300px, 0.2fr) 0.8fr;
+  min-height: 100%;
+}
+</style>
