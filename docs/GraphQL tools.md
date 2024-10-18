@@ -1,0 +1,3 @@
+- Is client preset ready for use in Typescript projects?
+  - https://github.com/apollographql/apollo-client/issues/10857
+  - https://github.com/apollographql/apollo-client/pull/11241
