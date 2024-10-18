@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
   <div id="admin-panel">
     <nav class="flex flex-col justify-between h-full">
