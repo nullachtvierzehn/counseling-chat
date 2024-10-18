@@ -1,0 +1,4 @@
+fragment ShortOrganization on Organization {
+  id
+  name
+}
