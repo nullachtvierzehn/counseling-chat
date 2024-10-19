@@ -95,8 +95,7 @@ export const ERROR_MESSAGE_OVERRIDES: { [code: string]: typeof pluck } = {
 }
 
 const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
-  const typeDefs = gql`
-    input RegisterInput {
+  const typeDefs = gql`input RegisterInput {
       username: String!
       email: String!
       password: String!
@@ -174,8 +173,8 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => {
       After triggering forgotPassword, you'll be sent a reset token. Combine this with your user ID and a new password to reset your password.
       """
       resetPassword(input: ResetPasswordInput!): ResetPasswordPayload
-    }
-  `
+  }
+`
   const userResource = build.input.pgRegistry.pgResources.users
   const currentUserIdResource
     = build.input.pgRegistry.pgResources.current_user_id

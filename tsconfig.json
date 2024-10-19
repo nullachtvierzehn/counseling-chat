@@ -8,6 +8,7 @@
         "schema": "./schema.graphql"
       }
     ],
-    "types": ["bun"]
+    "types": ["bun"],
+    "verbatimModuleSyntax": false
   }
 }

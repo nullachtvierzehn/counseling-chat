@@ -18,18 +18,18 @@ export default defineNuxtConfig({
   },
   typescript: {
     tsConfig: {
-      include: ["../shims.d.ts"]
+      include: ["../shims.d.ts"],
     }
   },
   eslint: {
     config: {
-      stylistic: false /* {
+      stylistic: {
         // https://eslint.style/guide/config-presets#configuration-factory
         indent: 2,
         semi: false,
         quotes: "double",
         commaDangle: "only-multiline",
-      }, */
+      },
     },
   },
 })

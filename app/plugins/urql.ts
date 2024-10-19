@@ -49,7 +49,7 @@ export default defineNuxtPlugin((nuxt) => {
       import.meta.client
         ? window.location.href
         : process.env.ROOT_URL
-        ?? `http://localhost:${process.env.FRONTEND_PORT ?? 3000}`
+          ?? `http://localhost:${process.env.FRONTEND_PORT ?? 3000}`
     )
 
     const wsClient = createWSClient({

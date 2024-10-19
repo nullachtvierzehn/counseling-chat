@@ -6,6 +6,7 @@ import withNuxt from "./.nuxt/eslint.config.mjs"
 // Stolen from
 // https://github.com/dimaMachina/graphql-eslint/blob/c9cbf6d8065740302cfb75b278733701dd5f7cf6/examples/vue-code-file/eslint.config.js
 const graphqlChecks = {
+  name: "graphql",
   files: ["**/*.graphql"],
   languageOptions: {
     parser: graphql.parser,
@@ -22,7 +23,7 @@ const graphqlChecks = {
     },
   },
   rules: {
-    ...graphql.configs["flat/operations-recommended"].rules,
+    ...graphql.configs["flat/operations-recommended"],
     "@graphql-eslint/no-anonymous-operations": "error",
     "@graphql-eslint/no-duplicate-fields": "error",
     "@graphql-eslint/naming-convention": [
@@ -36,11 +37,6 @@ const graphqlChecks = {
       },
     ],
   },
-}
-
-const graphqlInVue = {
-  files: ["**/*.vue"],
-  processor: graphql.processors.graphql,
 }
 
 export default withNuxt(
@@ -57,6 +53,15 @@ export default withNuxt(
       "@typescript-eslint/no-explicit-any": "warn",
     },
   },
-  // graphqlInVue,
+  // stylisticChecks,
+  // ...graphqlInVue,
   graphqlChecks
 )
+// We had the same issue before prepending.
+// https://github.com/dimaMachina/graphql-eslint/issues/480
+// https://github.com/dimaMachina/graphql-eslint/blob/v4-1/examples/vue-code-file/eslint.config.js
+  .prepend({
+    name: "graphql-in-vue",
+    files: ["**/*.vue", "**/*.ts"],
+    processor: graphql.processors.graphql,
+  })
