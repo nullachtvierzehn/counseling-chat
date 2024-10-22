@@ -89,7 +89,7 @@
     //{ "_": "command", "command": "echo $GM_DBURL" },
     { "_": "command", "command": "graphile-worker --connection $GM_DBURL --schema-only" },
   ],
- 
+
   /*
    * afterAllMigrations: actions executed once all migrations are complete.
    */
@@ -97,7 +97,7 @@
     {
       "_": "command",
       "shadow": true,
-      "command": "if [[ \"$IN_TESTS\" != \"1\" && \"$GM_SHADOW\" == \"1\" ]]; then pg_dump --no-sync --schema-only --no-owner --exclude-schema=graphile_migrate --exclude-schema=graphile_worker --file current-schema.sql $GM_DBURL; fi",
+      "command": "if [[ \"$IN_TESTS\" != \"1\" && \"$GM_SHADOW\" == \"1\" ]]; then pg_dump --no-sync --schema-only --no-owner --exclude-schema=graphile_migrate --exclude-schema=graphile_worker --file schema.sql $GM_DBURL; fi",
     },
   ],
 
@@ -117,7 +117,12 @@
       "_": "sql",
       "file": "restoreCurrentData.sql",
       "shadow": false
-    }
+    },
+    {
+      "_": "command",
+      "shadow": false,
+      "command": "pg_dump --no-sync --schema-only --no-owner --exclude-schema=graphile_migrate --exclude-schema=graphile_worker --file schema.sql $GM_DBURL",
+    },
     // {
     //   "_": "command",
     //   "shadow": true,

@@ -59,6 +59,20 @@ COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings
 
 
 --
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA app_public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
+
+--
 -- Name: pgcrypto; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -70,6 +84,20 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 --
 
 COMMENT ON EXTENSION pgcrypto IS 'cryptographic functions';
+
+
+--
+-- Name: temporal_tables; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS temporal_tables WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION temporal_tables; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION temporal_tables IS 'temporal tables';
 
 
 --
@@ -764,6 +792,49 @@ $$;
 
 
 --
+-- Name: folders; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.folders (
+    id uuid DEFAULT public.uuid_generate_v1mc() NOT NULL,
+    organization_id uuid NOT NULL,
+    parent_id uuid,
+    name text NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: ancestors(app_public.folders, boolean); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.ancestors(folder app_public.folders, include_self boolean DEFAULT false) RETURNS SETOF app_public.folders
+    LANGUAGE sql STABLE ROWS 10 PARALLEL SAFE
+    AS $$
+  with recursive traversal as (
+    select folder.* where include_self
+    union all
+    select f.*
+    from app_public.folders as f
+    where f.id = folder.parent_id
+    union all
+    select parent.*
+    from app_public.folders as parent
+    join traversal as child on (parent.id = child.parent_id)
+  )
+  select * from traversal
+$$;
+
+
+--
+-- Name: FUNCTION ancestors(folder app_public.folders, include_self boolean); Type: COMMENT; Schema: app_public; Owner: -
+--
+
+COMMENT ON FUNCTION app_public.ancestors(folder app_public.folders, include_self boolean) IS '@behavior +typeField +filterBy';
+
+
+--
 -- Name: change_password(text, text); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -943,6 +1014,20 @@ $$;
 --
 
 COMMENT ON FUNCTION app_public."current_user"() IS 'The currently logged in user (or null if not logged in).';
+
+
+--
+-- Name: current_user_consultation_ids(); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.current_user_consultation_ids() RETURNS SETOF uuid
+    LANGUAGE sql STABLE SECURITY DEFINER ROWS 20
+    SET search_path TO 'pg_catalog', 'public', 'pg_temp'
+    AS $$
+  select consultation_id 
+  from app_public.consultation_participants
+  where "user_id" = app_public.current_user_id();
+$$;
 
 
 --
@@ -1475,6 +1560,28 @@ COMMENT ON FUNCTION app_public.resend_email_verification_code(email_id uuid) IS 
 
 
 --
+-- Name: siblings(app_public.folders, boolean); Type: FUNCTION; Schema: app_public; Owner: -
+--
+
+CREATE FUNCTION app_public.siblings(folder app_public.folders, include_self boolean DEFAULT false) RETURNS SETOF app_public.folders
+    LANGUAGE sql STABLE ROWS 50 PARALLEL SAFE
+    AS $$
+  select f.*
+  from app_public.folders as f
+  where
+    f.parent_id = folder.parent_id
+    and (include_self or f.id != folder.id)
+$$;
+
+
+--
+-- Name: FUNCTION siblings(folder app_public.folders, include_self boolean); Type: COMMENT; Schema: app_public; Owner: -
+--
+
+COMMENT ON FUNCTION app_public.siblings(folder app_public.folders, include_self boolean) IS '@behavior +typeField +filterBy +orderBy';
+
+
+--
 -- Name: tg__graphql_subscription(); Type: FUNCTION; Schema: app_public; Owner: -
 --
 
@@ -1807,6 +1914,23 @@ $$;
 
 
 --
+-- Name: consultation_participants_history; Type: TABLE; Schema: app_hidden; Owner: -
+--
+
+CREATE TABLE app_hidden.consultation_participants_history (
+    id uuid NOT NULL,
+    consultation_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    is_client boolean NOT NULL,
+    is_counselor boolean NOT NULL,
+    is_supervisor boolean NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL,
+    sys_period tstzrange NOT NULL
+);
+
+
+--
 -- Name: connect_pg_simple_sessions; Type: TABLE; Schema: app_private; Owner: -
 --
 
@@ -1912,6 +2036,92 @@ COMMENT ON TABLE app_private.user_secrets IS 'The contents of this table should 
 
 
 --
+-- Name: consultation_participants; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.consultation_participants (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    consultation_id uuid NOT NULL,
+    user_id uuid DEFAULT app_public.current_user_id() NOT NULL,
+    is_client boolean DEFAULT false NOT NULL,
+    is_counselor boolean DEFAULT false NOT NULL,
+    is_supervisor boolean DEFAULT false NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    sys_period tstzrange DEFAULT tstzrange(now(), NULL::timestamp with time zone, '[)'::text) NOT NULL,
+    CONSTRAINT has_at_least_one_role CHECK ((is_client OR is_counselor OR is_supervisor)),
+    CONSTRAINT is_either_client_or_staff CHECK ((is_client <> (is_counselor OR is_supervisor)))
+);
+
+
+--
+-- Name: consultations; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.consultations (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    organization_id uuid NOT NULL,
+    name text NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: message_body_revision_approvals; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.message_body_revision_approvals (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    body_revision_id uuid NOT NULL,
+    approver_id uuid DEFAULT app_public.current_user_id(),
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: message_body_revision_comments; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.message_body_revision_comments (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    body_revision_id uuid NOT NULL,
+    commenter_id uuid DEFAULT app_public.current_user_id(),
+    content text NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: message_body_revisions; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.message_body_revisions (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    message_id uuid NOT NULL,
+    author_id uuid DEFAULT app_public.current_user_id(),
+    content text NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: messages; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.messages (
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    sender_id uuid DEFAULT app_public.current_user_id(),
+    consultation_id uuid NOT NULL,
+    is_for_clients boolean DEFAULT false NOT NULL,
+    is_for_staff boolean DEFAULT false NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: organization_invitations; Type: TABLE; Schema: app_public; Owner: -
 --
 
@@ -1936,7 +2146,10 @@ CREATE TABLE app_public.organization_memberships (
     user_id uuid NOT NULL,
     is_owner boolean DEFAULT false NOT NULL,
     is_billing_contact boolean DEFAULT false NOT NULL,
-    created_at timestamp with time zone DEFAULT now() NOT NULL
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    is_dispatcher boolean DEFAULT false NOT NULL,
+    is_counselor boolean DEFAULT false NOT NULL,
+    is_supervisor boolean DEFAULT false NOT NULL
 );
 
 
@@ -2029,6 +2242,78 @@ ALTER TABLE ONLY app_private.user_email_secrets
 
 ALTER TABLE ONLY app_private.user_secrets
     ADD CONSTRAINT user_secrets_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: folders at_most_one_root_folder_per_organization; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.folders
+    ADD CONSTRAINT at_most_one_root_folder_per_organization UNIQUE (organization_id, parent_id);
+
+
+--
+-- Name: consultation_participants consultation_participants_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.consultation_participants
+    ADD CONSTRAINT consultation_participants_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: consultations consultations_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.consultations
+    ADD CONSTRAINT consultations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: folders folders_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.folders
+    ADD CONSTRAINT folders_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: message_body_revision_approvals message_body_revision_approvals_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revision_approvals
+    ADD CONSTRAINT message_body_revision_approvals_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: message_body_revision_comments message_body_revision_comments_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revision_comments
+    ADD CONSTRAINT message_body_revision_comments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: message_body_revisions message_body_revisions_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revisions
+    ADD CONSTRAINT message_body_revisions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: messages messages_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.messages
+    ADD CONSTRAINT messages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: consultation_participants one_participation_per_user_in_consultations; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.consultation_participants
+    ADD CONSTRAINT one_participation_per_user_in_consultations UNIQUE (consultation_id, user_id);
 
 
 --
@@ -2143,6 +2428,69 @@ CREATE INDEX sessions_user_id_idx ON app_private.sessions USING btree (user_id);
 
 
 --
+-- Name: consultation_participants_on_consultation_id; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX consultation_participants_on_consultation_id ON app_public.consultation_participants USING btree (consultation_id);
+
+
+--
+-- Name: consultation_participants_on_created_at; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX consultation_participants_on_created_at ON app_public.consultation_participants USING brin (created_at);
+
+
+--
+-- Name: consultation_participants_on_user_id; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX consultation_participants_on_user_id ON app_public.consultation_participants USING btree (user_id);
+
+
+--
+-- Name: consultations_on_created_at; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX consultations_on_created_at ON app_public.consultations USING brin (created_at);
+
+
+--
+-- Name: folders_on_created_at; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX folders_on_created_at ON app_public.folders USING brin (created_at);
+
+
+--
+-- Name: folders_on_fuzzy_name; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX folders_on_fuzzy_name ON app_public.folders USING gin (name app_public.gin_trgm_ops);
+
+
+--
+-- Name: folders_on_name; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX folders_on_name ON app_public.folders USING btree (name);
+
+
+--
+-- Name: folders_on_organization_id; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX folders_on_organization_id ON app_public.folders USING hash (organization_id);
+
+
+--
+-- Name: folders_on_parent_id; Type: INDEX; Schema: app_public; Owner: -
+--
+
+CREATE INDEX folders_on_parent_id ON app_public.folders USING hash (parent_id);
+
+
+--
 -- Name: idx_user_emails_primary; Type: INDEX; Schema: app_public; Owner: -
 --
 
@@ -2189,6 +2537,20 @@ CREATE UNIQUE INDEX uniq_user_emails_verified_email ON app_public.user_emails US
 --
 
 CREATE INDEX user_authentications_user_id_idx ON app_public.user_authentications USING btree (user_id);
+
+
+--
+-- Name: consultation_participants _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.consultation_participants FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
+
+
+--
+-- Name: consultations _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.consultations FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
 
 
 --
@@ -2290,10 +2652,25 @@ CREATE TRIGGER _500_verify_account_on_verified AFTER INSERT OR UPDATE OF is_veri
 
 
 --
+-- Name: consultation_participants _900_audit_log_consultation_participants; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _900_audit_log_consultation_participants BEFORE INSERT OR DELETE OR UPDATE ON app_public.consultation_participants FOR EACH ROW EXECUTE FUNCTION public.versioning('sys_period', 'app_hidden.consultation_participants_history', 'true');
+
+
+--
 -- Name: user_emails _900_send_verification_email; Type: TRIGGER; Schema: app_public; Owner: -
 --
 
 CREATE TRIGGER _900_send_verification_email AFTER INSERT ON app_public.user_emails FOR EACH ROW WHEN ((new.is_verified IS FALSE)) EXECUTE FUNCTION app_private.tg__add_job('user_emails__send_verification');
+
+
+--
+-- Name: consultation_participants_history consultation; Type: FK CONSTRAINT; Schema: app_hidden; Owner: -
+--
+
+ALTER TABLE ONLY app_hidden.consultation_participants_history
+    ADD CONSTRAINT consultation FOREIGN KEY (consultation_id) REFERENCES app_public.consultations(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2329,6 +2706,121 @@ ALTER TABLE ONLY app_private.user_secrets
 
 
 --
+-- Name: message_body_revision_approvals approver; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revision_approvals
+    ADD CONSTRAINT approver FOREIGN KEY (approver_id) REFERENCES app_public.users(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: message_body_revisions author; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revisions
+    ADD CONSTRAINT author FOREIGN KEY (author_id) REFERENCES app_public.users(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: message_body_revision_approvals body_revision; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revision_approvals
+    ADD CONSTRAINT body_revision FOREIGN KEY (body_revision_id) REFERENCES app_public.message_body_revisions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: CONSTRAINT body_revision ON message_body_revision_approvals; Type: COMMENT; Schema: app_public; Owner: -
+--
+
+COMMENT ON CONSTRAINT body_revision ON app_public.message_body_revision_approvals IS '@foreignFieldName approvals
+The revision that this approval is for.';
+
+
+--
+-- Name: message_body_revision_comments body_revision; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revision_comments
+    ADD CONSTRAINT body_revision FOREIGN KEY (body_revision_id) REFERENCES app_public.message_body_revisions(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: CONSTRAINT body_revision ON message_body_revision_comments; Type: COMMENT; Schema: app_public; Owner: -
+--
+
+COMMENT ON CONSTRAINT body_revision ON app_public.message_body_revision_comments IS '@foreignFieldName comments
+The revision that this comment is for.';
+
+
+--
+-- Name: message_body_revision_comments commenter; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revision_comments
+    ADD CONSTRAINT commenter FOREIGN KEY (commenter_id) REFERENCES app_public.users(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: consultation_participants consultation; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.consultation_participants
+    ADD CONSTRAINT consultation FOREIGN KEY (consultation_id) REFERENCES app_public.consultations(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: CONSTRAINT consultation ON consultation_participants; Type: COMMENT; Schema: app_public; Owner: -
+--
+
+COMMENT ON CONSTRAINT consultation ON app_public.consultation_participants IS '
+@foreignFieldName participations
+
+The consultation this participant is part of.
+';
+
+
+--
+-- Name: messages consultation; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.messages
+    ADD CONSTRAINT consultation FOREIGN KEY (consultation_id) REFERENCES app_public.consultations(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: message_body_revisions message; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.message_body_revisions
+    ADD CONSTRAINT message FOREIGN KEY (message_id) REFERENCES app_public.messages(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: CONSTRAINT message ON message_body_revisions; Type: COMMENT; Schema: app_public; Owner: -
+--
+
+COMMENT ON CONSTRAINT message ON app_public.message_body_revisions IS '@foreignFieldName bodyRevisions
+The message that this revision is a part of.';
+
+
+--
+-- Name: consultations organization; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.consultations
+    ADD CONSTRAINT organization FOREIGN KEY (organization_id) REFERENCES app_public.organizations(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: folders organization; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.folders
+    ADD CONSTRAINT organization FOREIGN KEY (organization_id) REFERENCES app_public.organizations(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: organization_invitations organization_invitations_organization_id_fkey; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
@@ -2358,6 +2850,30 @@ ALTER TABLE ONLY app_public.organization_memberships
 
 ALTER TABLE ONLY app_public.organization_memberships
     ADD CONSTRAINT organization_memberships_user_id_fkey FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: folders parent; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.folders
+    ADD CONSTRAINT parent FOREIGN KEY (parent_id) REFERENCES app_public.folders(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: messages sender; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.messages
+    ADD CONSTRAINT sender FOREIGN KEY (sender_id) REFERENCES app_public.users(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: consultation_participants user; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.consultation_participants
+    ADD CONSTRAINT "user" FOREIGN KEY (user_id) REFERENCES app_public.users(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -2407,6 +2923,34 @@ ALTER TABLE app_private.user_email_secrets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE app_private.user_secrets ENABLE ROW LEVEL SECURITY;
 
 --
+-- Name: consultation_participants allow_to_leave_a_consultation; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY allow_to_leave_a_consultation ON app_public.consultation_participants FOR DELETE USING ((user_id = ( SELECT app_public.current_user_id() AS current_user_id)));
+
+
+--
+-- Name: consultation_participants; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.consultation_participants ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: consultations; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.consultations ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: folders create_and_manage_folders_as_organization_owner; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY create_and_manage_folders_as_organization_owner ON app_public.folders USING ((EXISTS ( SELECT
+   FROM app_public.organization_memberships
+  WHERE ((organization_memberships.organization_id = folders.organization_id) AND (organization_memberships.user_id = app_public.current_user_id()) AND organization_memberships.is_owner))));
+
+
+--
 -- Name: user_authentications delete_own; Type: POLICY; Schema: app_public; Owner: -
 --
 
@@ -2421,10 +2965,35 @@ CREATE POLICY delete_own ON app_public.user_emails FOR DELETE USING ((user_id = 
 
 
 --
+-- Name: folders; Type: ROW SECURITY; Schema: app_public; Owner: -
+--
+
+ALTER TABLE app_public.folders ENABLE ROW LEVEL SECURITY;
+
+--
 -- Name: user_emails insert_own; Type: POLICY; Schema: app_public; Owner: -
 --
 
 CREATE POLICY insert_own ON app_public.user_emails FOR INSERT WITH CHECK ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: consultations manage_as_owner; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_as_owner ON app_public.consultations USING ((EXISTS ( SELECT
+   FROM app_public.organization_memberships m
+  WHERE ((m.organization_id = consultations.organization_id) AND (m.user_id = app_public.current_user_id()) AND (m.is_owner IS TRUE)))));
+
+
+--
+-- Name: consultation_participants manage_as_owner_or_dispatcher; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY manage_as_owner_or_dispatcher ON app_public.consultation_participants USING ((EXISTS ( SELECT
+   FROM (app_public.consultations c
+     JOIN app_public.organization_memberships m USING (organization_id))
+  WHERE ((c.id = consultation_participants.consultation_id) AND (m.user_id = app_public.current_user_id()) AND ((m.is_dispatcher IS TRUE) OR (m.is_owner IS TRUE))))));
 
 
 --
@@ -2444,6 +3013,22 @@ ALTER TABLE app_public.organization_memberships ENABLE ROW LEVEL SECURITY;
 --
 
 ALTER TABLE app_public.organizations ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: consultations see_as_dispatcher; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY see_as_dispatcher ON app_public.consultations FOR SELECT USING ((EXISTS ( SELECT
+   FROM app_public.organization_memberships m
+  WHERE ((m.organization_id = consultations.organization_id) AND (m.user_id = app_public.current_user_id()) AND (m.is_dispatcher IS TRUE)))));
+
+
+--
+-- Name: consultation_participants see_participants_in_my_consultations; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY see_participants_in_my_consultations ON app_public.consultation_participants FOR SELECT USING ((consultation_id IN ( SELECT app_public.current_user_consultation_ids() AS current_user_consultation_ids)));
+
 
 --
 -- Name: users select_all; Type: POLICY; Schema: app_public; Owner: -
@@ -2492,6 +3077,13 @@ CREATE POLICY select_own ON app_public.user_authentications FOR SELECT USING ((u
 --
 
 CREATE POLICY select_own ON app_public.user_emails FOR SELECT USING ((user_id = app_public.current_user_id()));
+
+
+--
+-- Name: folders show_folders_of_my_organizations; Type: POLICY; Schema: app_public; Owner: -
+--
+
+CREATE POLICY show_folders_of_my_organizations ON app_public.folders FOR SELECT USING ((organization_id IN ( SELECT app_public.current_user_member_organization_ids() AS current_user_member_organization_ids)));
 
 
 --
@@ -2665,6 +3257,42 @@ GRANT ALL ON FUNCTION app_public.accept_invitation_to_organization(invitation_id
 
 
 --
+-- Name: TABLE folders; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.folders TO counseling_visitor;
+
+
+--
+-- Name: COLUMN folders.organization_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(organization_id),UPDATE(organization_id) ON TABLE app_public.folders TO counseling_visitor;
+
+
+--
+-- Name: COLUMN folders.parent_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(parent_id),UPDATE(parent_id) ON TABLE app_public.folders TO counseling_visitor;
+
+
+--
+-- Name: COLUMN folders.name; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(name),UPDATE(name) ON TABLE app_public.folders TO counseling_visitor;
+
+
+--
+-- Name: FUNCTION ancestors(folder app_public.folders, include_self boolean); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.ancestors(folder app_public.folders, include_self boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.ancestors(folder app_public.folders, include_self boolean) TO counseling_visitor;
+
+
+--
 -- Name: FUNCTION change_password(old_password text, new_password text); Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -2723,6 +3351,14 @@ GRANT ALL ON FUNCTION app_public.current_session_id() TO counseling_visitor;
 
 REVOKE ALL ON FUNCTION app_public."current_user"() FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public."current_user"() TO counseling_visitor;
+
+
+--
+-- Name: FUNCTION current_user_consultation_ids(); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.current_user_consultation_ids() FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.current_user_consultation_ids() TO counseling_visitor;
 
 
 --
@@ -2852,6 +3488,14 @@ GRANT ALL ON FUNCTION app_public.resend_email_verification_code(email_id uuid) T
 
 
 --
+-- Name: FUNCTION siblings(folder app_public.folders, include_self boolean); Type: ACL; Schema: app_public; Owner: -
+--
+
+REVOKE ALL ON FUNCTION app_public.siblings(folder app_public.folders, include_self boolean) FROM PUBLIC;
+GRANT ALL ON FUNCTION app_public.siblings(folder app_public.folders, include_self boolean) TO counseling_visitor;
+
+
+--
 -- Name: FUNCTION tg__graphql_subscription(); Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -2921,6 +3565,118 @@ GRANT ALL ON FUNCTION app_public.users_has_password(u app_public.users) TO couns
 
 REVOKE ALL ON FUNCTION app_public.verify_email(user_email_id uuid, token text) FROM PUBLIC;
 GRANT ALL ON FUNCTION app_public.verify_email(user_email_id uuid, token text) TO counseling_visitor;
+
+
+--
+-- Name: FUNCTION versioning(); Type: ACL; Schema: public; Owner: -
+--
+
+GRANT ALL ON FUNCTION public.versioning() TO counseling_owner;
+
+
+--
+-- Name: TABLE consultation_participants_history; Type: ACL; Schema: app_hidden; Owner: -
+--
+
+GRANT INSERT,UPDATE ON TABLE app_hidden.consultation_participants_history TO counseling_visitor;
+
+
+--
+-- Name: TABLE consultation_participants; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.consultation_participants TO counseling_visitor;
+
+
+--
+-- Name: COLUMN consultation_participants.id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(id) ON TABLE app_public.consultation_participants TO counseling_visitor;
+
+
+--
+-- Name: COLUMN consultation_participants.consultation_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(consultation_id) ON TABLE app_public.consultation_participants TO counseling_visitor;
+
+
+--
+-- Name: COLUMN consultation_participants.user_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(user_id) ON TABLE app_public.consultation_participants TO counseling_visitor;
+
+
+--
+-- Name: COLUMN consultation_participants.is_client; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(is_client),UPDATE(is_client) ON TABLE app_public.consultation_participants TO counseling_visitor;
+
+
+--
+-- Name: COLUMN consultation_participants.is_counselor; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(is_counselor),UPDATE(is_counselor) ON TABLE app_public.consultation_participants TO counseling_visitor;
+
+
+--
+-- Name: COLUMN consultation_participants.is_supervisor; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(is_supervisor),UPDATE(is_supervisor) ON TABLE app_public.consultation_participants TO counseling_visitor;
+
+
+--
+-- Name: TABLE consultations; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.consultations TO counseling_visitor;
+
+
+--
+-- Name: COLUMN consultations.id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(id) ON TABLE app_public.consultations TO counseling_visitor;
+
+
+--
+-- Name: COLUMN consultations.name; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(name),UPDATE(name) ON TABLE app_public.consultations TO counseling_visitor;
+
+
+--
+-- Name: TABLE message_body_revision_approvals; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT ON TABLE app_public.message_body_revision_approvals TO counseling_visitor;
+
+
+--
+-- Name: TABLE message_body_revision_comments; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT ON TABLE app_public.message_body_revision_comments TO counseling_visitor;
+
+
+--
+-- Name: TABLE message_body_revisions; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT ON TABLE app_public.message_body_revisions TO counseling_visitor;
+
+
+--
+-- Name: TABLE messages; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT ON TABLE app_public.messages TO counseling_visitor;
 
 
 --
