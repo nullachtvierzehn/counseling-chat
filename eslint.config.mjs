@@ -26,7 +26,7 @@ export default withNuxt(
 // Stolen from https://github.com/dimaMachina/graphql-eslint/blob/c9cbf6d8065740302cfb75b278733701dd5f7cf6/examples/vue-code-file/eslint.config.js
   .prepend({
     name: "graphql-in-vue",
-    files: ["**/*.vue", "**/*.ts"],
+    files: ["**/*.vue", "**/*.ts", "**/*.tsx"],
     processor: graphql.processors.graphql,
   },
   {
@@ -51,8 +51,6 @@ export default withNuxt(
         {
           OperationDefinition: {
             style: "PascalCase",
-            forbiddenPrefixes: ["Query", "Mutation", "Subscription", "Get"],
-            forbiddenSuffixes: ["Query", "Mutation", "Subscription"],
           },
         },
       ],

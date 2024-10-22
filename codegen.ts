@@ -1,6 +1,8 @@
 import type { CodegenConfig } from "@graphql-codegen/cli"
 import type { Types } from "@graphql-codegen/plugin-helpers"
-import { addTypenameSelectionDocumentTransform } from "@graphql-codegen/client-preset"
+import { loadConfigSync } from "graphql-config"
+
+import { addTypenameSelectionDocumentTransform, type ClientPresetConfig } from "@graphql-codegen/client-preset"
 
 const _generateComposables: Types.ConfiguredOutput = {
   plugins: [
@@ -16,24 +18,24 @@ const _generateComposables: Types.ConfiguredOutput = {
   }
 }
 
-const generateDocuments: Types.ConfiguredOutput = {
-  preset: "client",
-  presetConfig: {
-    fragmentMasking: false,
-    persistedDocuments: true
-  },
-  documentTransforms: [addTypenameSelectionDocumentTransform]
-}
+const graphqlRc = loadConfigSync({ filepath: ".graphqlrc.yml", rootDir: "./" })
 
 const config: CodegenConfig = {
-  schema: "./schema.graphql",
-  documents: ["./graphql/**/*.graphql", "./app/**/*.vue"],
+  schema: graphqlRc.getDefault().schema,
+  // schema: "./schema.graphql",
+  documents: graphqlRc.getDefault().documents,
   ignoreNoDocuments: true, // for better experience with the watcher
   generates: {
     // "./app/composables/graphql-queries.ts": _generateComposables,
-    "./app/utils/": generateDocuments
+    "./app/utils/": {
+      preset: "client",
+      presetConfig: {
+        fragmentMasking: false,
+        persistedDocuments: true,
+      } satisfies ClientPresetConfig,
+      documentTransforms: [addTypenameSelectionDocumentTransform]
+    }
   },
-
 }
 
 export default config

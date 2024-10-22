@@ -6,8 +6,8 @@ export const TopicMessageSubscriptionPlugin = makeExtendSchemaPlugin((build) => 
   const { messages /* topic, currentProfileClaims */ }
       = build.input.pgRegistry.pgResources
   return {
-    typeDefs: gql`        extend type Subscription {
-          topicMessage(topicId: BigInt!): TopicMessageSubscriptionPayload
+    typeDefs: gql`extend type Subscription {
+          topicMessage(topicId: Int!): TopicMessageSubscriptionPayload
         }
 
         type TopicMessageSubscriptionPayload {
