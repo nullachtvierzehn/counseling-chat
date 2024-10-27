@@ -2068,6 +2068,24 @@ CREATE TABLE app_public.consultations (
 
 
 --
+-- Name: files; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.files (
+    id uuid DEFAULT public.uuid_generate_v1mc() NOT NULL,
+    uploader_id uuid DEFAULT app_public.current_user_id(),
+    uploaded_bytes integer,
+    total_bytes integer,
+    filename text,
+    path_on_storage text,
+    mime_type text,
+    sha256 text,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
 -- Name: message_body_revision_approvals; Type: TABLE; Schema: app_public; Owner: -
 --
 
@@ -2150,6 +2168,23 @@ CREATE TABLE app_public.organization_memberships (
     is_dispatcher boolean DEFAULT false NOT NULL,
     is_counselor boolean DEFAULT false NOT NULL,
     is_supervisor boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- Name: pdf_files; Type: TABLE; Schema: app_public; Owner: -
+--
+
+CREATE TABLE app_public.pdf_files (
+    id uuid NOT NULL,
+    title text,
+    pages smallint NOT NULL,
+    metadata jsonb,
+    content_as_plain_text text,
+    fulltext_index_column tsvector GENERATED ALWAYS AS (to_tsvector('german'::regconfig, content_as_plain_text)) STORED,
+    thumbnail_id uuid,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
 );
 
 
@@ -2269,6 +2304,14 @@ ALTER TABLE ONLY app_public.consultations
 
 
 --
+-- Name: files files_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.files
+    ADD CONSTRAINT files_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: folders folders_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
 --
 
@@ -2370,6 +2413,14 @@ ALTER TABLE ONLY app_public.organizations
 
 ALTER TABLE ONLY app_public.organizations
     ADD CONSTRAINT organizations_slug_key UNIQUE (slug);
+
+
+--
+-- Name: pdf_files pdf_files_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.pdf_files
+    ADD CONSTRAINT pdf_files_pkey PRIMARY KEY (id);
 
 
 --
@@ -2551,6 +2602,13 @@ CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.consultatio
 --
 
 CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.consultations FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
+
+
+--
+-- Name: files _100_timestamps; Type: TRIGGER; Schema: app_public; Owner: -
+--
+
+CREATE TRIGGER _100_timestamps BEFORE INSERT OR UPDATE ON app_public.files FOR EACH ROW EXECUTE FUNCTION app_private.tg__timestamps();
 
 
 --
@@ -2789,6 +2847,14 @@ ALTER TABLE ONLY app_public.messages
 
 
 --
+-- Name: pdf_files file; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.pdf_files
+    ADD CONSTRAINT file FOREIGN KEY (id) REFERENCES app_public.files(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: message_body_revisions message; Type: FK CONSTRAINT; Schema: app_public; Owner: -
 --
 
@@ -2866,6 +2932,22 @@ ALTER TABLE ONLY app_public.folders
 
 ALTER TABLE ONLY app_public.messages
     ADD CONSTRAINT sender FOREIGN KEY (sender_id) REFERENCES app_public.users(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: pdf_files thumbnail; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.pdf_files
+    ADD CONSTRAINT thumbnail FOREIGN KEY (thumbnail_id) REFERENCES app_public.files(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: files uploader; Type: FK CONSTRAINT; Schema: app_public; Owner: -
+--
+
+ALTER TABLE ONLY app_public.files
+    ADD CONSTRAINT uploader FOREIGN KEY (uploader_id) REFERENCES app_public.users(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -3652,6 +3734,55 @@ GRANT INSERT(name),UPDATE(name) ON TABLE app_public.consultations TO counseling_
 
 
 --
+-- Name: TABLE files; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN files.id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(id),UPDATE(id) ON TABLE app_public.files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN files.uploader_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(uploader_id) ON TABLE app_public.files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN files.uploaded_bytes; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(uploaded_bytes),UPDATE(uploaded_bytes) ON TABLE app_public.files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN files.total_bytes; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(total_bytes),UPDATE(total_bytes) ON TABLE app_public.files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN files.filename; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(filename),UPDATE(filename) ON TABLE app_public.files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN files.mime_type; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(mime_type),UPDATE(mime_type) ON TABLE app_public.files TO counseling_visitor;
+
+
+--
 -- Name: TABLE message_body_revision_approvals; Type: ACL; Schema: app_public; Owner: -
 --
 
@@ -3684,6 +3815,55 @@ GRANT SELECT ON TABLE app_public.messages TO counseling_visitor;
 --
 
 GRANT SELECT ON TABLE app_public.organization_memberships TO counseling_visitor;
+
+
+--
+-- Name: TABLE pdf_files; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT SELECT,DELETE ON TABLE app_public.pdf_files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN pdf_files.id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(id),UPDATE(id) ON TABLE app_public.pdf_files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN pdf_files.title; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(title),UPDATE(title) ON TABLE app_public.pdf_files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN pdf_files.pages; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(pages),UPDATE(pages) ON TABLE app_public.pdf_files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN pdf_files.metadata; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(metadata),UPDATE(metadata) ON TABLE app_public.pdf_files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN pdf_files.content_as_plain_text; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(content_as_plain_text),UPDATE(content_as_plain_text) ON TABLE app_public.pdf_files TO counseling_visitor;
+
+
+--
+-- Name: COLUMN pdf_files.thumbnail_id; Type: ACL; Schema: app_public; Owner: -
+--
+
+GRANT INSERT(thumbnail_id),UPDATE(thumbnail_id) ON TABLE app_public.pdf_files TO counseling_visitor;
 
 
 --
