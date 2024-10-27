@@ -55,7 +55,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>
 
-const { executeMutation: loginMutation } = useLoginMutation()
+const { executeMutation: loginMutation } = useMutation(LoginDocument)
 
 const toast = useToast()
 const nuxt = useNuxtApp()

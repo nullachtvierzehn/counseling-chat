@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-const { executeMutation: logoutMutation } = useLogoutMutation()
+const { executeMutation: logoutMutation } = useMutation(LogoutDocument)
 
 const app = useNuxtApp()
 

@@ -128,7 +128,7 @@ const linkToOrganizations = ref<typeof NuxtLink>()
 const linkToCases = ref<typeof NuxtLink>()
 const loginModalOpen = ref(false)
 
-const { data: currentUserData } = await useCurrentUserQuery()
+const { data: currentUserData } = await useTypedQuery({ query: CurrentUserDocument, variables: {} })
 const currentUser = computed(() => currentUserData?.value?.currentUser)
 
 defineShortcuts({

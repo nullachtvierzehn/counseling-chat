@@ -35,8 +35,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useTypedQuery } from "~/composables/urql"
-
 definePageMeta({
   name: "all-folders",
   layout: "admin-panel"
@@ -46,7 +44,7 @@ const route = useRoute()
 
 const { data: foldersData } = useTypedQuery({
   query: FetchFoldersDocument,
-  variables: { filter: { parentExists: false }, orderBy: ["NAME_ASC"] }
+  variables: { filter: { parentExists: false }, orderBy: [FoldersOrderBy.NameDesc] }
 })
 
 const folders = computed(() => foldersData.value?.folders?.nodes ?? [])

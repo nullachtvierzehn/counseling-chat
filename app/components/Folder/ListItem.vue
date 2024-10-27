@@ -50,7 +50,8 @@ const emit = defineEmits<{
 
 const isOpen = useVModel(props, "open", emit, { passive: true })
 
-const { data: childFoldersData } = useFetchFoldersQuery({
+const { data: childFoldersData } = useTypedQuery({
+  query: FetchFoldersDocument,
   variables: computed(() => ({ condition: { parentId: props.modelValue.id } })),
   pause: computed(() =>
     // We pause fetching child folders until the folder is open

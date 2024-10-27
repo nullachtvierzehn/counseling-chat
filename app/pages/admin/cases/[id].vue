@@ -27,7 +27,7 @@ definePageMeta({
 
 const route = useRoute()
 
-const { data: consultationData } = await useGetConsultationQuery({ variables: computed(() => ({ id: route.params.id as string })) })
+const { data: consultationData } = await useTypedQuery({ query: GetConsultationDocument, variables: computed(() => ({ id: route.params.id as string })) })
 const consultation = computed(() => consultationData.value?.consultation)
 
 provide(consultationKey, consultation)

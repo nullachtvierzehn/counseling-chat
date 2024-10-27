@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-const { executeMutation: loginMutation } = useLoginMutation()
+const { executeMutation: loginMutation } = useMutation(LoginDocument)
 const email = ref("")
 const password = ref("")
 async function login() {

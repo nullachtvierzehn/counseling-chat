@@ -29,7 +29,8 @@ definePageMeta({
 
 const route = useRoute()
 
-const { data: folderData } = await useGetFolderQuery({
+const { data: folderData } = await useTypedQuery({
+  query: GetFolderDocument,
   variables: computed(() => ({ id: route.params.id as string }))
 })
 

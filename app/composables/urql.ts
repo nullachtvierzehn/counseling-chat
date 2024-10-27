@@ -1,4 +1,5 @@
 import type { AnyVariables, TypedDocumentNode } from "@urql/core"
+import { useQuery, type UseQueryResponse } from "@urql/vue"
 
 export { useQuery, useMutation } from "@urql/vue"
 
@@ -16,6 +17,6 @@ type InferVariablesFromQuery<R, V extends NonNullable<AnyVariables>> = {
 type OtherFieldsOfUseQueryArgument = Omit<Parameters<typeof useQuery>[0], "query" | "variables">
 
 // https://github.com/urql-graphql/urql/issues/2152
-export async function useTypedQuery<R, V extends NonNullable<AnyVariables>>({ query, variables, ...others }: InferVariablesFromQuery<R, V> & OtherFieldsOfUseQueryArgument) {
+export function useTypedQuery<R, V extends NonNullable<AnyVariables>>({ query, variables, ...others }: InferVariablesFromQuery<R, V> & OtherFieldsOfUseQueryArgument): UseQueryResponse<R, V> {
   return useQuery({ ...others, query, variables })
 }

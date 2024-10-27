@@ -82,7 +82,7 @@ const [closed] = useToggle(false)
 const [hasUnreadMessages] = useToggle(false)
 const [hasUnansweredMessages] = useToggle(false)
 
-const { data: consultationData } = await useFetchConsultationsQuery()
+const { data: consultationData } = await useTypedQuery({ query: FetchConsultationsDocument, variables: {} })
 const consultations = computed(() => consultationData.value?.consultations?.nodes ?? [])
 </script>
 
