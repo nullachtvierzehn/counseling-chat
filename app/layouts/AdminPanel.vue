@@ -26,7 +26,7 @@
         </li>
         <li>
           <UTooltip text="Materialien" :shortcuts="[metaSymbol, 'M']">
-            <NuxtLink role="tab" to="/admin/files" class="button">
+            <NuxtLink role="tab" to="/admin/folders" class="button">
               <Icon name="ic:outline-perm-media" />
               <span class="sr-only">Materialien</span>
             </NuxtLink>
