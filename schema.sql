@@ -2280,14 +2280,6 @@ ALTER TABLE ONLY app_private.user_secrets
 
 
 --
--- Name: folders at_most_one_root_folder_per_organization; Type: CONSTRAINT; Schema: app_public; Owner: -
---
-
-ALTER TABLE ONLY app_public.folders
-    ADD CONSTRAINT at_most_one_root_folder_per_organization UNIQUE (organization_id, parent_id);
-
-
---
 -- Name: consultation_participants consultation_participants_pkey; Type: CONSTRAINT; Schema: app_public; Owner: -
 --
 

@@ -12,9 +12,7 @@ create table if not exists app_public.folders (
     on update cascade on delete cascade,
   "name" text not null,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  constraint at_most_one_root_folder_per_organization
-    unique nulls distinct (organization_id, parent_id)
+  updated_at timestamptz not null default now()
 );
 
 alter table app_public.folders enable row level security;
