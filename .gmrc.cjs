@@ -1,3 +1,7 @@
+const { error, parsed: config } = require("dotenv").config()
+
+if (error) throw new Error(error.message)
+
 /*
  * Graphile Migrate configuration.
  *
@@ -8,14 +12,14 @@
  * This file is in JSON5 format, in VSCode you can use "JSON with comments" as
  * the file format.
  */
-{
+module.exports = {
   /*
    * connectionString: this tells Graphile Migrate where to find the database
    * to run the migrations against.
    *
    * RECOMMENDATION: use `DATABASE_URL` envvar instead.
    */
-  // "connectionString": "postgres://appuser:apppassword@host:5432/appdb",
+  "connectionString": `postgres://${config.DATABASE_OWNER}:${config.DATABASE_OWNER_PASSWORD}@${config.DATABASE_HOST}:${config.DATABASE_PORT}/${config.DATABASE_NAME}`,
 
   /*
    * shadowConnectionString: like connectionString, but this is used for the
@@ -23,7 +27,7 @@
    *
    * RECOMMENDATION: use `SHADOW_DATABASE_URL` envvar instead.
    */
-  // "shadowConnectionString": "postgres://appuser:apppassword@host:5432/appdb_shadow",
+  "shadowConnectionString": `postgres://${config.DATABASE_OWNER}:${config.DATABASE_OWNER_PASSWORD}@${config.DATABASE_HOST}:${config.DATABASE_PORT}/${config.DATABASE_NAME}_shadow`,
 
   /*
    * rootConnectionString: like connectionString, but this is used for
@@ -40,7 +44,7 @@
    * <value>`
    */
   "pgSettings": {
-    "search_path": "app_public,app_private,app_hidden,public",
+    search_path: "app_public,app_private,app_hidden,public",
   },
 
   /*
@@ -86,8 +90,8 @@
    */
   "afterReset": [
     "!afterReset.sql",
-    //{ "_": "command", "command": "echo $GM_DBURL" },
-    { "_": "command", "command": "graphile-worker --connection $GM_DBURL --schema-only" },
+    // { "_": "command", "command": "echo $GM_DBURL" },
+    { _: "command", command: "graphile-worker --connection $GM_DBURL --schema-only" },
   ],
 
   /*
@@ -95,16 +99,16 @@
    */
   "afterAllMigrations": [
     {
-      "_": "command",
-      "shadow": true,
-      "command": "if [[ \"$IN_TESTS\" != \"1\" && \"$GM_SHADOW\" == \"1\" ]]; then pg_dump --no-sync --schema-only --no-owner --exclude-schema=graphile_migrate --exclude-schema=graphile_worker --file schema.sql $GM_DBURL; fi",
+      _: "command",
+      shadow: true,
+      command: "if [[ \"$IN_TESTS\" != \"1\" && \"$GM_SHADOW\" == \"1\" ]]; then pg_dump --no-sync --schema-only --no-owner --exclude-schema=graphile_migrate --exclude-schema=graphile_worker --file schema.sql $GM_DBURL; fi",
     },
   ],
 
   "beforeCurrent": [
     {
-      "_": "command",
-      "command": "if [[ \"$IN_TESTS\" != \"1\" && \"$GM_SHADOW\" != \"1\" ]]; then pg_dump \"$GM_DBURL\" --data-only --schema app_public -T app_public.users -T app_public.user_emails -T app_public.user_authentications -T app_public.organizations -T app_public.organization_memberships -T app_public.organization_invitations --column-inserts --no-comments --rows-per-insert=1000 --file migrations/restoreCurrentData.sql; fi"
+      _: "command",
+      command: "if [[ \"$IN_TESTS\" != \"1\" && \"$GM_SHADOW\" != \"1\" ]]; then pg_dump \"$GM_DBURL\" --data-only --schema app_public -T app_public.users -T app_public.user_emails -T app_public.user_authentications -T app_public.organizations -T app_public.organization_memberships -T app_public.organization_invitations --column-inserts --no-comments --rows-per-insert=1000 --file migrations/restoreCurrentData.sql; fi"
     }
   ],
 
@@ -114,14 +118,14 @@
    */
   "afterCurrent": [
     {
-      "_": "sql",
-      "file": "restoreCurrentData.sql",
-      "shadow": false
+      _: "sql",
+      file: "restoreCurrentData.sql",
+      shadow: false
     },
     {
-      "_": "command",
-      "shadow": false,
-      "command": "pg_dump --no-sync --schema-only --no-owner --exclude-schema=graphile_migrate --exclude-schema=graphile_worker --file schema.sql $GM_DBURL",
+      _: "command",
+      shadow: false,
+      command: "pg_dump --no-sync --schema-only --no-owner --exclude-schema=graphile_migrate --exclude-schema=graphile_worker --file schema.sql $GM_DBURL",
     },
     // {
     //   "_": "command",
@@ -136,7 +140,7 @@
    */
   // "blankMigrationContent": "-- Write your migration here\n",
 
-  /****************************************************************************\
+  /** **************************************************************************\
   ***                                                                        ***
   ***         You probably don't want to edit anything below here.           ***
   ***                                                                        ***
