@@ -1,6 +1,10 @@
 const { error, parsed: config } = require("dotenv").config()
 
-if (error) throw new Error(error.message)
+if (error) {
+  console.error(error.message)
+  console.error("Failed to parse file .env. Please run `bun setup.mjs`.")
+  process.exit(1)
+}
 
 /*
  * Graphile Migrate configuration.
