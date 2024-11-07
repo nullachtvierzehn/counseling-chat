@@ -84,13 +84,13 @@ const answers = await inquirer.prompt(
       type: "input",
       name: "SESSION_PASSWORD",
       message: "A secret to encrypt sessions.",
-      default: () => generatePassword(),
+      default: () => generatePassword(32),
     },
     {
       type: "input",
       name: "JWT_SECRET",
       message: "A secret for signing and verifying tokens.",
-      default: () => generatePassword(),
+      default: () => generatePassword(32),
     },
     {
       type: "number",
