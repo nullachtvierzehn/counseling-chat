@@ -84,13 +84,13 @@ const answers = await inquirer.prompt(
       type: "input",
       name: "SESSION_PASSWORD",
       message: "A secret to encrypt sessions.",
-      default: () => generatePassword(),
+      default: () => generatePassword(32),
     },
     {
       type: "input",
       name: "JWT_SECRET",
       message: "A secret for signing and verifying tokens.",
-      default: () => generatePassword(),
+      default: () => generatePassword(32),
     },
     {
       type: "number",
@@ -252,12 +252,21 @@ async function runDatabaseSetup() {
   await client.query(
     `CREATE DATABASE ${answers.DATABASE_NAME}_shadow OWNER ${answers.DATABASE_OWNER} TEMPLATE template0 ENCODING 'UTF8' LC_COLLATE='de_DE.UTF-8' LC_CTYPE='de_DE.UTF-8';`
   )
+  await client.query(
+    `GRANT CONNECT ON DATABASE ${answers.DATABASE_NAME}, ${answers.DATABASE_NAME}_test, ${answers.DATABASE_NAME}_shadow TO ${answers.DATABASE_AUTHENTICATOR}, ${answers.DATABASE_VISITOR};`
+  )
 
   await client.end()
   console.log(
-    execSync("bunx graphile-migrate reset --erase").toString(
-      "utf-8"
-    )
+    execSync(
+      "bunx graphile-migrate reset --erase",
+      {
+        env: {
+          ...process.env,
+          ...answers,
+        }
+      }
+    ).toString("utf-8")
   )
 }
 

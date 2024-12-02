@@ -1,1 +1,4 @@
 *.lockb binary diff=lockb
+migrations/committed/*.sql text eol=lf
+migrations/current/*.sql text eol=lf
+migrations/current.sql text eol=lf

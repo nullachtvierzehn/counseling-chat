@@ -1236,6 +1236,20 @@ input DeleteFolderByNodeIdInput {
   nodeId: ID!
 }
 
+"""
+All input for the `deleteFolderByOrganizationIdAndParentIdAndName` mutation.
+"""
+input DeleteFolderByOrganizationIdAndParentIdAndNameInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  name: String!
+  organizationId: UUID!
+  parentId: UUID!
+}
+
 """All input for the `deleteFolder` mutation."""
 input DeleteFolderInput {
   """
@@ -3039,6 +3053,14 @@ type Mutation {
     """
     input: DeleteFolderByNodeIdInput!
   ): DeleteFolderPayload
+
+  """Deletes a single `Folder` using a unique key."""
+  deleteFolderByOrganizationIdAndParentIdAndName(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: DeleteFolderByOrganizationIdAndParentIdAndNameInput!
+  ): DeleteFolderPayload
   deleteOrganization(
     """
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
@@ -3285,6 +3307,14 @@ type Mutation {
     The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
     """
     input: UpdateFolderByNodeIdInput!
+  ): UpdateFolderPayload
+
+  """Updates a single `Folder` using a unique key and a patch."""
+  updateFolderByOrganizationIdAndParentIdAndName(
+    """
+    The exclusive input argument for this mutation. An object type, make sure to see documentation for this object’s fields.
+    """
+    input: UpdateFolderByOrganizationIdAndParentIdAndNameInput!
   ): UpdateFolderPayload
 
   """Updates a single `Organization` using a unique key and a patch."""
@@ -4257,6 +4287,9 @@ type Query implements Node {
     """The globally unique `ID` to be used in selecting a single `Folder`."""
     nodeId: ID!
   ): Folder
+
+  """Get a single `Folder`."""
+  folderByOrganizationIdAndParentIdAndName(name: String!, organizationId: UUID!, parentId: UUID!): Folder
 
   """Reads and enables pagination through a set of `Folder`."""
   folders(
@@ -5353,6 +5386,25 @@ input UpdateFolderByNodeIdInput {
   The globally unique `ID` which will identify a single `Folder` to be updated.
   """
   nodeId: ID!
+
+  """
+  An object where the defined keys will be set on the `Folder` being updated.
+  """
+  patch: FolderPatch!
+}
+
+"""
+All input for the `updateFolderByOrganizationIdAndParentIdAndName` mutation.
+"""
+input UpdateFolderByOrganizationIdAndParentIdAndNameInput {
+  """
+  An arbitrary string value with no semantic meaning. Will be included in the
+  payload verbatim. May be used to track mutations by the client.
+  """
+  clientMutationId: String
+  name: String!
+  organizationId: UUID!
+  parentId: UUID!
 
   """
   An object where the defined keys will be set on the `Folder` being updated.
