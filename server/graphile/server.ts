@@ -1,5 +1,4 @@
-import { makeServer } from "graphql-ws"
-import { makeGraphQLWSConfig, defaultMaskError } from "postgraphile/grafserv"
+import { defaultMaskError } from "postgraphile/grafserv"
 import { PostGraphileAmberPreset as amber } from "postgraphile/presets/amber"
 import { makePgService } from "postgraphile/adaptors/pg"
 import { makeV4Preset } from "postgraphile/presets/v4"
@@ -136,4 +135,3 @@ export const graphileInstance = postgraphile({
 })
 
 export const server = graphileInstance.createServ(grafserv)
-export const graphqlWsServer = makeServer(makeGraphQLWSConfig(server))
