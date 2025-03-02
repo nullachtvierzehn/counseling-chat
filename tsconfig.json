@@ -8,7 +8,7 @@
         "schema": "./schema.graphql"
       }
     ],
-    "types": ["bun"],
+    "types": ["bun", "@pinia/nuxt"],
     "verbatimModuleSyntax": false
   }
 }
