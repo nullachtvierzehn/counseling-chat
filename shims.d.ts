@@ -13,8 +13,8 @@ declare global {
       session?: {
         readonly id: string | undefined
         readonly data: SessionData
-        update: (update: SessionUpdate<SessionData>) => Promise<any>
-        clear: () => Promise<any>
+        update: (update: SessionUpdate<SessionData>) => Promise<void>
+        clear: () => Promise<void>
       }
     }
   }

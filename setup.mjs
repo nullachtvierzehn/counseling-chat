@@ -197,19 +197,19 @@ await client.end()
 
 const dbSetupIsComplete
   = existingOwner
-  && existingAuthenticator
-  && existingVisitor
-  && existingDatabase
-  && existingTestDatabase
-  && existingShadowDatabase
+    && existingAuthenticator
+    && existingVisitor
+    && existingDatabase
+    && existingTestDatabase
+    && existingShadowDatabase
 
 const dbSetupIsPartlyComplete
   = existingOwner
-  || existingAuthenticator
-  || existingVisitor
-  || existingDatabase
-  || existingTestDatabase
-  || existingShadowDatabase
+    || existingAuthenticator
+    || existingVisitor
+    || existingDatabase
+    || existingTestDatabase
+    || existingShadowDatabase
 
 async function runDatabaseSetup() {
   const client = await connectToDatabase()

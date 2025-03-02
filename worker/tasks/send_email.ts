@@ -34,7 +34,7 @@ export interface SendEmailPayload {
     subject: string
   }
   template: string
-  variables?: Record<string, any>
+  variables?: Record<string, unknown>
 }
 
 function assertPayload(payload: unknown): asserts payload is SendEmailPayload {
@@ -102,7 +102,7 @@ const task: Task = async (payload, { logger }) => {
 
 export default task
 
-function loadTemplate(template: string, variables?: Record<string, any>) {
+function loadTemplate(template: string, variables?: Record<string, unknown>) {
   // const templateString = templates[template.replace('.mjml', '')]
   const templateString = fs.readFileSync(
     path.resolve(__dirname, `../assets/templates/${template}`),
