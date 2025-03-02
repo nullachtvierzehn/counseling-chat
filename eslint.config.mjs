@@ -6,6 +6,7 @@ import withNuxt from "./.nuxt/eslint.config.mjs"
 
 export default withNuxt(
   {
+    ignores: ["./schema.graphql", "./schema.json"],
     rules: {
       "no-console": "warn",
       "vue/max-attributes-per-line": [
@@ -26,7 +27,7 @@ export default withNuxt(
 // Stolen from https://github.com/dimaMachina/graphql-eslint/blob/c9cbf6d8065740302cfb75b278733701dd5f7cf6/examples/vue-code-file/eslint.config.js
   .prepend({
     name: "graphql-in-vue",
-    files: ["**/*.vue", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.mjs"],
+    files: ["**/*.vue", "**/*.ts", "**/*.tsx"],
     processor: graphql.processors.graphql,
   },
   {
@@ -46,6 +47,7 @@ export default withNuxt(
       "@graphql-eslint/executable-definitions": "off",
       "@graphql-eslint/no-anonymous-operations": "error",
       "@graphql-eslint/no-duplicate-fields": "error",
+      "@graphql-eslint/no-unused-fragments": "warn",
       "@graphql-eslint/naming-convention": [
         "error",
         {
