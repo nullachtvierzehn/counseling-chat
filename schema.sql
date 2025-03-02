@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.3
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -3206,14 +3207,14 @@ ALTER TABLE app_public.users ENABLE ROW LEVEL SECURITY;
 -- Name: SCHEMA app_hidden; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA app_hidden TO null814_cms_app_users;
+GRANT USAGE ON SCHEMA app_hidden TO counseling_visitor;
 
 
 --
 -- Name: SCHEMA app_public; Type: ACL; Schema: -; Owner: -
 --
 
-GRANT USAGE ON SCHEMA app_public TO null814_cms_app_users;
+GRANT USAGE ON SCHEMA app_public TO counseling_visitor;
 
 
 --
@@ -3221,8 +3222,8 @@ GRANT USAGE ON SCHEMA app_public TO null814_cms_app_users;
 --
 
 REVOKE USAGE ON SCHEMA public FROM PUBLIC;
-GRANT ALL ON SCHEMA public TO null814_cms_owner;
-GRANT USAGE ON SCHEMA public TO null814_cms_app_users;
+GRANT ALL ON SCHEMA public TO counseling_owner;
+GRANT USAGE ON SCHEMA public TO counseling_visitor;
 
 
 --
@@ -3236,28 +3237,28 @@ REVOKE ALL ON FUNCTION app_private.assert_valid_password(new_password text) FROM
 -- Name: TABLE users; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT ON TABLE app_public.users TO null814_cms_app_users;
+GRANT SELECT ON TABLE app_public.users TO counseling_visitor;
 
 
 --
 -- Name: COLUMN users.username; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT UPDATE(username) ON TABLE app_public.users TO null814_cms_app_users;
+GRANT UPDATE(username) ON TABLE app_public.users TO counseling_visitor;
 
 
 --
 -- Name: COLUMN users.name; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT UPDATE(name) ON TABLE app_public.users TO null814_cms_app_users;
+GRANT UPDATE(name) ON TABLE app_public.users TO counseling_visitor;
 
 
 --
 -- Name: COLUMN users.avatar_url; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT UPDATE(avatar_url) ON TABLE app_public.users TO null814_cms_app_users;
+GRANT UPDATE(avatar_url) ON TABLE app_public.users TO counseling_visitor;
 
 
 --
@@ -3335,35 +3336,35 @@ REVOKE ALL ON FUNCTION app_private.tg_user_secrets__insert_with_user() FROM PUBL
 --
 
 REVOKE ALL ON FUNCTION app_public.accept_invitation_to_organization(invitation_id uuid, code text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.accept_invitation_to_organization(invitation_id uuid, code text) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.accept_invitation_to_organization(invitation_id uuid, code text) TO counseling_visitor;
 
 
 --
 -- Name: TABLE folders; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT,DELETE ON TABLE app_public.folders TO null814_cms_app_users;
+GRANT SELECT,DELETE ON TABLE app_public.folders TO counseling_visitor;
 
 
 --
 -- Name: COLUMN folders.organization_id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(organization_id),UPDATE(organization_id) ON TABLE app_public.folders TO null814_cms_app_users;
+GRANT INSERT(organization_id),UPDATE(organization_id) ON TABLE app_public.folders TO counseling_visitor;
 
 
 --
 -- Name: COLUMN folders.parent_id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(parent_id),UPDATE(parent_id) ON TABLE app_public.folders TO null814_cms_app_users;
+GRANT INSERT(parent_id),UPDATE(parent_id) ON TABLE app_public.folders TO counseling_visitor;
 
 
 --
 -- Name: COLUMN folders.name; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(name),UPDATE(name) ON TABLE app_public.folders TO null814_cms_app_users;
+GRANT INSERT(name),UPDATE(name) ON TABLE app_public.folders TO counseling_visitor;
 
 
 --
@@ -3371,7 +3372,7 @@ GRANT INSERT(name),UPDATE(name) ON TABLE app_public.folders TO null814_cms_app_u
 --
 
 REVOKE ALL ON FUNCTION app_public.ancestors(folder app_public.folders, include_self boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.ancestors(folder app_public.folders, include_self boolean) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.ancestors(folder app_public.folders, include_self boolean) TO counseling_visitor;
 
 
 --
@@ -3379,7 +3380,7 @@ GRANT ALL ON FUNCTION app_public.ancestors(folder app_public.folders, include_se
 --
 
 REVOKE ALL ON FUNCTION app_public.change_password(old_password text, new_password text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.change_password(old_password text, new_password text) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.change_password(old_password text, new_password text) TO counseling_visitor;
 
 
 --
@@ -3387,28 +3388,28 @@ GRANT ALL ON FUNCTION app_public.change_password(old_password text, new_password
 --
 
 REVOKE ALL ON FUNCTION app_public.confirm_account_deletion(token text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.confirm_account_deletion(token text) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.confirm_account_deletion(token text) TO counseling_visitor;
 
 
 --
 -- Name: TABLE organizations; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT ON TABLE app_public.organizations TO null814_cms_app_users;
+GRANT SELECT ON TABLE app_public.organizations TO counseling_visitor;
 
 
 --
 -- Name: COLUMN organizations.slug; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT UPDATE(slug) ON TABLE app_public.organizations TO null814_cms_app_users;
+GRANT UPDATE(slug) ON TABLE app_public.organizations TO counseling_visitor;
 
 
 --
 -- Name: COLUMN organizations.name; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT UPDATE(name) ON TABLE app_public.organizations TO null814_cms_app_users;
+GRANT UPDATE(name) ON TABLE app_public.organizations TO counseling_visitor;
 
 
 --
@@ -3416,7 +3417,7 @@ GRANT UPDATE(name) ON TABLE app_public.organizations TO null814_cms_app_users;
 --
 
 REVOKE ALL ON FUNCTION app_public.create_organization(slug public.citext, name text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.create_organization(slug public.citext, name text) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.create_organization(slug public.citext, name text) TO counseling_visitor;
 
 
 --
@@ -3424,7 +3425,7 @@ GRANT ALL ON FUNCTION app_public.create_organization(slug public.citext, name te
 --
 
 REVOKE ALL ON FUNCTION app_public.current_session_id() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.current_session_id() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.current_session_id() TO counseling_visitor;
 
 
 --
@@ -3432,7 +3433,7 @@ GRANT ALL ON FUNCTION app_public.current_session_id() TO null814_cms_app_users;
 --
 
 REVOKE ALL ON FUNCTION app_public."current_user"() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public."current_user"() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public."current_user"() TO counseling_visitor;
 
 
 --
@@ -3440,7 +3441,7 @@ GRANT ALL ON FUNCTION app_public."current_user"() TO null814_cms_app_users;
 --
 
 REVOKE ALL ON FUNCTION app_public.current_user_consultation_ids() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.current_user_consultation_ids() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.current_user_consultation_ids() TO counseling_visitor;
 
 
 --
@@ -3448,7 +3449,7 @@ GRANT ALL ON FUNCTION app_public.current_user_consultation_ids() TO null814_cms_
 --
 
 REVOKE ALL ON FUNCTION app_public.current_user_id() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.current_user_id() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.current_user_id() TO counseling_visitor;
 
 
 --
@@ -3456,7 +3457,7 @@ GRANT ALL ON FUNCTION app_public.current_user_id() TO null814_cms_app_users;
 --
 
 REVOKE ALL ON FUNCTION app_public.current_user_invited_organization_ids() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.current_user_invited_organization_ids() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.current_user_invited_organization_ids() TO counseling_visitor;
 
 
 --
@@ -3464,7 +3465,7 @@ GRANT ALL ON FUNCTION app_public.current_user_invited_organization_ids() TO null
 --
 
 REVOKE ALL ON FUNCTION app_public.current_user_member_organization_ids() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.current_user_member_organization_ids() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.current_user_member_organization_ids() TO counseling_visitor;
 
 
 --
@@ -3472,7 +3473,7 @@ GRANT ALL ON FUNCTION app_public.current_user_member_organization_ids() TO null8
 --
 
 REVOKE ALL ON FUNCTION app_public.delete_organization(organization_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.delete_organization(organization_id uuid) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.delete_organization(organization_id uuid) TO counseling_visitor;
 
 
 --
@@ -3480,7 +3481,7 @@ GRANT ALL ON FUNCTION app_public.delete_organization(organization_id uuid) TO nu
 --
 
 REVOKE ALL ON FUNCTION app_public.forgot_password(email public.citext) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.forgot_password(email public.citext) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.forgot_password(email public.citext) TO counseling_visitor;
 
 
 --
@@ -3488,7 +3489,7 @@ GRANT ALL ON FUNCTION app_public.forgot_password(email public.citext) TO null814
 --
 
 REVOKE ALL ON FUNCTION app_public.invite_to_organization(organization_id uuid, username public.citext, email public.citext) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.invite_to_organization(organization_id uuid, username public.citext, email public.citext) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.invite_to_organization(organization_id uuid, username public.citext, email public.citext) TO counseling_visitor;
 
 
 --
@@ -3496,21 +3497,21 @@ GRANT ALL ON FUNCTION app_public.invite_to_organization(organization_id uuid, us
 --
 
 REVOKE ALL ON FUNCTION app_public.logout() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.logout() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.logout() TO counseling_visitor;
 
 
 --
 -- Name: TABLE user_emails; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT,DELETE ON TABLE app_public.user_emails TO null814_cms_app_users;
+GRANT SELECT,DELETE ON TABLE app_public.user_emails TO counseling_visitor;
 
 
 --
 -- Name: COLUMN user_emails.email; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(email) ON TABLE app_public.user_emails TO null814_cms_app_users;
+GRANT INSERT(email) ON TABLE app_public.user_emails TO counseling_visitor;
 
 
 --
@@ -3518,7 +3519,7 @@ GRANT INSERT(email) ON TABLE app_public.user_emails TO null814_cms_app_users;
 --
 
 REVOKE ALL ON FUNCTION app_public.make_email_primary(email_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.make_email_primary(email_id uuid) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.make_email_primary(email_id uuid) TO counseling_visitor;
 
 
 --
@@ -3526,7 +3527,7 @@ GRANT ALL ON FUNCTION app_public.make_email_primary(email_id uuid) TO null814_cm
 --
 
 REVOKE ALL ON FUNCTION app_public.organization_for_invitation(invitation_id uuid, code text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.organization_for_invitation(invitation_id uuid, code text) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.organization_for_invitation(invitation_id uuid, code text) TO counseling_visitor;
 
 
 --
@@ -3534,7 +3535,7 @@ GRANT ALL ON FUNCTION app_public.organization_for_invitation(invitation_id uuid,
 --
 
 REVOKE ALL ON FUNCTION app_public.organizations_current_user_is_billing_contact(org app_public.organizations) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.organizations_current_user_is_billing_contact(org app_public.organizations) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.organizations_current_user_is_billing_contact(org app_public.organizations) TO counseling_visitor;
 
 
 --
@@ -3542,7 +3543,7 @@ GRANT ALL ON FUNCTION app_public.organizations_current_user_is_billing_contact(o
 --
 
 REVOKE ALL ON FUNCTION app_public.organizations_current_user_is_owner(org app_public.organizations) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.organizations_current_user_is_owner(org app_public.organizations) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.organizations_current_user_is_owner(org app_public.organizations) TO counseling_visitor;
 
 
 --
@@ -3550,7 +3551,7 @@ GRANT ALL ON FUNCTION app_public.organizations_current_user_is_owner(org app_pub
 --
 
 REVOKE ALL ON FUNCTION app_public.remove_from_organization(organization_id uuid, user_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.remove_from_organization(organization_id uuid, user_id uuid) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.remove_from_organization(organization_id uuid, user_id uuid) TO counseling_visitor;
 
 
 --
@@ -3558,7 +3559,7 @@ GRANT ALL ON FUNCTION app_public.remove_from_organization(organization_id uuid, 
 --
 
 REVOKE ALL ON FUNCTION app_public.request_account_deletion() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.request_account_deletion() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.request_account_deletion() TO counseling_visitor;
 
 
 --
@@ -3566,7 +3567,7 @@ GRANT ALL ON FUNCTION app_public.request_account_deletion() TO null814_cms_app_u
 --
 
 REVOKE ALL ON FUNCTION app_public.resend_email_verification_code(email_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.resend_email_verification_code(email_id uuid) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.resend_email_verification_code(email_id uuid) TO counseling_visitor;
 
 
 --
@@ -3574,7 +3575,7 @@ GRANT ALL ON FUNCTION app_public.resend_email_verification_code(email_id uuid) T
 --
 
 REVOKE ALL ON FUNCTION app_public.siblings(folder app_public.folders, include_self boolean) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.siblings(folder app_public.folders, include_self boolean) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.siblings(folder app_public.folders, include_self boolean) TO counseling_visitor;
 
 
 --
@@ -3582,7 +3583,7 @@ GRANT ALL ON FUNCTION app_public.siblings(folder app_public.folders, include_sel
 --
 
 REVOKE ALL ON FUNCTION app_public.tg__graphql_subscription() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.tg__graphql_subscription() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.tg__graphql_subscription() TO counseling_visitor;
 
 
 --
@@ -3590,7 +3591,7 @@ GRANT ALL ON FUNCTION app_public.tg__graphql_subscription() TO null814_cms_app_u
 --
 
 REVOKE ALL ON FUNCTION app_public.tg_user_emails__forbid_if_verified() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.tg_user_emails__forbid_if_verified() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.tg_user_emails__forbid_if_verified() TO counseling_visitor;
 
 
 --
@@ -3598,7 +3599,7 @@ GRANT ALL ON FUNCTION app_public.tg_user_emails__forbid_if_verified() TO null814
 --
 
 REVOKE ALL ON FUNCTION app_public.tg_user_emails__prevent_delete_last_email() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.tg_user_emails__prevent_delete_last_email() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.tg_user_emails__prevent_delete_last_email() TO counseling_visitor;
 
 
 --
@@ -3606,7 +3607,7 @@ GRANT ALL ON FUNCTION app_public.tg_user_emails__prevent_delete_last_email() TO 
 --
 
 REVOKE ALL ON FUNCTION app_public.tg_user_emails__verify_account_on_verified() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.tg_user_emails__verify_account_on_verified() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.tg_user_emails__verify_account_on_verified() TO counseling_visitor;
 
 
 --
@@ -3614,7 +3615,7 @@ GRANT ALL ON FUNCTION app_public.tg_user_emails__verify_account_on_verified() TO
 --
 
 REVOKE ALL ON FUNCTION app_public.tg_users__deletion_organization_checks_and_actions() FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.tg_users__deletion_organization_checks_and_actions() TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.tg_users__deletion_organization_checks_and_actions() TO counseling_visitor;
 
 
 --
@@ -3622,7 +3623,7 @@ GRANT ALL ON FUNCTION app_public.tg_users__deletion_organization_checks_and_acti
 --
 
 REVOKE ALL ON FUNCTION app_public.transfer_organization_billing_contact(organization_id uuid, user_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.transfer_organization_billing_contact(organization_id uuid, user_id uuid) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.transfer_organization_billing_contact(organization_id uuid, user_id uuid) TO counseling_visitor;
 
 
 --
@@ -3630,7 +3631,7 @@ GRANT ALL ON FUNCTION app_public.transfer_organization_billing_contact(organizat
 --
 
 REVOKE ALL ON FUNCTION app_public.transfer_organization_ownership(organization_id uuid, user_id uuid) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.transfer_organization_ownership(organization_id uuid, user_id uuid) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.transfer_organization_ownership(organization_id uuid, user_id uuid) TO counseling_visitor;
 
 
 --
@@ -3638,7 +3639,7 @@ GRANT ALL ON FUNCTION app_public.transfer_organization_ownership(organization_id
 --
 
 REVOKE ALL ON FUNCTION app_public.users_has_password(u app_public.users) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.users_has_password(u app_public.users) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.users_has_password(u app_public.users) TO counseling_visitor;
 
 
 --
@@ -3646,280 +3647,280 @@ GRANT ALL ON FUNCTION app_public.users_has_password(u app_public.users) TO null8
 --
 
 REVOKE ALL ON FUNCTION app_public.verify_email(user_email_id uuid, token text) FROM PUBLIC;
-GRANT ALL ON FUNCTION app_public.verify_email(user_email_id uuid, token text) TO null814_cms_app_users;
+GRANT ALL ON FUNCTION app_public.verify_email(user_email_id uuid, token text) TO counseling_visitor;
 
 
 --
 -- Name: FUNCTION versioning(); Type: ACL; Schema: public; Owner: -
 --
 
-GRANT ALL ON FUNCTION public.versioning() TO null814_cms_owner;
+GRANT ALL ON FUNCTION public.versioning() TO counseling_owner;
 
 
 --
 -- Name: TABLE consultation_participants_history; Type: ACL; Schema: app_hidden; Owner: -
 --
 
-GRANT INSERT,UPDATE ON TABLE app_hidden.consultation_participants_history TO null814_cms_app_users;
+GRANT INSERT,UPDATE ON TABLE app_hidden.consultation_participants_history TO counseling_visitor;
 
 
 --
 -- Name: TABLE consultation_participants; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT,DELETE ON TABLE app_public.consultation_participants TO null814_cms_app_users;
+GRANT SELECT,DELETE ON TABLE app_public.consultation_participants TO counseling_visitor;
 
 
 --
 -- Name: COLUMN consultation_participants.id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(id) ON TABLE app_public.consultation_participants TO null814_cms_app_users;
+GRANT INSERT(id) ON TABLE app_public.consultation_participants TO counseling_visitor;
 
 
 --
 -- Name: COLUMN consultation_participants.consultation_id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(consultation_id) ON TABLE app_public.consultation_participants TO null814_cms_app_users;
+GRANT INSERT(consultation_id) ON TABLE app_public.consultation_participants TO counseling_visitor;
 
 
 --
 -- Name: COLUMN consultation_participants.user_id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(user_id) ON TABLE app_public.consultation_participants TO null814_cms_app_users;
+GRANT INSERT(user_id) ON TABLE app_public.consultation_participants TO counseling_visitor;
 
 
 --
 -- Name: COLUMN consultation_participants.is_client; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(is_client),UPDATE(is_client) ON TABLE app_public.consultation_participants TO null814_cms_app_users;
+GRANT INSERT(is_client),UPDATE(is_client) ON TABLE app_public.consultation_participants TO counseling_visitor;
 
 
 --
 -- Name: COLUMN consultation_participants.is_counselor; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(is_counselor),UPDATE(is_counselor) ON TABLE app_public.consultation_participants TO null814_cms_app_users;
+GRANT INSERT(is_counselor),UPDATE(is_counselor) ON TABLE app_public.consultation_participants TO counseling_visitor;
 
 
 --
 -- Name: COLUMN consultation_participants.is_supervisor; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(is_supervisor),UPDATE(is_supervisor) ON TABLE app_public.consultation_participants TO null814_cms_app_users;
+GRANT INSERT(is_supervisor),UPDATE(is_supervisor) ON TABLE app_public.consultation_participants TO counseling_visitor;
 
 
 --
 -- Name: TABLE consultations; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT,DELETE ON TABLE app_public.consultations TO null814_cms_app_users;
+GRANT SELECT,DELETE ON TABLE app_public.consultations TO counseling_visitor;
 
 
 --
 -- Name: COLUMN consultations.id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(id) ON TABLE app_public.consultations TO null814_cms_app_users;
+GRANT INSERT(id) ON TABLE app_public.consultations TO counseling_visitor;
 
 
 --
 -- Name: COLUMN consultations.name; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(name),UPDATE(name) ON TABLE app_public.consultations TO null814_cms_app_users;
+GRANT INSERT(name),UPDATE(name) ON TABLE app_public.consultations TO counseling_visitor;
 
 
 --
 -- Name: TABLE files; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT,DELETE ON TABLE app_public.files TO null814_cms_app_users;
+GRANT SELECT,DELETE ON TABLE app_public.files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN files.id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(id),UPDATE(id) ON TABLE app_public.files TO null814_cms_app_users;
+GRANT INSERT(id),UPDATE(id) ON TABLE app_public.files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN files.uploader_id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(uploader_id) ON TABLE app_public.files TO null814_cms_app_users;
+GRANT INSERT(uploader_id) ON TABLE app_public.files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN files.uploaded_bytes; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(uploaded_bytes),UPDATE(uploaded_bytes) ON TABLE app_public.files TO null814_cms_app_users;
+GRANT INSERT(uploaded_bytes),UPDATE(uploaded_bytes) ON TABLE app_public.files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN files.total_bytes; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(total_bytes),UPDATE(total_bytes) ON TABLE app_public.files TO null814_cms_app_users;
+GRANT INSERT(total_bytes),UPDATE(total_bytes) ON TABLE app_public.files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN files.filename; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(filename),UPDATE(filename) ON TABLE app_public.files TO null814_cms_app_users;
+GRANT INSERT(filename),UPDATE(filename) ON TABLE app_public.files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN files.mime_type; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(mime_type),UPDATE(mime_type) ON TABLE app_public.files TO null814_cms_app_users;
+GRANT INSERT(mime_type),UPDATE(mime_type) ON TABLE app_public.files TO counseling_visitor;
 
 
 --
 -- Name: TABLE message_body_revision_approvals; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT ON TABLE app_public.message_body_revision_approvals TO null814_cms_app_users;
+GRANT SELECT ON TABLE app_public.message_body_revision_approvals TO counseling_visitor;
 
 
 --
 -- Name: TABLE message_body_revision_comments; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT ON TABLE app_public.message_body_revision_comments TO null814_cms_app_users;
+GRANT SELECT ON TABLE app_public.message_body_revision_comments TO counseling_visitor;
 
 
 --
 -- Name: TABLE message_body_revisions; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT ON TABLE app_public.message_body_revisions TO null814_cms_app_users;
+GRANT SELECT ON TABLE app_public.message_body_revisions TO counseling_visitor;
 
 
 --
 -- Name: TABLE messages; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT ON TABLE app_public.messages TO null814_cms_app_users;
+GRANT SELECT ON TABLE app_public.messages TO counseling_visitor;
 
 
 --
 -- Name: TABLE organization_memberships; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT ON TABLE app_public.organization_memberships TO null814_cms_app_users;
+GRANT SELECT ON TABLE app_public.organization_memberships TO counseling_visitor;
 
 
 --
 -- Name: TABLE pdf_files; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT,DELETE ON TABLE app_public.pdf_files TO null814_cms_app_users;
+GRANT SELECT,DELETE ON TABLE app_public.pdf_files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN pdf_files.id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(id),UPDATE(id) ON TABLE app_public.pdf_files TO null814_cms_app_users;
+GRANT INSERT(id),UPDATE(id) ON TABLE app_public.pdf_files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN pdf_files.title; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(title),UPDATE(title) ON TABLE app_public.pdf_files TO null814_cms_app_users;
+GRANT INSERT(title),UPDATE(title) ON TABLE app_public.pdf_files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN pdf_files.pages; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(pages),UPDATE(pages) ON TABLE app_public.pdf_files TO null814_cms_app_users;
+GRANT INSERT(pages),UPDATE(pages) ON TABLE app_public.pdf_files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN pdf_files.metadata; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(metadata),UPDATE(metadata) ON TABLE app_public.pdf_files TO null814_cms_app_users;
+GRANT INSERT(metadata),UPDATE(metadata) ON TABLE app_public.pdf_files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN pdf_files.content_as_plain_text; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(content_as_plain_text),UPDATE(content_as_plain_text) ON TABLE app_public.pdf_files TO null814_cms_app_users;
+GRANT INSERT(content_as_plain_text),UPDATE(content_as_plain_text) ON TABLE app_public.pdf_files TO counseling_visitor;
 
 
 --
 -- Name: COLUMN pdf_files.thumbnail_id; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT INSERT(thumbnail_id),UPDATE(thumbnail_id) ON TABLE app_public.pdf_files TO null814_cms_app_users;
+GRANT INSERT(thumbnail_id),UPDATE(thumbnail_id) ON TABLE app_public.pdf_files TO counseling_visitor;
 
 
 --
 -- Name: TABLE user_authentications; Type: ACL; Schema: app_public; Owner: -
 --
 
-GRANT SELECT,DELETE ON TABLE app_public.user_authentications TO null814_cms_app_users;
+GRANT SELECT,DELETE ON TABLE app_public.user_authentications TO counseling_visitor;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: app_hidden; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE null814_cms_owner IN SCHEMA app_hidden GRANT SELECT,USAGE ON SEQUENCES TO null814_cms_app_users;
+ALTER DEFAULT PRIVILEGES FOR ROLE counseling_owner IN SCHEMA app_hidden GRANT SELECT,USAGE ON SEQUENCES TO counseling_visitor;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: app_hidden; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE null814_cms_owner IN SCHEMA app_hidden GRANT ALL ON FUNCTIONS TO null814_cms_app_users;
+ALTER DEFAULT PRIVILEGES FOR ROLE counseling_owner IN SCHEMA app_hidden GRANT ALL ON FUNCTIONS TO counseling_visitor;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: app_public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE null814_cms_owner IN SCHEMA app_public GRANT SELECT,USAGE ON SEQUENCES TO null814_cms_app_users;
+ALTER DEFAULT PRIVILEGES FOR ROLE counseling_owner IN SCHEMA app_public GRANT SELECT,USAGE ON SEQUENCES TO counseling_visitor;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: app_public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE null814_cms_owner IN SCHEMA app_public GRANT ALL ON FUNCTIONS TO null814_cms_app_users;
+ALTER DEFAULT PRIVILEGES FOR ROLE counseling_owner IN SCHEMA app_public GRANT ALL ON FUNCTIONS TO counseling_visitor;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE null814_cms_owner IN SCHEMA public GRANT SELECT,USAGE ON SEQUENCES TO null814_cms_app_users;
+ALTER DEFAULT PRIVILEGES FOR ROLE counseling_owner IN SCHEMA public GRANT SELECT,USAGE ON SEQUENCES TO counseling_visitor;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: public; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE null814_cms_owner IN SCHEMA public GRANT ALL ON FUNCTIONS TO null814_cms_app_users;
+ALTER DEFAULT PRIVILEGES FOR ROLE counseling_owner IN SCHEMA public GRANT ALL ON FUNCTIONS TO counseling_visitor;
 
 
 --
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: -; Owner: -
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE null814_cms_owner REVOKE ALL ON FUNCTIONS FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES FOR ROLE counseling_owner REVOKE ALL ON FUNCTIONS FROM PUBLIC;
 
 
 --
