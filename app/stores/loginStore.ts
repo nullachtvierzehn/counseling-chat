@@ -49,3 +49,5 @@ export const useLoginStore = defineStore("login", () => {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useLoginStore, import.meta.hot))
 }
+
+export default useLoginStore
