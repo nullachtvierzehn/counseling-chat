@@ -1,4 +1,4 @@
-export interface LoginPayload {
+export interface LoginActionParams {
   username: string
   password: string
 }
@@ -14,7 +14,7 @@ export const useLoginStore = defineStore("login", () => {
   const currentUser = computed(() => userData.value?.currentUser ?? null)
   const app = useNuxtApp()
 
-  async function login({ username, password }: LoginPayload) {
+  async function login({ username, password }: LoginActionParams) {
     const { data, error } = await loginMutation({ username, password })
     if (error) {
       if (error?.graphQLErrors.some(e => e.extensions.code === "LOCKD")) {
