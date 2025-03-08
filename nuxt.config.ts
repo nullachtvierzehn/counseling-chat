@@ -5,7 +5,8 @@ export default defineNuxtConfig({
   css: [
     "prosemirror-view/style/prosemirror.css",
     "prosemirror-example-setup/style/style.css",
-    "prosemirror-menu/style/menu.css"
+    "prosemirror-menu/style/menu.css",
+    "~/assets/css/main.css",
   ],
   future: {
     compatibilityVersion: 4,

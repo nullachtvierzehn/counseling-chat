@@ -3,7 +3,7 @@ query GetFolder($id: UUID!) {
     ...ShortFolder
 
     # Get ancestors and their siblings for navigatable breadcrumbs
-    ancestors(includeSelf: true) {
+    ancestors {
       nodes {
         ...ShortFolder
         siblings {

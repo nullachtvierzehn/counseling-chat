@@ -1,0 +1,29 @@
+.navigation-panel {
+  @apply bg-slate-50 grid border-r;
+
+  grid-template:
+    "title actions" min-content
+    "search search" min-content
+    "menu menu" 1fr
+    / 1fr min-content;
+}
+
+.navigation-panel__title {
+  @apply m-2 uppercase tracking-wider;
+  grid-area: title;
+}
+
+.navigation-panel__actions {
+  @apply m-2 flex justify-end items-center gap-1;
+  grid-area: actions;
+}
+
+.navigation-panel__search {
+  @apply mx-2;
+  grid-area: search;
+}
+
+.navigation-panel__menu {
+  @apply overflow-y-auto;
+  grid-area: menu;
+}
