@@ -8,4 +8,8 @@ export const tusServer = new Server({
   relativeLocation: true,
 })
 
+tusServer.on("POST_RECEIVE_V2", (req, upload) => {
+  console.debug(`Upload ${upload.id} with offset ${upload.offset} and size ${upload.size}`)
+})
+
 export default tusServer

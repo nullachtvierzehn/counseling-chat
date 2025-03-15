@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useStorage } from "@vueuse/core"
+import { useLocalStorage } from "@vueuse/core"
 
 definePageMeta({
   name: "all-folders",
@@ -52,11 +52,12 @@ definePageMeta({
 })
 
 const route = useRoute()
-const { id: routeId } = toRefs(route.params)
+const routeId = computed(() => route.params.id)
 
 const { data: currentFolderData } = await useQuery({
   query: GetFolderDocument,
-  variables: { id: routeId }
+  variables: { id: routeId },
+  pause: () => !routeId.value,
 })
 
 const { data: foldersData } = await useQuery({
@@ -65,13 +66,37 @@ const { data: foldersData } = await useQuery({
 })
 
 const currentFolder = computed(() => currentFolderData.value?.folder)
-const openIds = useStorage("open-folders", new Set<string>())
 const folders = computed(() => foldersData.value?.folders?.nodes ?? [])
 
-// Open the current folder and all its ancestors
-watch(() => currentFolder.value?.ancestors.nodes ?? [], (ancestors) => {
-  ancestors.forEach(ancestor => openIds.value.add(ancestor.id))
-}, { immediate: true })
+function getAncestorIdsOfTheCurrentFolder(): string[] {
+  return currentFolder.value?.ancestors.nodes.map(ancestor => ancestor.id) ?? []
+}
+
+const openIds = useLocalStorage(
+  "open-folders",
+  // Per default, open all ancestors of the current folder.
+  // The default will be used during SSR, but will be overwritten by the actual value from localStorage, when mounted.
+  new Set<string>(getAncestorIdsOfTheCurrentFolder()),
+  {
+    // Keeps open folders in sync across tabs.
+    listenToStorageChanges: true,
+    serializer: {
+      read: value => value ? new Set(JSON.parse(value)) : null,
+      write: value => JSON.stringify(value)
+    }
+  }
+)
+
+/*
+watch(
+  () => getAncestorIdsOfTheCurrentFolder(),
+  (now) => {
+    openIds.value = openIds.value?.union(new Set(now))
+  },
+  // Run the watcher immediately. After both reloads and page changes, we want to open the ancestors of the current folder.
+  { immediate: true }
+)
+  */
 
 watch(
   [folders, route],
